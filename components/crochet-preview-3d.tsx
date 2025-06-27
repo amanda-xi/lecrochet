@@ -20,7 +20,7 @@ function CrochetMesh({ patternSequence }: { patternSequence: string[] }) {
   }
 
   // Create a simple yarn-like structure based on pattern sequence
-  const points = []
+  const points: THREE.Vector3[] | undefined = []
   const radius = 2
 
   patternSequence.forEach((pattern, index) => {
