@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Share2, Settings, Sun, Moon, Monitor } from "lucide-react"
+import { Plus, Share2, Settings, Sun, Moon, Monitor, Import } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
@@ -70,6 +70,11 @@ export default function CreatePage() {
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm" onClick={cycleTheme} className="text-sm font-light">
                 {getThemeIcon()}
+              </Button>
+
+              <Button variant="ghost" size="sm" className="text-sm font-light">
+                <Import className="h-4 w-4 mr-2" />
+                Import
               </Button>
 
               <Button variant="ghost" size="sm" className="text-sm font-light">
