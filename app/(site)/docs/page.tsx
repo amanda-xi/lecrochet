@@ -82,7 +82,7 @@ export default function DocsPage() {
                 <li>Choose an example pattern or start writing your own CrochetScript</li>
                 <li>Watch your pattern render in real-time in the preview panel</li>
                 <li>Use drag and zoom controls to explore your pattern diagram</li>
-                <li>Download your pattern when you're satisfied</li>
+                <li>Download your pattern when you&apos;re satisfied</li>
               </ol>
             </CardContent>
           </Card>
@@ -218,7 +218,7 @@ export default function DocsPage() {
                     <ul className="text-sm space-y-1 text-gray-700">
                       <li><strong>Drag:</strong> Click and drag to pan around your pattern</li>
                       <li><strong>Scroll:</strong> Use mouse wheel to zoom in and out</li>
-                      <li><strong>Reset:</strong> Click the "Reset" button to return to original view</li>
+                      <li><strong>Reset:</strong> Click the &quot;Reset&quot; button to return to original view</li>
                     </ul>
                   </div>
                   
@@ -291,7 +291,7 @@ export default function DocsPage() {
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium mb-3 text-green-700">Do's</h4>
+                  <h4 className="font-medium mb-3 text-green-700">Do&apos;s</h4>
                   <ul className="text-sm space-y-1 text-gray-700">
                     <li>✓ Use clear, descriptive comments</li>
                     <li>✓ Start with example patterns to learn syntax</li>
@@ -301,12 +301,12 @@ export default function DocsPage() {
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-3 text-red-700">Don'ts</h4>
+                  <h4 className="font-medium mb-3 text-red-700">Don&apos;ts</h4>
                   <ul className="text-sm space-y-1 text-gray-700">
-                    <li>✗ Don't forget to specify pattern type</li>
-                    <li>✗ Don't mix pattern types in one script</li>
-                    <li>✗ Don't use unsupported stitch abbreviations</li>
-                    <li>✗ Don't create overly complex patterns without testing</li>
+                    <li>✗ Don&apos;t forget to specify pattern type</li>
+                    <li>✗ Don&apos;t mix pattern types in one script</li>
+                    <li>✗ Don&apos;t use unsupported stitch abbreviations</li>
+                    <li>✗ Don&apos;t create overly complex patterns without testing</li>
                   </ul>
                 </div>
               </div>

@@ -14,11 +14,7 @@ export interface CompilerResult {
   success: boolean
 }
 
-interface StitchInstruction {
-  type: string
-  count: number
-  metadata?: Record<string, any>
-}
+
 
 export class CrochetScriptCompiler {
   private errors: CompilerError[] = []

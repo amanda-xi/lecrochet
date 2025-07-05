@@ -5,6 +5,15 @@ export interface PatternExample {
 }
 
 export const EXAMPLE_PATTERNS: Record<string, PatternExample> = {
+
+  "Custom-Pattern": {
+    name: "Custom Pattern",
+    description: "Custom pattern",
+    code: `// Custom Pattern
+
+end`
+  },
+
   "basic-scarf": {
     name: "Basic Scarf",
     description: "Simple linear pattern with single crochet",

@@ -137,7 +137,7 @@ export default function EnhancedCrochetDiagram({
   }, [])
 
   // Load SVG content
-  const loadSVG = async (filename: string): Promise<string> => {
+  const loadSVG = useCallback(async (filename: string): Promise<string> => {
     if (loadedSVGs.has(filename)) {
       return loadedSVGs.get(filename)!
     }
@@ -155,10 +155,10 @@ export default function EnhancedCrochetDiagram({
       console.error(`Error loading SVG ${filename}:`, error)
       return ''
     }
-  }
+  }, [loadedSVGs])
 
   // Calculate positions based on pattern type
-  const calculatePositions = (): StitchPosition[] => {
+  const calculatePositions = useCallback((): StitchPosition[] => {
     if (patternSequence.length === 0) return []
 
     const positions: StitchPosition[] = []
@@ -170,7 +170,7 @@ export default function EnhancedCrochetDiagram({
       let stitchesInCurrentRound = 0
       let expectedStitchesInRound = 6 // Start with 6 for typical granny square
 
-      patternSequence.forEach((stitchType, index) => {
+      patternSequence.forEach((stitchType) => {
         // Special handling for magic ring start
         if (stitchType === 'magic-ring' || stitchType === 'ring') {
           positions.push({
@@ -213,7 +213,7 @@ export default function EnhancedCrochetDiagram({
       let currentY = 150
       let rowHeight = 0
 
-      patternSequence.forEach((stitchType, index) => {
+      patternSequence.forEach((stitchType) => {
         const stitchInfo = STITCH_SVG_MAP[stitchType] || STITCH_SVG_MAP['unknown']
         
         // Handle row breaks and turns
@@ -238,10 +238,10 @@ export default function EnhancedCrochetDiagram({
     }
 
     return positions
-  }
+  }, [patternSequence, patternType, centerX, centerY])
 
   // Extract SVG content and create simplified version
-  const createStitchElement = (svgContent: string, stitchType: string): string => {
+  const createStitchElement = (svgContent: string): string => {
     const parser = new DOMParser()
     const doc = parser.parseFromString(svgContent, 'image/svg+xml')
     const svgElement = doc.querySelector('svg')
@@ -259,7 +259,7 @@ export default function EnhancedCrochetDiagram({
   useEffect(() => {
     const positions = calculatePositions()
     setStitchPositions(positions)
-  }, [patternSequence, patternType, centerX, centerY])
+  }, [patternSequence, patternType, centerX, centerY, calculatePositions])
 
   // Load all required SVGs
   useEffect(() => {
@@ -277,7 +277,7 @@ export default function EnhancedCrochetDiagram({
     if (uniqueStitchTypes.length > 0) {
       loadAllSVGs()
     }
-  }, [patternSequence])
+  }, [patternSequence, loadSVG])
 
   // Global mouse event listeners for dragging
   useEffect(() => {
@@ -393,7 +393,7 @@ export default function EnhancedCrochetDiagram({
               )
             }
 
-            const stitchElement = createStitchElement(svgContent, position.stitchType)
+            const stitchElement = createStitchElement(svgContent)
             
             return (
               <g

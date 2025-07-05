@@ -234,7 +234,6 @@ export class EnhancedCrochetScriptCompiler {
     // Cluster stitches: 3dc_cluster, 5dc_cluster, etc.
     const clusterMatch = statement.match(/^(\d+)(dc|hdc|tr)_cluster/)
     if (clusterMatch) {
-      const [, , baseStitch] = clusterMatch
       this.addStitches(`cluster`, 1, lineNumber)
       this.metadata.techniques.push('clusters')
       return
