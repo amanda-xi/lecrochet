@@ -3,7 +3,6 @@
 
 import { 
   Vertex3D, 
-  Edge3D, 
   CrochetGeometry, 
   calculateStitchPosition, 
   calculateBounds 
@@ -71,12 +70,10 @@ function generateVertices(
   const vertices: Vertex3D[] = []
   
   patternSequence.forEach((stitchType, index) => {
-    const previousVertex = vertices[vertices.length - 1]
     const position = calculateStitchPosition(
       stitchType,
       index,
-      patternType,
-      previousVertex
+      patternType
     )
     
     // Apply scaling

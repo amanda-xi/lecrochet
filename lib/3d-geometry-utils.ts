@@ -34,8 +34,7 @@ export interface CrochetGeometry {
 export function calculateStitchPosition(
   stitchType: string,
   index: number,
-  patternType: 'linear' | 'circular' | 'granny-square',
-  previousPosition?: Vertex3D
+  patternType: 'linear' | 'circular' | 'granny-square'
 ): Vertex3D {
   const baseHeight = getStitchHeight(stitchType)
   const baseWidth = getStitchWidth(stitchType)

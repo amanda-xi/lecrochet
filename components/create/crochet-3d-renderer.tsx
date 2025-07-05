@@ -23,13 +23,11 @@ interface Crochet3DRendererProps {
 function StitchVertex({ 
   position, 
   color, 
-  size, 
-  stitchType 
+  size 
 }: { 
   position: [number, number, number]
   color: string
   size: number
-  stitchType: string
 }) {
   const meshRef = useRef<THREE.Mesh>(null)
   
@@ -173,10 +171,9 @@ function CrochetScene({
       {geometry.vertices.map((vertex) => (
         <StitchVertex
           key={vertex.id}
-          position={[vertex.x, vertex.y, vertex.z]}
-          color={getStitchColor(vertex.stitchType)}
-          size={getVertexSize(vertex.stitchType)}
-          stitchType={vertex.stitchType}
+                     position={[vertex.x, vertex.y, vertex.z]}
+           color={getStitchColor(vertex.stitchType)}
+           size={getVertexSize(vertex.stitchType)}
         />
       ))}
       

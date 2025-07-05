@@ -91,7 +91,7 @@ function calculateStructuralConnections(
       
       // Connect if vertically aligned and within structural distance
       if (distance <= rules.maxStructuralDistance && 
-          isStructurallyConnected(current, other, patternType)) {
+          isStructurallyConnected(current, other)) {
         edges.push({
           fromVertex: other.id,
           toVertex: current.id,
@@ -143,8 +143,7 @@ function calculateJoinConnections(
  */
 function isStructurallyConnected(
   v1: Vertex3D,
-  v2: Vertex3D,
-  patternType: 'linear' | 'circular' | 'granny-square'
+  v2: Vertex3D
 ): boolean {
   // Vertical alignment check
   const horizontalDistance = Math.sqrt(
@@ -169,9 +168,6 @@ function groupVerticesByRound(
   
   if (patternType === 'circular') {
     // Group by distance from center
-    const centerX = 0
-    const centerY = 0
-    
     const byDistance = vertices.map(v => ({
       vertex: v,
       distance: Math.sqrt(v.x * v.x + v.y * v.y)

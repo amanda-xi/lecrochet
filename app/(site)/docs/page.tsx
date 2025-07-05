@@ -4,7 +4,8 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, BookOpen, Code, Eye, Play, Zap } from "lucide-react"
+import { ArrowLeft, BookOpen, Code, Play, Zap, Box, Layers } from "lucide-react"
+import CrochetLegend from "@/components/crochet-legend"
 
 export default function DocsPage() {
   return (
@@ -44,7 +45,7 @@ export default function DocsPage() {
             and see them rendered as beautiful visual diagrams in real-time.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <Card>
               <CardContent className="p-6 text-center">
                 <Code className="h-8 w-8 text-grey-600 mx-auto mb-3" />
@@ -54,16 +55,23 @@ export default function DocsPage() {
             </Card>
             <Card>
               <CardContent className="p-6 text-center">
-                <Eye className="h-8 w-8 text-grey-600 mx-auto mb-3" />
-                <h3 className="font-semibold mb-2">Live Preview</h3>
-                <p className="text-sm text-gray-600">See your pattern rendered instantly as you type</p>
+                <Layers className="h-8 w-8 text-grey-600 mx-auto mb-3" />
+                <h3 className="font-semibold mb-2">2D Diagrams</h3>
+                <p className="text-sm text-gray-600">Traditional crochet symbol charts with pan and zoom</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6 text-center">
+                <Box className="h-8 w-8 text-grey-600 mx-auto mb-3" />
+                <h3 className="font-semibold mb-2">3D Visualization</h3>
+                <p className="text-sm text-gray-600">Interactive 3D view showing stitch structure and yarn flow</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-6 text-center">
                 <Zap className="h-8 w-8 text-grey-600 mx-auto mb-3" />
                 <h3 className="font-semibold mb-2">Interactive</h3>
-                <p className="text-sm text-gray-600">Drag to pan and scroll to zoom in the preview</p>
+                <p className="text-sm text-gray-600">Real-time preview with multiple viewing modes</p>
               </CardContent>
             </Card>
           </div>
@@ -206,41 +214,136 @@ export default function DocsPage() {
         {/* Preview Controls */}
         <section className="mb-12">
           <h2 className="text-2xl font-extralight mb-6">Using the Preview Panel</h2>
-          <Card>
+          
+          {/* View Mode Toggle */}
+          <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Interactive Controls</CardTitle>
+              <CardTitle className="text-lg font-semibold">View Modes</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-medium mb-2">Navigation</h4>
+                    <h4 className="font-medium mb-2 flex items-center gap-2">
+                      <Layers className="h-4 w-4" />
+                      2D Diagram View
+                    </h4>
                     <ul className="text-sm space-y-1 text-gray-700">
-                      <li><strong>Drag:</strong> Click and drag to pan around your pattern</li>
-                      <li><strong>Scroll:</strong> Use mouse wheel to zoom in and out</li>
-                      <li><strong>Reset:</strong> Click the &quot;Reset&quot; button to return to original view</li>
+                      <li>• Traditional crochet symbol charts</li>
+                      <li>• Pan and zoom navigation</li>
+                      <li>• Perfect for following patterns</li>
+                      <li>• Drag to move, scroll to zoom</li>
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium mb-2">Information</h4>
+                    <h4 className="font-medium mb-2 flex items-center gap-2">
+                      <Box className="h-4 w-4" />
+                      3D Visualization
+                    </h4>
                     <ul className="text-sm space-y-1 text-gray-700">
-                      <li><strong>Stitch Count:</strong> See total stitches in your pattern</li>
-                      <li><strong>Round Count:</strong> For circular patterns, see number of rounds</li>
-                      <li><strong>Zoom Level:</strong> Current zoom percentage display</li>
+                      <li>• Interactive 3D structure view</li>
+                      <li>• Vertices represent stitches</li>
+                      <li>• Edges show yarn flow connections</li>
+                      <li>• Rotate, pan, and zoom in 3D space</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                  <p className="text-sm text-purple-800">
+                    <strong>New Feature:</strong> Toggle between 2D and 3D views using the view mode buttons 
+                    in the preview panel header. The 3D view helps visualize complex stitch relationships 
+                    and yarn flow patterns.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 3D Controls */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">3D View Controls</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <h4 className="font-medium mb-2">Mouse Controls</h4>
+                    <ul className="text-sm space-y-1 text-gray-700">
+                      <li><strong>Left Click + Drag:</strong> Rotate view</li>
+                      <li><strong>Right Click + Drag:</strong> Pan view</li>
+                      <li><strong>Mouse Wheel:</strong> Zoom in/out</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-2">Display Options</h4>
+                    <ul className="text-sm space-y-1 text-gray-700">
+                      <li><strong>Vertices:</strong> Show/hide stitches</li>
+                      <li><strong>Edges:</strong> Show/hide connections</li>
+                      <li><strong>Opacity:</strong> Adjust edge transparency</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-2">Connection Types</h4>
+                    <ul className="text-sm space-y-1 text-gray-700">
+                      <li><span className="inline-block w-3 h-3 bg-amber-500 rounded-full mr-2"></span>Yarn Flow</li>
+                      <li><span className="inline-block w-3 h-3 bg-gray-500 rounded-full mr-2"></span>Structural</li>
+                      <li><span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>Joins</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Traditional Controls */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">General Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium mb-2">Pattern Statistics</h4>
+                    <ul className="text-sm space-y-1 text-gray-700">
+                      <li><strong>Stitch Count:</strong> Total stitches in pattern</li>
+                      <li><strong>Round Count:</strong> Number of rounds (circular patterns)</li>
+                      <li><strong>Vertex Count:</strong> 3D vertices displayed</li>
+                      <li><strong>Connection Count:</strong> 3D edges shown</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-2">Performance</h4>
+                    <ul className="text-sm space-y-1 text-gray-700">
+                      <li><strong>Compilation:</strong> Real-time pattern processing</li>
+                      <li><strong>Optimization:</strong> Automatic edge optimization</li>
+                      <li><strong>Limits:</strong> Max 200 vertices in 3D for performance</li>
                     </ul>
                   </div>
                 </div>
                 
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                   <p className="text-sm text-blue-800">
-                    <strong>Tip:</strong> Use the zoom feature to inspect fine details of complex patterns, 
-                    and drag to see different sections of large patterns.
+                    <strong>Performance Tip:</strong> Large patterns are automatically optimized. 
+                    Use the 2D view for very complex patterns and 3D view to understand 
+                    structure and stitch relationships.
                   </p>
                 </div>
               </div>
             </CardContent>
           </Card>
+        </section>
+
+        {/* Symbol Legend */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-extralight mb-6">Symbol Reference</h2>
+          <CrochetLegend />
         </section>
 
         {/* Examples */}

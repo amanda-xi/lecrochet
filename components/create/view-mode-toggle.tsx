@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import { Eye, Box, Layers } from 'lucide-react'
+import { Box, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export type ViewMode = '2d' | '3d'
