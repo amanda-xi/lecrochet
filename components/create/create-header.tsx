@@ -161,10 +161,12 @@ export default function CreateHeader({
               Share
             </Button>
 
-            <Button variant="ghost" size="sm" className="text-sm font-light">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </Button>
+            <Link href="/settings">
+              <Button variant="ghost" size="sm" className="text-sm font-light">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
+            </Link>
 
             <Link href="/docs" target="_blank">
               <Button variant="ghost" size="sm" className="text-sm font-light">
@@ -223,10 +225,12 @@ export default function CreateHeader({
                   Share
                 </Button>
 
-                <Button variant="ghost" size="sm" className="text-sm font-light justify-start">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
+                <Link href="/settings" className="w-full">
+                  <Button variant="ghost" size="sm" className="text-sm font-light justify-start w-full">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Settings
+                  </Button>
+                </Link>
 
                 <Link href="/docs" target="_blank" className="w-full">
                   <Button variant="ghost" size="sm" className="text-sm font-light justify-start w-full">

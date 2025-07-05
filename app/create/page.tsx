@@ -57,7 +57,7 @@ export default function CreatePage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'pattern.crochet'
+    a.download = 'pattern.txt'
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
