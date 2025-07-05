@@ -76,7 +76,18 @@ export default function CrochetPreview3D({ patternSequence }: CrochetPreview3DPr
 
           <CrochetMesh patternSequence={patternSequence} />
 
-          <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} minDistance={2} maxDistance={10} />
+          <OrbitControls 
+            enablePan={true} 
+            enableZoom={true} 
+            enableRotate={true} 
+            minDistance={2} 
+            maxDistance={10}
+            enableDamping={true}
+            dampingFactor={0.1}
+            rotateSpeed={0.3}
+            panSpeed={0.3}
+            zoomSpeed={0.3}
+          />
         </Suspense>
       </Canvas>
 

@@ -1,6 +1,10 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useDiagramTransform } from "@/hooks/use-diagram-transform"
+import { calculateStitchPositions, type StitchPosition } from "@/lib/pattern-positioning"
+import { loadAllSVGs, getSVGContent, createStitchElement } from "@/lib/svg-utils"
+import { STITCH_SVG_MAP } from "@/lib/stitch-mappings"
 
 interface EnhancedCrochetDiagramProps {
   patternSequence: string[]
@@ -8,74 +12,6 @@ interface EnhancedCrochetDiagramProps {
   centerX?: number
   centerY?: number
   scale?: number
-}
-
-interface StitchPosition {
-  x: number
-  y: number
-  rotation: number
-  stitchType: string
-}
-
-interface Transform {
-  x: number
-  y: number
-  scale: number
-}
-
-// Comprehensive stitch mapping using available SVG files
-const STITCH_SVG_MAP: Record<string, { file: string; width: number; height: number }> = {
-  // Basic stitches
-  'chain': { file: 'ch.svg', width: 32, height: 16 },
-  'ch': { file: 'ch.svg', width: 32, height: 16 },
-  'single-crochet': { file: 'sc.svg', width: 32, height: 32 },
-  'sc': { file: 'sc.svg', width: 32, height: 32 },
-  'double-crochet': { file: 'dc.svg', width: 32, height: 80 },
-  'dc': { file: 'dc.svg', width: 32, height: 80 },
-  'half-double': { file: 'hdc.svg', width: 32, height: 48 },
-  'hdc': { file: 'hdc.svg', width: 32, height: 48 },
-  'treble': { file: 'tr.svg', width: 32, height: 96 },
-  'tr': { file: 'tr.svg', width: 32, height: 96 },
-  'double-treble': { file: 'dtr.svg', width: 32, height: 112 },
-  'dtr': { file: 'dtr.svg', width: 32, height: 112 },
-  'slip-stitch': { file: 'sl_st.svg', width: 32, height: 20 },
-  'sl': { file: 'sl_st.svg', width: 32, height: 20 },
-  
-  // Post stitches
-  'front-post-dc': { file: 'FPdc.svg', width: 32, height: 80 },
-  'fpdc': { file: 'FPdc.svg', width: 32, height: 80 },
-  'back-post-dc': { file: 'BPdc.svg', width: 32, height: 80 },
-  'bpdc': { file: 'BPdc.svg', width: 32, height: 80 },
-  'front-post-tr': { file: 'FPtr.svg', width: 32, height: 96 },
-  'fptr': { file: 'FPtr.svg', width: 32, height: 96 },
-  'back-post-tr': { file: 'BPtr.svg', width: 32, height: 96 },
-  'bptr': { file: 'BPtr.svg', width: 32, height: 96 },
-  
-  // Decrease stitches
-  'sc2tog': { file: 'sc2tog.svg', width: 48, height: 32 },
-  'dc2tog': { file: 'dc2tog.svg', width: 48, height: 80 },
-  'dc3tog': { file: 'dc3tog.svg', width: 64, height: 80 },
-  'sc3tog': { file: 'sc3tog.svg', width: 64, height: 32 },
-  
-  // Cluster stitches
-  '3dc-cluster': { file: '3dc_cluster.svg', width: 48, height: 80 },
-  '3hdc-cluster': { file: '3hdc_cluster.svg', width: 48, height: 48 },
-  'cluster': { file: '3dc_cluster.svg', width: 48, height: 80 },
-  
-  // Shell and fan stitches
-  '5dc-shell': { file: '5dc_shell.svg', width: 80, height: 80 },
-  'shell': { file: '5dc_shell.svg', width: 80, height: 80 },
-  '5dc-popcorn': { file: '5dc_popcorn.svg', width: 48, height: 80 },
-  'popcorn': { file: '5dc_popcorn.svg', width: 48, height: 80 },
-  
-  // Special elements
-  'magic-ring': { file: 'adjustable_ring.svg', width: 48, height: 48 },
-  'ring': { file: 'ring.svg', width: 48, height: 48 },
-  'start': { file: 'start.svg', width: 24, height: 24 },
-  'end': { file: 'end.svg', width: 24, height: 24 },
-  
-  // Default fallback
-  'unknown': { file: 'unknown.svg', width: 32, height: 32 },
 }
 
 export default function EnhancedCrochetDiagram({ 
@@ -87,229 +23,32 @@ export default function EnhancedCrochetDiagram({
 }: EnhancedCrochetDiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [stitchPositions, setStitchPositions] = useState<StitchPosition[]>([])
-  const [loadedSVGs, setLoadedSVGs] = useState<Map<string, string>>(new Map())
+  const [svgsLoaded, setSvgsLoaded] = useState(false)
   
-  // Transform state for pan and zoom
-  const [transform, setTransform] = useState<Transform>({ x: 0, y: 0, scale: 1 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 })
+  const {
+    transform,
+    isDragging,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleWheel,
+    resetView
+  } = useDiagramTransform()
 
-  // Drag and zoom handlers
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    setIsDragging(true)
-    setLastMousePos({ x: e.clientX, y: e.clientY })
-    e.preventDefault()
-  }, [])
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging) return
-    
-    const deltaX = e.clientX - lastMousePos.x
-    const deltaY = e.clientY - lastMousePos.y
-    
-    setTransform(prev => ({
-      ...prev,
-      x: prev.x + deltaX / prev.scale,
-      y: prev.y + deltaY / prev.scale
-    }))
-    
-    setLastMousePos({ x: e.clientX, y: e.clientY })
-  }, [isDragging, lastMousePos])
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false)
-  }, [])
-
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault()
-    
-    const scaleFactor = e.deltaY > 0 ? 0.9 : 1.1
-    const newScale = Math.max(0.1, Math.min(5, transform.scale * scaleFactor))
-    
-    setTransform(prev => ({
-      ...prev,
-      scale: newScale
-    }))
-  }, [transform.scale])
-
-  const resetView = useCallback(() => {
-    setTransform({ x: 0, y: 0, scale: 1 })
-  }, [])
-
-  // Load SVG content
-  const loadSVG = useCallback(async (filename: string): Promise<string> => {
-    if (loadedSVGs.has(filename)) {
-      return loadedSVGs.get(filename)!
-    }
-    
-    try {
-      const response = await fetch(`/stitches/${filename}`)
-      if (!response.ok) {
-        console.warn(`Could not load SVG: ${filename}`)
-        return ''
-      }
-      const svgContent = await response.text()
-      setLoadedSVGs(prev => new Map(prev).set(filename, svgContent))
-      return svgContent
-    } catch (error) {
-      console.error(`Error loading SVG ${filename}:`, error)
-      return ''
-    }
-  }, [loadedSVGs])
-
-  // Calculate positions based on pattern type
-  const calculatePositions = useCallback((): StitchPosition[] => {
-    if (patternSequence.length === 0) return []
-
-    const positions: StitchPosition[] = []
-    
-    if (patternType === "circular" || patternType === "granny-square") {
-      // Circular/granny square pattern
-      let currentRadius = 60
-      let currentAngle = 0
-      let stitchesInCurrentRound = 0
-      let expectedStitchesInRound = 6 // Start with 6 for typical granny square
-
-      patternSequence.forEach((stitchType) => {
-        // Special handling for magic ring start
-        if (stitchType === 'magic-ring' || stitchType === 'ring') {
-          positions.push({
-            x: centerX - 24,
-            y: centerY - 24,
-            rotation: 0,
-            stitchType
-          })
-          return
-        }
-
-        // Calculate position on circle
-        const x = centerX + Math.cos(currentAngle) * currentRadius - 16
-        const y = centerY + Math.sin(currentAngle) * currentRadius - 16
-        const rotation = 0 // Keep symbols upright for readability
-
-        positions.push({
-          x,
-          y,
-          rotation,
-          stitchType
-        })
-
-        stitchesInCurrentRound++
-        
-        // Move to next position
-        currentAngle += (2 * Math.PI) / expectedStitchesInRound
-
-        // Check if we've completed the round
-        if (stitchesInCurrentRound >= expectedStitchesInRound) {
-          currentRadius += 50 // Increase radius for next round
-          expectedStitchesInRound = Math.max(6, Math.floor(expectedStitchesInRound * 1.5)) // Increase stitches per round
-          stitchesInCurrentRound = 0
-          currentAngle = 0
-        }
-      })
-    } else {
-      // Linear pattern
-      let currentX = 50
-      let currentY = 150
-      let rowHeight = 0
-
-      patternSequence.forEach((stitchType) => {
-        const stitchInfo = STITCH_SVG_MAP[stitchType] || STITCH_SVG_MAP['unknown']
-        
-        // Handle row breaks and turns
-        if (stitchType === 'turn') {
-          currentX = 50
-          currentY += rowHeight + 30
-          rowHeight = 0
-          return
-        }
-
-        positions.push({
-          x: currentX,
-          y: currentY,
-          rotation: 0,
-          stitchType
-        })
-
-        // Update position for next stitch
-        currentX += Math.max(stitchInfo.width * 0.9, 35) // Spacing between stitches
-        rowHeight = Math.max(rowHeight, stitchInfo.height)
-      })
-    }
-
-    return positions
-  }, [patternSequence, patternType, centerX, centerY])
-
-  // Extract SVG content and create simplified version
-  const createStitchElement = (svgContent: string): string => {
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(svgContent, 'image/svg+xml')
-    const svgElement = doc.querySelector('svg')
-    
-    if (!svgElement) return `<circle r="8" fill="#e5e7eb" stroke="#9ca3af" stroke-width="2"/>`
-    
-    // Extract paths and basic shapes
-    const paths = Array.from(svgElement.querySelectorAll('path, circle, ellipse, rect, line'))
-    const pathElements = paths.map(el => el.outerHTML).join('')
-    
-    return pathElements || `<circle r="8" fill="#e5e7eb" stroke="#9ca3af" stroke-width="2"/>`
-  }
-
-  // Render the diagram
+  // Calculate stitch positions
   useEffect(() => {
-    const positions = calculatePositions()
+    const positions = calculateStitchPositions(patternSequence, patternType, centerX, centerY)
     setStitchPositions(positions)
-  }, [patternSequence, patternType, centerX, centerY, calculatePositions])
+  }, [patternSequence, patternType, centerX, centerY])
 
   // Load all required SVGs
   useEffect(() => {
-    const uniqueStitchTypes = [...new Set(patternSequence)]
-    
-    const loadAllSVGs = async () => {
-      const promises = uniqueStitchTypes.map(async (stitchType) => {
-        const stitchInfo = STITCH_SVG_MAP[stitchType] || STITCH_SVG_MAP['unknown']
-        return loadSVG(stitchInfo.file)
+    if (patternSequence.length > 0) {
+      loadAllSVGs(patternSequence).then(() => {
+        setSvgsLoaded(true)
       })
-      
-      await Promise.all(promises)
     }
-
-    if (uniqueStitchTypes.length > 0) {
-      loadAllSVGs()
-    }
-  }, [patternSequence, loadSVG])
-
-  // Global mouse event listeners for dragging
-  useEffect(() => {
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return
-      
-      const deltaX = e.clientX - lastMousePos.x
-      const deltaY = e.clientY - lastMousePos.y
-      
-      setTransform(prev => ({
-        ...prev,
-        x: prev.x + deltaX / prev.scale,
-        y: prev.y + deltaY / prev.scale
-      }))
-      
-      setLastMousePos({ x: e.clientX, y: e.clientY })
-    }
-
-    const handleGlobalMouseUp = () => {
-      setIsDragging(false)
-    }
-
-    if (isDragging) {
-      document.addEventListener('mousemove', handleGlobalMouseMove)
-      document.addEventListener('mouseup', handleGlobalMouseUp)
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleGlobalMouseMove)
-      document.removeEventListener('mouseup', handleGlobalMouseUp)
-    }
-  }, [isDragging, lastMousePos, transform.scale])
+  }, [patternSequence])
 
   return (
     <div className="w-full h-full bg-white overflow-hidden relative">
@@ -376,20 +115,24 @@ export default function EnhancedCrochetDiagram({
           {/* Render stitches */}
           {stitchPositions.map((position, index) => {
             const stitchInfo = STITCH_SVG_MAP[position.stitchType] || STITCH_SVG_MAP['unknown']
-            const svgContent = loadedSVGs.get(stitchInfo.file)
+            const svgContent = getSVGContent(stitchInfo.file)
             
-            if (!svgContent) {
-              // Fallback rendering while loading
+            if (!svgContent && svgsLoaded) {
+              // Fallback rendering when SVG not found
               return (
-                <circle
+                <g
                   key={`stitch-fallback-${index}`}
-                  cx={position.x + 16}
-                  cy={position.y + 16}
-                  r="8"
-                  fill="#e5e7eb"
-                  stroke="#9ca3af"
-                  strokeWidth="2"
-                />
+                  transform={`translate(${position.x}, ${position.y}) rotate(${position.rotation}, 16, 16)`}
+                >
+                  <circle
+                    cx={16}
+                    cy={16}
+                    r="8"
+                    fill="#e5e7eb"
+                    stroke="#9ca3af"
+                    strokeWidth="2"
+                  />
+                </g>
               )
             }
 
@@ -398,7 +141,7 @@ export default function EnhancedCrochetDiagram({
             return (
               <g
                 key={`stitch-${index}`}
-                transform={`translate(${position.x}, ${position.y}) scale(${scale})`}
+                transform={`translate(${position.x}, ${position.y}) scale(${scale}) rotate(${position.rotation}, ${stitchInfo.width / 2}, ${stitchInfo.height / 2})`}
                 className="stitch-group"
               >
                 <g
