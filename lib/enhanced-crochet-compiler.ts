@@ -33,6 +33,8 @@ export class EnhancedCrochetScriptCompiler {
   private patternSequence: string[] = []
   private patternType: "linear" | "circular" | "granny-square" = "linear"
   private currentContext: string[] = []
+  private blockContent: { [key: string]: string[] } = {}
+  private blockStartLines: { [key: string]: number } = {}
   private metadata = {
     rounds: 0,
     stitchCount: 0,
@@ -44,6 +46,8 @@ export class EnhancedCrochetScriptCompiler {
     this.patternSequence = []
     this.patternType = "linear"
     this.currentContext = []
+    this.blockContent = {}
+    this.blockStartLines = {}
     this.metadata = { rounds: 0, stitchCount: 0, techniques: [] }
 
     try {
@@ -111,6 +115,23 @@ export class EnhancedCrochetScriptCompiler {
   }
 
   private parseStatement(statement: string, lineNumber: number): void {
+    // Check if we're inside a repeat block
+    const currentBlock = this.currentContext[this.currentContext.length - 1]
+    const isInsideRepeat = currentBlock && currentBlock.startsWith('repeat:')
+    
+    // Special handling for nested structures - these should be processed even inside repeats
+    const isNestedStructure = statement.match(/^(repeat|round|magic_ring|granny)\s*(\(.*\))?\s*\{/) || statement === '}'
+    
+    if (isInsideRepeat && !isNestedStructure) {
+      // Regular statements inside repeat blocks get collected
+      // Ensure block content exists before pushing
+      if (!this.blockContent[currentBlock]) {
+        this.blockContent[currentBlock] = []
+      }
+      this.blockContent[currentBlock].push(statement)
+      return
+    }
+
     // Handle different statement types
     
     // Round definitions: round { ... } or round(number) { ... }
@@ -146,32 +167,36 @@ export class EnhancedCrochetScriptCompiler {
       let count = parseInt(repeatMatch[1], 10)
       const content = repeatMatch[2]?.trim()
       
-      if (content && content !== '') {
-        // Safety check for repeat operations
-        if (count > SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES) {
-          this.errors.push({
-            line: lineNumber,
-            column: 1,
-            message: `Excessive repeat count (${count}). Maximum allowed is ${SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES}. Repeat truncated to prevent system crash.`,
-            severity: "error"
-          })
-          count = SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES
-        } else if (count > SAFETY_LIMITS.WARNING_SINGLE_OPERATION) {
-          this.errors.push({
-            line: lineNumber,
-            column: 1,
-            message: `Large repeat count (${count}). Consider breaking into smaller repeats for better performance.`,
-            severity: "warning"
-          })
-        }
-
+      // Safety check for repeat operations
+      if (count > SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES) {
+        this.errors.push({
+          line: lineNumber,
+          column: 1,
+          message: `Excessive repeat count (${count}). Maximum allowed is ${SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES}. Repeat truncated to prevent system crash.`,
+          severity: "error"
+        })
+        count = SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES
+      } else if (count > SAFETY_LIMITS.WARNING_SINGLE_OPERATION) {
+        this.errors.push({
+          line: lineNumber,
+          column: 1,
+          message: `Large repeat count (${count}). Consider breaking into smaller repeats for better performance.`,
+          severity: "warning"
+        })
+      }
+      
+      if (content && content !== '' && content.endsWith('}')) {
         // Inline repeat - parse content immediately
+        const innerContent = content.replace(/\}$/, '').trim()
         for (let i = 0; i < count; i++) {
-          this.parseStatement(content.replace(/\}$/, ''), lineNumber)
+          this.parseStatement(innerContent, lineNumber)
         }
       } else {
-        // Block repeat - handle in block parsing
-        this.currentContext.push(`repeat:${count}`)
+        // Block repeat - start collecting content
+        const blockKey = `repeat:${count}`
+        this.currentContext.push(blockKey)
+        this.blockContent[blockKey] = []
+        this.blockStartLines[blockKey] = lineNumber
       }
       return
     }
@@ -274,7 +299,42 @@ export class EnhancedCrochetScriptCompiler {
 
     // Block closers
     if (statement === '}') {
-      this.currentContext.pop()
+      const currentBlock = this.currentContext.pop()
+      if (currentBlock && currentBlock.startsWith('repeat:')) {
+        // Process repeat block
+        const count = parseInt(currentBlock.split(':')[1], 10)
+        const blockContent = this.blockContent[currentBlock] || []
+        const startLine = this.blockStartLines[currentBlock] || lineNumber
+        
+        // Check if we're inside another repeat block
+        const parentBlock = this.currentContext[this.currentContext.length - 1]
+        const isNestedInRepeat = parentBlock && parentBlock.startsWith('repeat:')
+        
+        if (isNestedInRepeat) {
+          // We're inside another repeat - collect the expanded content instead of executing
+          const expandedContent: string[] = []
+          for (let i = 0; i < count; i++) {
+            expandedContent.push(...blockContent)
+          }
+          // Ensure parent block content exists before pushing
+          if (!this.blockContent[parentBlock]) {
+            this.blockContent[parentBlock] = []
+          }
+          // Add the expanded content to the parent repeat
+          this.blockContent[parentBlock].push(...expandedContent)
+        } else {
+          // Execute the block content the specified number of times
+          for (let i = 0; i < count; i++) {
+            for (const statement of blockContent) {
+              this.parseStatement(statement, startLine)
+            }
+          }
+        }
+        
+        // Clean up
+        delete this.blockContent[currentBlock]
+        delete this.blockStartLines[currentBlock]
+      }
       return
     }
 
