@@ -157,16 +157,6 @@ function CrochetScene({
       />
       <pointLight position={[-50, -50, -50]} intensity={0.4} />
       
-      {/* Ground plane for reference */}
-      <mesh position={[0, -50, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[1000, 1000]} />
-        <meshBasicMaterial 
-          color="#f8f9fa" 
-          transparent 
-          opacity={0.3}
-        />
-      </mesh>
-      
       {/* Render vertices */}
       {geometry.vertices.map((vertex) => (
         <StitchVertex
