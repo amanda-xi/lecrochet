@@ -14,8 +14,6 @@ export function calculateStitchPositions(
   centerY: number
 ): StitchPosition[] {
   if (patternSequence.length === 0) return []
-
-  const positions: StitchPosition[] = []
   
   if (patternType === "circular" || patternType === "granny-square") {
     return calculateCircularPositions(patternSequence, centerX, centerY)
