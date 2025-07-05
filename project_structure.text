@@ -1,0 +1,266 @@
+- .DS_Store
+- .env.local
+- .gitignore
+- README.md
+- app
+  - (site)
+    - contact
+      - client.tsx
+      - page.tsx
+    - docs
+      - page.tsx
+    - features
+      - client.tsx
+      - page.tsx
+    - forum
+      - client.tsx
+      - page.tsx
+    - gallery
+      - client.tsx
+      - page.tsx
+    - help
+      - client.tsx
+      - page.tsx
+    - layout.tsx
+    - marketplace
+      - client.tsx
+      - more
+        - client.tsx
+        - page.tsx
+      - page.tsx
+    - page.tsx
+    - privacy
+      - client.tsx
+      - page.tsx
+    - profile
+      - client.tsx
+      - page.tsx
+    - settings
+      - client.tsx
+      - page.tsx
+  - api
+    - auth
+      - [...nextauth]
+        - route.ts
+  - create
+    - page.tsx
+  - favicon.ico
+  - globals.css
+  - layout.tsx
+- components
+  - create
+    - code-editor-panel.tsx
+    - compilation-messages-panel.tsx
+    - create-header.tsx
+    - crochet-3d-renderer.tsx
+    - example-patterns-selector.tsx
+    - preview-panel.tsx
+    - view-mode-toggle.tsx
+  - crochet
+    - 2 crossed dc with chain.svg
+    - 2 crossed dc.svg
+    - 2 stitch decrease in dc.svg
+    - 3 chain arch .svg
+    - 3 dc cluster.svg
+    - 3 hdc cluster.svg
+    - 5 chain arch .svg
+    - 5 dc popcorn.svg
+    - 5 dc shell.svg
+    - Back post dc.svg
+    - Beginning of work.svg
+    - Decrease in dc.svg
+    - Direction of work (L).svg
+    - Direction of work (R).svg
+    - Double treble.svg
+    - Double.svg
+    - End or bind off.svg
+    - Front post dc.svg
+    - Half double.svg
+    - Joining bar.svg
+    - Treble.svg
+    - Work in back loop only.svg
+    - Work in front loop only.svg
+    - ch 3 picot.svg
+    - chain.svg
+    - dc2tog.svg
+    - dc3tog.svg
+    - sc2tog.svg
+    - sc3tog.svg
+    - single.svg
+    - slip.svg
+  - crochet-code-editor.tsx
+  - crochet-diagram-2d.tsx
+  - crochet-legend.tsx
+  - crochet-preview-3d.tsx
+  - enhanced-crochet-diagram.tsx
+  - site
+    - footer.tsx
+    - header.tsx
+    - session-provider.tsx
+  - ui
+    - avatar.tsx
+    - badge.tsx
+    - button.tsx
+    - card.tsx
+    - dropdown-menu.tsx
+    - input.tsx
+    - select.tsx
+    - separator.tsx
+    - textarea.tsx
+- components.json
+- eslint.config.mjs
+- lib
+  - 3d-edge-calculator.ts
+  - 3d-geometry-utils.ts
+  - 3d-pattern-processor.ts
+  - auth.ts
+  - enhanced-crochet-compiler.ts
+  - pattern-examples.ts
+  - utils.ts
+- next-env.d.ts
+- next.config.ts
+- package-lock.json
+- package.json
+- postcss.config.mjs
+- public
+  - file.svg
+  - globe.svg
+  - next.svg
+  - stitches
+    - 3dc_cluster.svg
+    - 3hdc_cluster.svg
+    - 5dc_popcorn.svg
+    - 5dc_shell.svg
+    - BPdc.svg
+    - BPtr.svg
+    - FPdc.svg
+    - FPtr.svg
+    - adjustable_ring.svg
+    - blo.svg
+    - ch.svg
+    - ch3_picot.svg
+    - ch_close3tog_ch.svg
+    - close3tog.svg
+    - dc.svg
+    - dc2tog.svg
+    - dc3tog.svg
+    - dtr.svg
+    - end.svg
+    - flo.svg
+    - hdc.svg
+    - loops.svg
+    - normal_closing.svg
+    - ring.svg
+    - sc.svg
+    - sc2.svg
+    - sc2tog.svg
+    - sc3tog.svg
+    - sl_st.svg
+    - st1.svg
+    - st10.svg
+    - st11.svg
+    - st12.svg
+    - st13.svg
+    - st14.svg
+    - st15.svg
+    - st16.svg
+    - st17.svg
+    - st18.svg
+    - st19.svg
+    - st2.svg
+    - st20.svg
+    - st21.svg
+    - st22.svg
+    - st23.svg
+    - st24.svg
+    - st25.svg
+    - st26.svg
+    - st27.svg
+    - st28.svg
+    - st29.svg
+    - st2tog_v1.svg
+    - st2tog_v2.svg
+    - st3.svg
+    - st30.svg
+    - st31.svg
+    - st32.svg
+    - st33.svg
+    - st34.svg
+    - st35.svg
+    - st36.svg
+    - st37.svg
+    - st38.svg
+    - st39.svg
+    - st3tog.svg
+    - st3tog_ch.svg
+    - st4.svg
+    - st40.svg
+    - st41.svg
+    - st42.svg
+    - st43.svg
+    - st44.svg
+    - st45.svg
+    - st46.svg
+    - st47.svg
+    - st48.svg
+    - st49.svg
+    - st5.svg
+    - st50.svg
+    - st51.svg
+    - st52.svg
+    - st53.svg
+    - st54.svg
+    - st55.svg
+    - st57.svg
+    - st58.svg
+    - st59.svg
+    - st6.svg
+    - st60.svg
+    - st61.svg
+    - st62.svg
+    - st63.svg
+    - st64.svg
+    - st65.svg
+    - st66.svg
+    - st67.svg
+    - st68.svg
+    - st69.svg
+    - st7.svg
+    - st70.svg
+    - st71.svg
+    - st72.svg
+    - st73.svg
+    - st74.svg
+    - st75.svg
+    - st76.svg
+    - st77.svg
+    - st8.svg
+    - st9.svg
+    - start.svg
+    - stitches.qrc
+    - t-ch1.svg
+    - t-ch2.svg
+    - t-ch3.svg
+    - t-ch4.svg
+    - t-ch5.svg
+    - t-ch6.svg
+    - tcc.svg
+    - tds2tog.svg
+    - tfs.svg
+    - thb.svg
+    - tks.svg
+    - tksp.svg
+    - tps.svg
+    - tps2tog.svg
+    - tr.svg
+    - trs.svg
+    - tss.svg
+    - ttr.svg
+    - unknown.svg
+  - vercel.svg
+  - window.svg
+  - yarn.gif
+  - yarn.mov
+- todo
+- tsconfig.json
+- tsconfig.tsbuildinfo
