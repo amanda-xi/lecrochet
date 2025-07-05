@@ -107,10 +107,13 @@ export default function EnhancedCrochetDiagram({
     const deltaX = e.clientX - lastMousePos.x
     const deltaY = e.clientY - lastMousePos.y
     
+    // Apply sensitivity multiplier to reduce drag sensitivity
+    const sensitivity = 0.5 // Lower value = less sensitive
+    
     setTransform(prev => ({
       ...prev,
-      x: prev.x + deltaX / prev.scale,
-      y: prev.y + deltaY / prev.scale
+      x: prev.x + (deltaX * sensitivity) / prev.scale,
+      y: prev.y + (deltaY * sensitivity) / prev.scale
     }))
     
     setLastMousePos({ x: e.clientX, y: e.clientY })
@@ -287,10 +290,13 @@ export default function EnhancedCrochetDiagram({
       const deltaX = e.clientX - lastMousePos.x
       const deltaY = e.clientY - lastMousePos.y
       
+      // Apply sensitivity multiplier to reduce drag sensitivity
+      const sensitivity = 0.5 // Lower value = less sensitive
+      
       setTransform(prev => ({
         ...prev,
-        x: prev.x + deltaX / prev.scale,
-        y: prev.y + deltaY / prev.scale
+        x: prev.x + (deltaX * sensitivity) / prev.scale,
+        y: prev.y + (deltaY * sensitivity) / prev.scale
       }))
       
       setLastMousePos({ x: e.clientX, y: e.clientY })

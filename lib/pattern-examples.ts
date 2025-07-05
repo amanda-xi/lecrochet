@@ -20,6 +20,7 @@ end`
     code: `// Basic Scarf Pattern
 // Foundation chain
 chain(30)
+turn
 
 // Row 1
 sc(28)
@@ -123,6 +124,7 @@ end`
     description: "Demonstrating front and back post stitches",
     code: `// Post Stitch Ribbing
 chain(24)
+turn
 
 // Foundation row
 dc(22)
@@ -149,6 +151,7 @@ end`
     description: "Advanced pattern with clusters and shells",
     code: `// Cluster and Shell Pattern
 chain(32)
+turn
 
 // Row 1: Foundation
 dc(30)
