@@ -3,24 +3,110 @@
 import { useEffect, useRef } from "react"
 import Editor from "@monaco-editor/react"
 import type * as Monaco from "monaco-editor"
+import type { CompilerResult } from "@/lib/enhanced-crochet-compiler"
 
 interface CrochetCodeEditorProps {
   value: string
   onChange: (value: string) => void
   onCompile?: (code: string) => void
   theme?: "light" | "dark"
+  compilerResult?: CompilerResult | null
 }
 
 export default function CrochetCodeEditor({ 
   value, 
   onChange, 
   onCompile, 
-  theme = "light" 
+  theme = "light",
+  compilerResult
 }: CrochetCodeEditorProps) {
   const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null)
+  const decorationsRef = useRef<string[]>([])
+
+  // Function to update error/warning line decorations
+  const updateLineDecorations = () => {
+    if (!editorRef.current || !compilerResult) {
+      // Clear decorations if no compiler result
+      if (editorRef.current && decorationsRef.current.length > 0) {
+        decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, [])
+      }
+      return
+    }
+
+    const editor = editorRef.current
+    const model = editor.getModel()
+    if (!model) return
+
+    const newDecorations: any[] = []
+
+    // Add decorations for each error/warning
+    compilerResult.errors.forEach((error) => {
+      const lineNumber = Math.min(error.line, model.getLineCount())
+      
+      // Create hover message with proper formatting
+      const severityLabel = error.severity === "error" ? "ERROR" : "WARNING"
+      const hoverMessage = {
+        value: `**${severityLabel} (Line ${error.line})**\n\n${error.message}`,
+        isTrusted: true
+      }
+      
+      // Line decoration (background highlighting)
+      newDecorations.push({
+        range: new (window as any).monaco.Range(lineNumber, 1, lineNumber, 1),
+        options: {
+          isWholeLine: true,
+          className: error.severity === "error" ? "error-line-highlight" : "warning-line-highlight",
+          hoverMessage: hoverMessage
+        }
+      })
+
+      // Glyph decoration (left margin indicator)
+      newDecorations.push({
+        range: new (window as any).monaco.Range(lineNumber, 1, lineNumber, 1),
+        options: {
+          glyphMarginClassName: error.severity === "error" ? "error-glyph" : "warning-glyph",
+          glyphMarginHoverMessage: hoverMessage
+        }
+      })
+    })
+
+    // Apply decorations
+    decorationsRef.current = editor.deltaDecorations(decorationsRef.current, newDecorations)
+  }
 
   const handleEditorDidMount = (editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) => {
     editorRef.current = editor
+
+    // Add CSS styles for error/warning highlighting
+    const style = document.createElement('style')
+    style.textContent = `
+      .error-line-highlight {
+        background-color: rgba(239, 68, 68, 0.1) !important;
+        border-left: 3px solid #ef4444 !important;
+      }
+      .warning-line-highlight {
+        background-color: rgba(245, 158, 11, 0.1) !important;
+        border-left: 3px solid #f59e0b !important;
+      }
+      .error-glyph::before {
+        content: "●";
+        color: #ef4444 !important;
+        font-weight: bold;
+        position: absolute;
+        left: 3px;
+      }
+      .warning-glyph::before {
+        content: "●";
+        color: #f59e0b !important;
+        font-weight: bold;
+        position: absolute;
+        left: 3px;
+      }
+    `
+    if (!document.head.querySelector('style[data-crochet-editor]')) {
+      style.setAttribute('data-crochet-editor', 'true')
+      document.head.appendChild(style)
+    }
 
     // Register CrochetScript language
     monaco.languages.register({ id: "crochetscript" })
@@ -194,7 +280,15 @@ export default function CrochetCodeEditor({
         timeoutId = setTimeout(() => onCompile(currentValue), 500)
       }
     })
+
+    // Initial decoration update
+    setTimeout(updateLineDecorations, 100)
   }
+
+  // Update decorations when compiler result changes
+  useEffect(() => {
+    updateLineDecorations()
+  }, [compilerResult])
 
   useEffect(() => {
     if (editorRef.current) {
@@ -229,6 +323,7 @@ export default function CrochetCodeEditor({
           smoothScrolling: true,
           cursorBlinking: "smooth",
           cursorSmoothCaretAnimation: "on",
+          glyphMargin: true,
         }}
       />
     </div>

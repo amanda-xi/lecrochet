@@ -115,9 +115,19 @@ export class EnhancedCrochetScriptCompiler {
   }
 
   private parseStatement(statement: string, lineNumber: number): void {
-    // If we're inside a repeat block, collect the statement instead of processing it
+    // Check if we're inside a repeat block
     const currentBlock = this.currentContext[this.currentContext.length - 1]
-    if (currentBlock && currentBlock.startsWith('repeat:') && statement !== '}') {
+    const isInsideRepeat = currentBlock && currentBlock.startsWith('repeat:')
+    
+    // Special handling for nested structures - these should be processed even inside repeats
+    const isNestedStructure = statement.match(/^(repeat|round|magic_ring|granny)\s*(\(.*\))?\s*\{/) || statement === '}'
+    
+    if (isInsideRepeat && !isNestedStructure) {
+      // Regular statements inside repeat blocks get collected
+      // Ensure block content exists before pushing
+      if (!this.blockContent[currentBlock]) {
+        this.blockContent[currentBlock] = []
+      }
       this.blockContent[currentBlock].push(statement)
       return
     }
@@ -296,10 +306,28 @@ export class EnhancedCrochetScriptCompiler {
         const blockContent = this.blockContent[currentBlock] || []
         const startLine = this.blockStartLines[currentBlock] || lineNumber
         
-        // Execute the block content the specified number of times
-        for (let i = 0; i < count; i++) {
-          for (const statement of blockContent) {
-            this.parseStatement(statement, startLine)
+        // Check if we're inside another repeat block
+        const parentBlock = this.currentContext[this.currentContext.length - 1]
+        const isNestedInRepeat = parentBlock && parentBlock.startsWith('repeat:')
+        
+        if (isNestedInRepeat) {
+          // We're inside another repeat - collect the expanded content instead of executing
+          const expandedContent: string[] = []
+          for (let i = 0; i < count; i++) {
+            expandedContent.push(...blockContent)
+          }
+          // Ensure parent block content exists before pushing
+          if (!this.blockContent[parentBlock]) {
+            this.blockContent[parentBlock] = []
+          }
+          // Add the expanded content to the parent repeat
+          this.blockContent[parentBlock].push(...expandedContent)
+        } else {
+          // Execute the block content the specified number of times
+          for (let i = 0; i < count; i++) {
+            for (const statement of blockContent) {
+              this.parseStatement(statement, startLine)
+            }
           }
         }
         

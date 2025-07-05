@@ -8,7 +8,6 @@ import CreateHeader from "@/components/create/create-header"
 import ExamplePatternsSelector from "@/components/create/example-patterns-selector"
 import CodeEditorPanel from "@/components/create/code-editor-panel"
 import PreviewPanel from "@/components/create/preview-panel"
-import CompilationMessagesPanel from "@/components/create/compilation-messages-panel"
 
 
 
@@ -102,6 +101,7 @@ export default function CreatePage() {
             onCodeChange={handleCodeChange}
             onCompile={autoCompile ? handleCompile : undefined}
             theme={theme === "dark" ? "dark" : "light"}
+            compilerResult={compilerResult}
           />
 
           <PreviewPanel
@@ -109,8 +109,6 @@ export default function CreatePage() {
             isCompiling={isCompiling}
           />
         </div>
-
-        <CompilationMessagesPanel compilerResult={compilerResult} />
       </main>
     </div>
   )

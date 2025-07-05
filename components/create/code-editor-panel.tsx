@@ -3,19 +3,22 @@
 import { FileCode } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import CrochetCodeEditor from "@/components/crochet-code-editor"
+import type { CompilerResult } from "@/lib/enhanced-crochet-compiler"
 
 interface CodeEditorPanelProps {
   code: string
   onCodeChange: (code: string) => void
   onCompile?: (code: string) => void
   theme?: "light" | "dark"
+  compilerResult?: CompilerResult | null
 }
 
 export default function CodeEditorPanel({
   code,
   onCodeChange,
   onCompile,
-  theme
+  theme,
+  compilerResult
 }: CodeEditorPanelProps) {
   return (
     <Card className="flex flex-col">
@@ -32,6 +35,7 @@ export default function CodeEditorPanel({
             onChange={onCodeChange}
             onCompile={onCompile}
             theme={theme === "dark" ? "dark" : "light"}
+            compilerResult={compilerResult}
           />
         </div>
       </CardContent>
