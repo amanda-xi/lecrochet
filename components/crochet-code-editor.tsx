@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useCallback } from "react"
 import Editor from "@monaco-editor/react"
 import type * as Monaco from "monaco-editor"
 import type { CompilerResult } from "@/lib/enhanced-crochet-compiler"
@@ -24,7 +24,7 @@ export default function CrochetCodeEditor({
   const decorationsRef = useRef<string[]>([])
 
   // Function to update error/warning line decorations
-  const updateLineDecorations = () => {
+  const updateLineDecorations = useCallback(() => {
     if (!editorRef.current || !compilerResult) {
       // Clear decorations if no compiler result
       if (editorRef.current && decorationsRef.current.length > 0) {
@@ -37,7 +37,11 @@ export default function CrochetCodeEditor({
     const model = editor.getModel()
     if (!model) return
 
-    const newDecorations: any[] = []
+    const globalWindow = window as typeof window & { monaco?: typeof Monaco }
+    const monaco = globalWindow.monaco
+    if (!monaco) return
+
+    const newDecorations: Monaco.editor.IModelDeltaDecoration[] = []
 
     // Add decorations for each error/warning
     compilerResult.errors.forEach((error) => {
@@ -52,7 +56,7 @@ export default function CrochetCodeEditor({
       
       // Line decoration (background highlighting)
       newDecorations.push({
-        range: new (window as any).monaco.Range(lineNumber, 1, lineNumber, 1),
+        range: new monaco.Range(lineNumber, 1, lineNumber, 1),
         options: {
           isWholeLine: true,
           className: error.severity === "error" ? "error-line-highlight" : "warning-line-highlight",
@@ -62,7 +66,7 @@ export default function CrochetCodeEditor({
 
       // Glyph decoration (left margin indicator)
       newDecorations.push({
-        range: new (window as any).monaco.Range(lineNumber, 1, lineNumber, 1),
+        range: new monaco.Range(lineNumber, 1, lineNumber, 1),
         options: {
           glyphMarginClassName: error.severity === "error" ? "error-glyph" : "warning-glyph",
           glyphMarginHoverMessage: hoverMessage
@@ -72,7 +76,7 @@ export default function CrochetCodeEditor({
 
     // Apply decorations
     decorationsRef.current = editor.deltaDecorations(decorationsRef.current, newDecorations)
-  }
+  }, [compilerResult])
 
   const handleEditorDidMount = (editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) => {
     editorRef.current = editor
@@ -288,7 +292,7 @@ export default function CrochetCodeEditor({
   // Update decorations when compiler result changes
   useEffect(() => {
     updateLineDecorations()
-  }, [compilerResult])
+  }, [updateLineDecorations])
 
   useEffect(() => {
     if (editorRef.current) {
