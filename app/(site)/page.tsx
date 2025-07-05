@@ -6,6 +6,8 @@ import { motion, Variants, Variant } from "framer-motion"
 import { signIn } from "next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Code, Eye, Zap } from "lucide-react"
+import Image from "next/image"
+import { useEffect, useState } from "react"
 
 export default function CrochetPlatform() {
   // Animation variants
@@ -38,11 +40,40 @@ export default function CrochetPlatform() {
     }
   }
 
+  useEffect(() => {
+    // Set timeout based on your GIF duration (e.g., 3 seconds)
+    const timer = setTimeout(() => {
+      setShowGif(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  const [showGif, setShowGif] = useState(true);
+
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Hero Section */}
-      <section className="py-32 md:py-46 overflow-hidden">
-        <div className="container mx-auto px-6">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <div className="relative w-full h-full z-0">
+      {showGif && (
+        <Image
+          src="/yarn.gif"
+          alt="Yarn animation"
+          fill
+          className="object-contain"
+          priority
+          unoptimized
+        />
+      )}
+    </div>
+  </div>
+      <section className="py-32 md:py-46 overflow-hidden relative">
+        {/* Yarn GIF Overlay */}
+
+
+        {/* Content */}
+        <div className="container mx-auto px-6 relative z-10">
           <motion.div 
             className="max-w-4xl mx-auto text-center"
             variants={staggerContainer}
@@ -52,7 +83,7 @@ export default function CrochetPlatform() {
             <motion.div variants={fadeInUp}>
               <Badge 
                 variant="outline" 
-                className="mb-6 border-gray-300 text-xs font-light px-3 py-1 relative overflow-hidden group"
+                className="mb-6 border-gray-300 text-xs font-light px-3 py-1 relative overflow-hidden group bg-white/80 backdrop-blur-sm"
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-100 to-transparent"
@@ -113,7 +144,7 @@ export default function CrochetPlatform() {
               >
                 <Button 
                 onClick={() => signIn("google", { callbackUrl: "/create" })} 
-                className="bg-black text-white hover:bg-gray-800 px-8 py-3 text-sm font-light group">
+                className="bg-black text-white hover:bg-gray-800 px-8 py-3 text-sm font-light group shadow-lg">
                   Start building your pattern 
                   <motion.div
                     className="ml-2"
@@ -367,4 +398,8 @@ export default function CrochetPlatform() {
       </motion.section>
     </div>
   )
+}
+
+function setShowGif(arg0: boolean) {
+  throw new Error("Function not implemented.")
 }
