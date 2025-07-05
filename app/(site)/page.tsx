@@ -10,6 +10,8 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 
 export default function CrochetPlatform() {
+  const [showGif, setShowGif] = useState(true);
+
   // Animation variants
   const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 20 },
@@ -49,28 +51,25 @@ export default function CrochetPlatform() {
     return () => clearTimeout(timer);
   }, []);
 
-  const [showGif, setShowGif] = useState(true);
-
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Hero Section */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-    <div className="relative w-full h-full z-0">
-      {showGif && (
-        <Image
-          src="/yarn.gif"
-          alt="Yarn animation"
-          fill
-          className="object-contain"
-          priority
-          unoptimized
-        />
-      )}
-    </div>
-  </div>
+        <div className="relative w-full h-full z-0">
+          {showGif && (
+            <Image
+              src="/yarn.gif"
+              alt="Yarn animation"
+              fill
+              className="object-contain"
+              priority
+              unoptimized
+            />
+          )}
+        </div>
+      </div>
       <section className="py-32 md:py-46 overflow-hidden relative">
         {/* Yarn GIF Overlay */}
-
 
         {/* Content */}
         <div className="container mx-auto px-6 relative z-10">
@@ -296,7 +295,6 @@ export default function CrochetPlatform() {
           </div>
         </section>
 
-
       {/* CTA Section */}
       <motion.section 
         className="py-20 "
@@ -350,16 +348,6 @@ export default function CrochetPlatform() {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
               variants={fadeInUp}
             >
-              {/* <motion.div
-                whileFocus={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <Input 
-                  placeholder="Enter your email" 
-                  className="border-gray-300 text-sm font-light focus:ring-2 focus:ring-gray-200 transition-all duration-200" 
-                />
-              </motion.div> */}
-              
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
@@ -398,8 +386,4 @@ export default function CrochetPlatform() {
       </motion.section>
     </div>
   )
-}
-
-function setShowGif(arg0: boolean) {
-  throw new Error("Function not implemented.")
 }
