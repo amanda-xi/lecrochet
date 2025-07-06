@@ -41,7 +41,7 @@ export default function DocsPage() {
         <section className="mb-12">
           <h2 className="text-3xl font-extralight mb-4">Welcome to le Crochet</h2>
           <p className="text-lg text-gray-600 mb-6">
-            A modern crochet pattern designer that lets you write patterns using CrochetScript 
+            A modern crochet pattern designer that lets you write patterns using CrocheTeX 
             and see them rendered as beautiful visual diagrams in real-time.
           </p>
           
@@ -50,7 +50,7 @@ export default function DocsPage() {
               <CardContent className="p-6 text-center">
                 <Code className="h-8 w-8 text-grey-600 mx-auto mb-3" />
                 <h3 className="font-semibold mb-2">Write Code</h3>
-                <p className="text-sm text-gray-600">Use simple CrochetScript syntax to describe your patterns</p>
+                <p className="text-sm text-gray-600">Use structured CrocheTeX syntax with blocks and functions</p>
               </CardContent>
             </Card>
             <Card>
@@ -87,7 +87,7 @@ export default function DocsPage() {
             <CardContent>
               <ol className="list-decimal list-inside space-y-2 text-gray-700">
                 <li>Navigate to the <Link href="/create" className="text-grey-600 underline">Create page</Link></li>
-                <li>Choose an example pattern or start writing your own CrochetScript</li>
+                <li>Choose an example pattern or start writing your own CrocheTeX</li>
                 <li>Watch your pattern render in real-time in the preview panel</li>
                 <li>Use drag and zoom controls to explore your pattern diagram</li>
                 <li>Download your pattern when you&apos;re satisfied</li>
@@ -96,9 +96,9 @@ export default function DocsPage() {
           </Card>
         </section>
 
-        {/* CrochetScript Syntax */}
+        {/* CrocheTeX Syntax */}
         <section className="mb-12">
-          <h2 className="text-2xl font-extralight mb-6">CrochetScript Syntax</h2>
+          <h2 className="text-2xl font-extralight mb-6">CrocheTeX Syntax</h2>
           
           {/* Basic Stitches */}
           <Card className="mb-6">
@@ -108,71 +108,181 @@ export default function DocsPage() {
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-2">Common Stitches</h4>
+                  <h4 className="font-medium mb-2">Common Stitches (Function Call Syntax)</h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                    <Badge variant="outline">ch - Chain</Badge>
-                    <Badge variant="outline">sc - Single Crochet</Badge>
-                    <Badge variant="outline">hdc - Half Double</Badge>
-                    <Badge variant="outline">dc - Double Crochet</Badge>
-                    <Badge variant="outline">tr - Treble</Badge>
-                    <Badge variant="outline">dtr - Double Treble</Badge>
-                    <Badge variant="outline">sl - Slip Stitch</Badge>
-                    <Badge variant="outline">fpdc - Front Post DC</Badge>
+                    <Badge variant="outline">ch(n) - Chain</Badge>
+                    <Badge variant="outline">sc(n) - Single Crochet</Badge>
+                    <Badge variant="outline">hdc(n) - Half Double</Badge>
+                    <Badge variant="outline">dc(n) - Double Crochet</Badge>
+                    <Badge variant="outline">tr(n) - Treble</Badge>
+                    <Badge variant="outline">dtr(n) - Double Treble</Badge>
+                    <Badge variant="outline">sl_st(n) - Slip Stitch</Badge>
+                    <Badge variant="outline">fpdc(n) - Front Post DC</Badge>
                   </div>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium mb-2">Example: Basic Row</h4>
-                  <code className="text-sm">ch 20, sc 19, turn, ch 1, sc 19</code>
+                  <h4 className="font-medium mb-2">Example: Basic Foundation Chain</h4>
+                  <code className="text-sm">
+                    foundation_chain &#123;<br/>
+                    &nbsp;&nbsp;ch(20)<br/>
+                    &#125;<br/><br/>
+                    row &#123;<br/>
+                    &nbsp;&nbsp;sc(19)<br/>
+                    &nbsp;&nbsp;turn<br/>
+                    &#125;
+                  </code>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Pattern Types */}
+          {/* Block Structure */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Pattern Types</CardTitle>
+              <CardTitle className="text-lg font-semibold">Block Structure</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-2">Linear Patterns</h4>
-                  <p className="text-sm text-gray-600 mb-2">For scarves, blankets, and flat pieces</p>
+                  <h4 className="font-medium mb-2">Core Blocks</h4>
+                  <div className="space-y-3">
+                    <div className="bg-gray-50 p-3 rounded">
+                      <strong className="text-sm">magic_ring &#123; &#125;</strong>
+                      <p className="text-xs text-gray-600 mt-1">Start circular patterns with adjustable ring</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded">
+                      <strong className="text-sm">round &#123; &#125;</strong>
+                      <p className="text-xs text-gray-600 mt-1">Define a round in circular patterns</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded">
+                      <strong className="text-sm">row &#123; &#125;</strong>
+                      <p className="text-xs text-gray-600 mt-1">Define a row in linear patterns</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded">
+                      <strong className="text-sm">repeat(n) &#123; &#125;</strong>
+                      <p className="text-xs text-gray-600 mt-1">Repeat enclosed stitches n times</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="font-medium mb-2">Control Keywords</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                    <Badge variant="outline">join - Join round</Badge>
+                    <Badge variant="outline">turn - Turn work</Badge>
+                    <Badge variant="outline">end - End pattern</Badge>
+                    <Badge variant="outline">skip - Skip stitch</Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Pattern Examples */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Pattern Examples</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div>
+                  <h4 className="font-medium mb-2">Linear Pattern (Scarf)</h4>
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <code className="text-sm">
-                      pattern: linear<br/>
-                      ch 21<br/>
-                      row 1: sc 20, turn<br/>
-                      row 2: ch 1, sc 20, turn<br/>
-                      repeat row 2 for desired length
+                      {`// Simple scarf pattern`}<br/>
+                      foundation_chain &#123;<br/>
+                      &nbsp;&nbsp;ch(31)<br/>
+                      &#125;<br/><br/>
+                      
+                      row &#123;<br/>
+                      &nbsp;&nbsp;sc(30)<br/>
+                      &nbsp;&nbsp;turn<br/>
+                      &#125;<br/><br/>
+                      
+                      repeat(50) &#123;<br/>
+                      &nbsp;&nbsp;row &#123;<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;ch(1)<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;sc(30)<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;turn<br/>
+                      &nbsp;&nbsp;&#125;<br/>
+                      &#125;<br/><br/>
+                      
+                      end
                     </code>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">Circular Patterns</h4>
-                  <p className="text-sm text-gray-600 mb-2">For hats, amigurumi, and round motifs</p>
+                  <h4 className="font-medium mb-2">Circular Pattern (Hat Crown)</h4>
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <code className="text-sm">
-                      pattern: circular<br/>
-                      magic-ring<br/>
-                      round 1: sc 6<br/>
-                      round 2: sc 2 in each st (12)<br/>
-                      round 3: *sc 1, sc 2 in next st* repeat (18)
+                      {`// Basic hat crown`}<br/>
+                      magic_ring &#123;<br/>
+                      &nbsp;&nbsp;sc(6)<br/>
+                      &nbsp;&nbsp;join<br/>
+                      &#125;<br/><br/>
+                      
+                      round &#123;<br/>
+                      &nbsp;&nbsp;repeat(6) &#123;<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;sc(2)<br/>
+                      &nbsp;&nbsp;&#125;<br/>
+                      &nbsp;&nbsp;join<br/>
+                      &#125;<br/><br/>
+                      
+                      round &#123;<br/>
+                      &nbsp;&nbsp;repeat(6) &#123;<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;sc(1)<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;sc(2)<br/>
+                      &nbsp;&nbsp;&#125;<br/>
+                      &nbsp;&nbsp;join<br/>
+                      &#125;<br/><br/>
+                      
+                      end
                     </code>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">Granny Square</h4>
-                  <p className="text-sm text-gray-600 mb-2">Traditional granny square patterns</p>
+                  <h4 className="font-medium mb-2">Classic Granny Square</h4>
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <code className="text-sm">
-                      pattern: granny-square<br/>
-                      magic-ring<br/>
-                      round 1: ch 3, dc 2, ch 2, *dc 3, ch 2* repeat 3 times<br/>
-                      round 2: sl to ch-2 space, ch 3, dc 2, ch 2, dc 3, ch 1, *dc 3, ch 2, dc 3, ch 1* repeat
+                      {`// Classic Granny Square`}<br/>
+                      {`// Start with magic ring`}<br/>
+                      magic_ring &#123;<br/>
+                      &nbsp;&nbsp;{`// Round 1: Foundation`}<br/>
+                      &nbsp;&nbsp;ch(3)<br/>
+                      &nbsp;&nbsp;dc(2)<br/>
+                      &nbsp;&nbsp;ch(2)<br/>
+                      &nbsp;&nbsp;repeat(3) &#123;<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;dc(3)<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
+                      &nbsp;&nbsp;&#125;<br/>
+                      &nbsp;&nbsp;join<br/>
+                      &#125;<br/><br/>
+                      
+                      {`// Round 2: Corner shells`}<br/>
+                      round &#123;<br/>
+                      &nbsp;&nbsp;ch(3)<br/>
+                      &nbsp;&nbsp;repeat(4) &#123;<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;shell(5)<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
+                      &nbsp;&nbsp;&#125;<br/>
+                      &nbsp;&nbsp;join<br/>
+                      &#125;<br/><br/>
+                      
+                      {`// Round 3: Sides and corners`}<br/>
+                      round &#123;<br/>
+                      &nbsp;&nbsp;repeat(4) &#123;<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;dc(3)<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;ch(1)<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;shell(5)<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
+                      &nbsp;&nbsp;&#125;<br/>
+                      &nbsp;&nbsp;join<br/>
+                      &#125;<br/><br/>
+                      
+                      end
                     </code>
                   </div>
                 </div>
@@ -190,21 +300,39 @@ export default function DocsPage() {
                 <div>
                   <h4 className="font-medium mb-2">Decreases</h4>
                   <div className="space-y-1 text-sm">
-                    <Badge variant="outline">sc2tog - SC 2 together</Badge>
-                    <Badge variant="outline">dc2tog - DC 2 together</Badge>
-                    <Badge variant="outline">sc3tog - SC 3 together</Badge>
-                    <Badge variant="outline">dc3tog - DC 3 together</Badge>
+                    <Badge variant="outline">sc2tog() - SC 2 together</Badge>
+                    <Badge variant="outline">dc2tog() - DC 2 together</Badge>
+                    <Badge variant="outline">sc3tog() - SC 3 together</Badge>
+                    <Badge variant="outline">dc3tog() - DC 3 together</Badge>
                   </div>
                 </div>
                 
                 <div>
                   <h4 className="font-medium mb-2">Clusters & Shells</h4>
                   <div className="space-y-1 text-sm">
-                    <Badge variant="outline">3dc-cluster - 3 DC cluster</Badge>
-                    <Badge variant="outline">3hdc-cluster - 3 HDC cluster</Badge>
-                    <Badge variant="outline">5dc-shell - 5 DC shell</Badge>
-                    <Badge variant="outline">popcorn - Popcorn stitch</Badge>
+                    <Badge variant="outline">cluster(n) - n DC cluster</Badge>
+                    <Badge variant="outline">shell(n) - n DC shell</Badge>
+                    <Badge variant="outline">popcorn(n) - n DC popcorn</Badge>
+                    <Badge variant="outline">v_stitch() - V-stitch</Badge>
                   </div>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <h4 className="font-medium mb-2">Special Stitch Examples</h4>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <code className="text-sm">
+                    {`// Using special stitches`}<br/>
+                    round &#123;<br/>
+                    &nbsp;&nbsp;repeat(8) &#123;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;shell(5)&nbsp;&nbsp;&nbsp;&nbsp;{`// 5 DC shell`}<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;cluster(3)&nbsp;&nbsp;{`// 3 DC cluster`}<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
+                    &nbsp;&nbsp;&#125;<br/>
+                    &nbsp;&nbsp;join<br/>
+                    &#125;
+                  </code>
                 </div>
               </div>
             </CardContent>
@@ -348,20 +476,27 @@ export default function DocsPage() {
 
         {/* Examples */}
         <section className="mb-12">
-          <h2 className="text-2xl font-extralight mb-6">Example Patterns</h2>
+          <h2 className="text-2xl font-extralight mb-6">Quick Start Patterns</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg font-semibold">Simple Scarf</CardTitle>
+                <CardTitle className="text-lg font-semibold">Simple Dishcloth</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="bg-gray-50 p-4 rounded-lg text-sm">
                   <code>
-                    pattern: linear<br/>
-                    foundation: ch 31<br/>
-                    row 1: sc 30, turn<br/>
-                    row 2: ch 1, sc 30, turn<br/>
-                    repeat row 2 for 100 rows
+                    foundation_chain &#123;<br/>
+                    &nbsp;&nbsp;ch(31)<br/>
+                    &#125;<br/><br/>
+                    
+                    repeat(30) &#123;<br/>
+                    &nbsp;&nbsp;row &#123;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;sc(30)<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;turn<br/>
+                    &nbsp;&nbsp;&#125;<br/>
+                    &#125;<br/><br/>
+                    
+                    end
                   </code>
                 </div>
               </CardContent>
@@ -369,17 +504,26 @@ export default function DocsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg font-semibold">Basic Hat</CardTitle>
+                <CardTitle className="text-lg font-semibold">Basic Coaster</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="bg-gray-50 p-4 rounded-lg text-sm">
                   <code>
-                    pattern: circular<br/>
-                    magic-ring<br/>
-                    round 1: sc 6<br/>
-                    round 2: sc 2 in each (12)<br/>
-                    round 3: *sc 1, inc* repeat (18)<br/>
-                    round 4: *sc 2, inc* repeat (24)
+                    magic_ring &#123;<br/>
+                    &nbsp;&nbsp;sc(6)<br/>
+                    &nbsp;&nbsp;join<br/>
+                    &#125;<br/><br/>
+                    
+                    repeat(4) &#123;<br/>
+                    &nbsp;&nbsp;round &#123;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;repeat(6) &#123;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sc(2)<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&#125;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;join<br/>
+                    &nbsp;&nbsp;&#125;<br/>
+                    &#125;<br/><br/>
+                    
+                    end
                   </code>
                 </div>
               </CardContent>
@@ -396,22 +540,34 @@ export default function DocsPage() {
                 <div>
                   <h4 className="font-medium mb-3 text-green-700">Do&apos;s</h4>
                   <ul className="text-sm space-y-1 text-gray-700">
-                    <li>✓ Use clear, descriptive comments</li>
+                    <li>✓ Use clear block structure with proper nesting</li>
+                    <li>✓ Add comments to explain complex sections</li>
                     <li>✓ Start with example patterns to learn syntax</li>
-                    <li>✓ Test small sections before building complex patterns</li>
-                    <li>✓ Save your work frequently</li>
+                    <li>✓ Use consistent indentation for readability</li>
+                    <li>✓ Always end patterns with &apos;end&apos; keyword</li>
                   </ul>
                 </div>
                 
                 <div>
                   <h4 className="font-medium mb-3 text-red-700">Don&apos;ts</h4>
                   <ul className="text-sm space-y-1 text-gray-700">
-                    <li>✗ Don&apos;t forget to specify pattern type</li>
-                    <li>✗ Don&apos;t mix pattern types in one script</li>
-                    <li>✗ Don&apos;t use unsupported stitch abbreviations</li>
-                    <li>✗ Don&apos;t create overly complex patterns without testing</li>
+                    <li>✗ Don&apos;t forget closing braces &#125;</li>
+                    <li>✗ Don&apos;t mix circular and linear structures</li>
+                    <li>✗ Don&apos;t use undefined stitch functions</li>
+                    <li>✗ Don&apos;t create deeply nested repeat blocks</li>
+                    <li>✗ Don&apos;t forget &apos;join&apos; in circular patterns</li>
                   </ul>
                 </div>
+              </div>
+
+              <div className="mt-6 bg-amber-50 p-4 rounded-lg border border-amber-200">
+                <h4 className="font-medium mb-2 text-amber-800">Syntax Notes</h4>
+                <ul className="text-sm space-y-1 text-amber-700">
+                  <li>• All stitch functions use parentheses: dc(3), not dc 3</li>
+                  <li>• Block structures use curly braces: round &#123; &#125;</li>
+                  <li>• Comments start with // and continue to end of line</li>
+                  <li>• Use underscore for compound names: magic_ring, sl_st</li>
+                </ul>
               </div>
             </CardContent>
           </Card>
@@ -423,7 +579,7 @@ export default function DocsPage() {
             <CardContent className="p-8">
               <h3 className="text-xl font-semibold mb-4">Ready to Create?</h3>
               <p className="text-gray-600 mb-6">
-                Start designing your crochet patterns with our interactive editor.
+                Start designing your crochet patterns with our interactive editor and structured CrocheTeX syntax.
               </p>
               <Link href="/create">
                 <Button size="lg" className="bg-grey-600 hover:bg-grey-700">

@@ -47,51 +47,27 @@ function calculateYarnConnections(
   const edges: Edge3D[] = []
   
   if (patternType === 'linear') {
-    // For linear patterns, we need to handle turns properly
-    // Group vertices by rows to handle turns correctly
-    const rowGroups = groupVerticesByRow(vertices)
+    // For linear patterns with flow-based positioning, connect vertices sequentially
+    // with special handling for row connections
     
-    // Connect stitches within each row
-    rowGroups.forEach(row => {
-      for (let i = 0; i < row.length - 1; i++) {
-        const current = row[i]
-        const next = row[i + 1]
-        
-        // Skip magic ring connections as they're handled separately
-        if (current.stitchType === 'magic-ring' || next.stitchType === 'magic-ring') {
-          continue
-        }
-        
-        const distance = calculateDistance(current, next)
-        
-        if (distance <= rules.maxYarnDistance) {
-          edges.push({
-            fromVertex: current.id,
-            toVertex: next.id,
-            connectionType: 'yarn'
-          })
-        }
-      }
-    })
-    
-    // Connect between rows (end of one row to start of next)
-    for (let i = 0; i < rowGroups.length - 1; i++) {
-      const currentRow = rowGroups[i]
-      const nextRow = rowGroups[i + 1]
+    for (let i = 0; i < vertices.length - 1; i++) {
+      const current = vertices[i]
+      const next = vertices[i + 1]
       
-      if (currentRow.length > 0 && nextRow.length > 0) {
-        const endOfCurrentRow = currentRow[currentRow.length - 1]
-        const startOfNextRow = nextRow[0]
-        
-        const distance = calculateDistance(endOfCurrentRow, startOfNextRow)
-        
-        if (distance <= rules.maxYarnDistance) {
-          edges.push({
-            fromVertex: endOfCurrentRow.id,
-            toVertex: startOfNextRow.id,
-            connectionType: 'yarn'
-          })
-        }
+      // Skip magic ring connections as they're handled separately
+      if (current.stitchType === 'magic-ring' || next.stitchType === 'magic-ring') {
+        continue
+      }
+      
+      const distance = calculateDistance(current, next)
+      
+      // Connect if within reasonable distance (handles both within-row and between-row connections)
+      if (distance <= rules.maxYarnDistance * 1.5) { // Allow slightly longer connections for row turns
+        edges.push({
+          fromVertex: current.id,
+          toVertex: next.id,
+          connectionType: 'yarn'
+        })
       }
     }
   } else if (patternType === 'circular' || patternType === 'granny-square') {
@@ -171,32 +147,7 @@ function calculateYarnConnections(
   return edges
 }
 
-/**
- * Group vertices by row based on their Y coordinates
- */
-function groupVerticesByRow(vertices: Vertex3D[]): Vertex3D[][] {
-  const rows: Vertex3D[][] = []
-  const rowMap = new Map<number, Vertex3D[]>()
-  
-  vertices.forEach(vertex => {
-    const rowY = Math.round(vertex.y / 35) * 35 // Group by row height intervals (adjusted for better grouping)
-    
-    if (!rowMap.has(rowY)) {
-      rowMap.set(rowY, [])
-    }
-    rowMap.get(rowY)!.push(vertex)
-  })
-  
-  // Sort rows by Y coordinate and sort vertices within each row by X coordinate
-  Array.from(rowMap.entries())
-    .sort(([aY], [bY]) => aY - bY)
-    .forEach(([, vertices]) => {
-      vertices.sort((a, b) => a.x - b.x)
-      rows.push(vertices)
-    })
-  
-  return rows
-}
+
 
 /**
  * Calculate structural connections (stitches built on other stitches)
@@ -375,7 +326,7 @@ function groupVerticesByRound(
  */
 function getDefaultRules(): ConnectionRules {
   return {
-    maxYarnDistance: 80,
+    maxYarnDistance: 60, // Increased to accommodate consistent 25-unit spacing and row turns
     maxStructuralDistance: 50,
     enableRoundConnections: true,
     enableLayerConnections: true

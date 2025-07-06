@@ -30,11 +30,27 @@ function calculateCircularPositions(
   const positions: StitchPosition[] = []
   let currentRadius = 60
   
-  // First, group pattern into rounds based on join commands
+  // Check if pattern starts with magic ring
+  let sequenceWithoutMagicRing = patternSequence
+  
+  if (patternSequence.length > 0 && (patternSequence[0] === 'magic-ring' || patternSequence[0] === 'ring')) {
+    sequenceWithoutMagicRing = patternSequence.slice(1) // Remove magic ring from sequence
+    
+    // Position magic ring at center (adjusted slightly left and down)
+    const magicRingInfo = STITCH_SVG_MAP[patternSequence[0]] || STITCH_SVG_MAP['unknown']
+    positions.push({
+      x: centerX - magicRingInfo.width / 2 - 18, //adjust  left
+      y: centerY - magicRingInfo.height / 2 + 10, // adjust  down
+      rotation: 0,
+      stitchType: patternSequence[0]
+    })
+  }
+  
+  // Group remaining pattern into rounds based on join commands
   const rounds: string[][] = []
   let currentRound: string[] = []
   
-  patternSequence.forEach((stitchType) => {
+  sequenceWithoutMagicRing.forEach((stitchType) => {
     if (stitchType === 'join') {
       if (currentRound.length > 0) {
         rounds.push([...currentRound])
@@ -68,17 +84,10 @@ function calculateCircularPositions(
     }
     
     round.forEach((stitchType, stitchIndex) => {
-      // Special handling for magic ring start
-      if (stitchType === 'magic-ring' || stitchType === 'ring') {
-        positions.push({
-          x: centerX - 16, // Center the magic ring properly
-          y: centerY - 16,
-          rotation: 0,
-          stitchType
-        })
-        return
-      }
-
+      const stitchInfo = STITCH_SVG_MAP[stitchType] || STITCH_SVG_MAP['unknown']
+      const halfWidth = stitchInfo.width / 2
+      const halfHeight = stitchInfo.height / 2
+      
       // Calculate position on circle
       const angleIncrement = (2 * Math.PI) / totalStitchesInRound
       const currentStitchAngle = stitchIndex * angleIncrement
@@ -87,8 +96,8 @@ function calculateCircularPositions(
       const rotationOffset = roundIndex * (Math.PI / 16) // Small offset per round
       const adjustedAngle = currentStitchAngle + rotationOffset
       
-      const x = centerX + Math.cos(adjustedAngle) * currentRadius - 16
-      const y = centerY + Math.sin(adjustedAngle) * currentRadius - 16
+      const x = centerX + Math.cos(adjustedAngle) * currentRadius - halfWidth
+      const y = centerY + Math.sin(adjustedAngle) * currentRadius - halfHeight
       
       // Rotate stitches so they point toward center
       const rotation = (adjustedAngle * 180 / Math.PI) + 90
@@ -110,50 +119,90 @@ function calculateCircularPositions(
 
 function calculateLinearPositions(patternSequence: string[]): StitchPosition[] {
   const positions: StitchPosition[] = []
-  let currentX = 50
-  let currentY = 150
-  let rowHeight = 0
-  let workingLeftToRight = true // Track direction of work
-
+  
+  // First pass: group stitches by rows
+  const rows: string[][] = []
+  let currentRow: string[] = []
+  
   patternSequence.forEach((stitchType) => {
-    const stitchInfo = STITCH_SVG_MAP[stitchType] || STITCH_SVG_MAP['unknown']
-    
-    // Handle row breaks and turns
     if (stitchType === 'turn') {
-      // Move to next row
-      currentY += rowHeight + 30
-      rowHeight = 0
-      
-      // Flip direction - stay at current X position (end of previous row)
-      workingLeftToRight = !workingLeftToRight
-      return
+      if (currentRow.length > 0) {
+        rows.push([...currentRow])
+        currentRow = []
+      }
+    } else if (stitchType !== 'start' && stitchType !== 'end') {
+      currentRow.push(stitchType)
     }
-
-    // Calculate stitch width and position
-    const stitchWidth = Math.max(stitchInfo.width * 0.9, 35)
+  })
+  
+  // Add the last row if it has stitches
+  if (currentRow.length > 0) {
+    rows.push(currentRow)
+  }
+  
+  if (rows.length === 0) return positions
+  
+  // Calculate row heights based on tallest stitch in each row
+  const rowHeights: number[] = []
+  const rowYPositions: number[] = []
+  
+  rows.forEach((row, rowIndex) => {
+    let maxHeight = 0
+    row.forEach((stitchType) => {
+      const stitchInfo = STITCH_SVG_MAP[stitchType] || STITCH_SVG_MAP['unknown']
+      maxHeight = Math.max(maxHeight, stitchInfo.height)
+    })
+    rowHeights[rowIndex] = maxHeight
+  })
+  
+  // Calculate Y positions from bottom to top with proper spacing
+  const baseY = 150
+  const rowSpacing = 10 // Additional spacing between rows
+  
+  // Start from the bottom row (last row in the array)
+  let cumulativeHeight = baseY
+  for (let i = rows.length - 1; i >= 0; i--) {
+    rowYPositions[i] = cumulativeHeight
+    if (i > 0) {
+      // Add height of current row plus spacing for next row up
+      cumulativeHeight += rowHeights[i] + rowSpacing
+    }
+  }
+  
+  // Second pass: position stitches with proper spacing
+  let currentX = 50
+  let workingLeftToRight = true
+  
+  rows.forEach((row, rowIndex) => {
+    const currentY = rowYPositions[rowIndex]
     
-    if (workingLeftToRight) {
-      // Working left to right: place stitch at current position, then move right
-      positions.push({
-        x: currentX,
-        y: currentY,
-        rotation: 0,
-        stitchType
-      })
-      currentX += stitchWidth
-    } else {
-      // Working right to left: move left first, then place stitch
-      currentX -= stitchWidth
-      positions.push({
-        x: currentX,
-        y: currentY,
-        rotation: 0,
-        stitchType
-      })
-    }
-
-    // Update row height
-    rowHeight = Math.max(rowHeight, stitchInfo.height)
+    row.forEach((stitchType) => {
+      const stitchInfo = STITCH_SVG_MAP[stitchType] || STITCH_SVG_MAP['unknown']
+      const stitchWidth = Math.max(stitchInfo.width * 0.7, 28)
+      
+      if (workingLeftToRight) {
+        // Working left to right: place stitch at current position, then move right
+        positions.push({
+          x: currentX,
+          y: currentY,
+          rotation: 0,
+          stitchType
+        })
+        currentX += stitchWidth
+      } else {
+        // Working right to left: move left first, then place stitch
+        currentX -= stitchWidth
+        positions.push({
+          x: currentX,
+          y: currentY,
+          rotation: 0,
+          stitchType
+        })
+      }
+    })
+    
+    // Flip direction for next row (don't change X position)
+    workingLeftToRight = !workingLeftToRight
   })
 
   return positions

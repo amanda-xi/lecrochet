@@ -69,21 +69,21 @@ export function View3DControls({
           type="checkbox"
           checked={showVertices}
           onChange={(e) => onShowVerticesChange(e.target.checked)}
-          className="rounded border-gray-300"
+          className="rounded border-gray-400 bg-gray-100 text-indigo-600 accent-indigo-500"
         />
         <span>Vertices</span>
       </label>
-      
+  
       <label className="flex items-center gap-1 cursor-pointer">
         <input
           type="checkbox"
           checked={showEdges}
           onChange={(e) => onShowEdgesChange(e.target.checked)}
-          className="rounded border-gray-300"
+          className="rounded border-gray-400 bg-gray-100 text-indigo-600 accent-indigo-500"
         />
         <span>Edges</span>
       </label>
-      
+  
       {showEdges && (
         <div className="flex items-center gap-1">
           <span className="text-xs text-gray-600">Opacity:</span>
@@ -94,7 +94,7 @@ export function View3DControls({
             step="0.1"
             value={edgeOpacity}
             onChange={(e) => onEdgeOpacityChange(parseFloat(e.target.value))}
-            className="w-16"
+            className="w-16 accent-indigo-500"
           />
           <span className="text-xs text-gray-600 w-8">
             {Math.round(edgeOpacity * 100)}%

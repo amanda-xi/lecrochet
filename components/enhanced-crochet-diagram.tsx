@@ -178,24 +178,6 @@ export default function EnhancedCrochetDiagram({
         {/* Main transform group */}
         <g transform={`translate(${transform.x}, ${transform.y}) scale(${transform.scale})`}>
 
-          {/* Render connecting lines for circular patterns */}
-          {stitchPositions.length > 1 && patternType === "circular" && (
-            <g className="connections">
-              {stitchPositions.slice(1).map((position, index) => (
-                <line
-                  key={`connection-${index}`}
-                  x1={centerX}
-                  y1={centerY}
-                  x2={position.x + 16}
-                  y2={position.y + 16}
-                  stroke="#cbd5e1"
-                  strokeWidth="1"
-                  opacity="0.4"
-                />
-              ))}
-            </g>
-          )}
-
           {/* Render stitches */}
           {stitchPositions.map((position, index) => {
             const stitchInfo = STITCH_SVG_MAP[position.stitchType] || STITCH_SVG_MAP['unknown']
@@ -203,14 +185,17 @@ export default function EnhancedCrochetDiagram({
             
             if (!svgContent && svgsLoaded) {
               // Fallback rendering when SVG not found
+              const halfWidth = stitchInfo.width / 2
+              const halfHeight = stitchInfo.height / 2
+              
               return (
                 <g
                   key={`stitch-fallback-${index}`}
-                  transform={`translate(${position.x}, ${position.y}) rotate(${position.rotation}, 16, 16)`}
+                  transform={`translate(${position.x}, ${position.y}) rotate(${position.rotation}, ${halfWidth}, ${halfHeight})`}
                 >
                   <circle
-                    cx={16}
-                    cy={16}
+                    cx={halfWidth}
+                    cy={halfHeight}
                     r="8"
                     fill="#e5e7eb"
                     stroke="#9ca3af"
@@ -236,29 +221,14 @@ export default function EnhancedCrochetDiagram({
                     fill: 'none'
                   }}
                 />
-                
-                {/* Add stitch number for reference */}
-                {patternType === "linear" && 
-                 index < Math.min(100, firstTurnIndex === -1 ? 100 : firstTurnIndex) && (
-                  <text
-                    x={stitchInfo.width / 2}
-                    y={-8}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fill="#6b7280"
-                    className="select-none"
-                  >
-                    {index + 1}
-                  </text>
-                )}
               </g>
             )
           })}
 
           {/* Pattern info overlay */}
-          <text x="10" y="20" fontSize="12" fill="#6b7280" className="select-none">
+          {/* <text x="10" y="20" fontSize="12" fill="#6b7280" className="select-none">
             Pattern: {patternType} | Stitches: {patternSequence.length}
-          </text>
+          </text> */}
           
           {patternSequence.length === 0 && (
             <text 
@@ -269,7 +239,7 @@ export default function EnhancedCrochetDiagram({
               fill="#9ca3af"
               className="select-none"
             >
-              Write CrochetScript to see your pattern
+              Write CrocheTeX to see your pattern
             </text>
           )}
 

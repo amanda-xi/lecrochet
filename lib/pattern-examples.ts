@@ -133,11 +133,11 @@ turn
 
 // Ribbing pattern
 repeat(8) {
-  fpdc(2)
-  bpdc(2)
+  dc(2)
+  tr(2)
   repeat(5) {
-    fpdc(2)
-    bpdc(2)
+    dc(2)
+    tr(2)
   }
   ch(3)
   turn
@@ -167,10 +167,30 @@ turn
 
 // Row 3: Shell row  
 repeat(5) {
-  shell(5)
+  dc(5)
   ch(1)
 }
-turn
+
+end`
+  },
+
+  "magic-ring-test": {
+    name: "Magic Ring Test",
+    description: "Simple magic ring with basic stitches for testing centering",
+    code: `// Magic Ring Test
+magic_ring {
+  ch(3)
+  dc(11)
+  join
+}
+
+round {
+  ch(3)
+  repeat(12) {
+    dc(2)
+  }
+  join
+}
 
 end`
   }
