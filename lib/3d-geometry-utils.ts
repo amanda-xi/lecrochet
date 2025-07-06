@@ -47,7 +47,7 @@ export function calculateStitchPosition(
   if (patternType === 'linear') {
     // Linear arrangement with proper turn handling
     if (patternSequence) {
-      const position = calculateLinearPositionWithTurns(patternSequence, index, baseWidth)
+      const position = calculateLinearPositionWithTurns(patternSequence, index)
       x = position.x
       y = position.y
       z = position.z
@@ -117,8 +117,7 @@ export function calculateStitchPosition(
  */
 function calculateLinearPositionWithTurns(
   patternSequence: string[],
-  targetIndex: number,
-  baseWidth: number
+  targetIndex: number
 ): { x: number; y: number; z: number } {
   const standardWidth = 25 // Use consistent width for all stitches for visual clarity
   const rowHeight = 45 // Standard spacing between rows
@@ -283,6 +282,7 @@ export function getStitchHeight(stitchType: string): number {
 /**
  * Get the width of a stitch type for 3D positioning
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getStitchWidth(stitchType: string): number {
   // Return consistent width for all stitches for visual clarity
   return 25

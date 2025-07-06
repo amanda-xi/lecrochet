@@ -12,6 +12,7 @@ import {
   getVertexSize
 } from '@/lib/3d-pattern-processor'
 import { CrochetGeometry } from '@/lib/3d-geometry-utils'
+import CrochetLegend from './crochet-3d-legend'
 
 interface Crochet3DRendererProps {
   patternSequence: string[]
@@ -240,6 +241,12 @@ export default function Crochet3DRenderer({
           Use mouse to rotate, zoom, and hold command to pan
         </div>
       </div>
+      
+      {/* Stitch Legend */}
+      <CrochetLegend 
+        patternSequence={patternSequence}
+        className="absolute bottom-4 left-4 w-64 max-w-[calc(100vw-2rem)]"
+      />
     </div>
   )
 } 

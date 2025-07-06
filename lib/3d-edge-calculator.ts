@@ -147,43 +147,7 @@ function calculateYarnConnections(
   return edges
 }
 
-/**
- * Group vertices by row based on their Y coordinates
- */
-function groupVerticesByRow(vertices: Vertex3D[]): Vertex3D[][] {
-  const rows: Vertex3D[][] = []
-  const rowMap = new Map<number, Vertex3D[]>()
-  
-  vertices.forEach(vertex => {
-    const rowY = Math.round(vertex.y / 45) * 45 // Group by row height intervals (updated to match new row spacing)
-    
-    if (!rowMap.has(rowY)) {
-      rowMap.set(rowY, [])
-    }
-    rowMap.get(rowY)!.push(vertex)
-  })
-  
-  // Sort rows by Y coordinate
-  const sortedRows = Array.from(rowMap.entries())
-    .sort(([aY], [bY]) => aY - bY)
-  
-  // Sort vertices within each row considering alternating direction
-  sortedRows.forEach(([rowY, vertices], rowIndex) => {
-    const isEvenRow = rowIndex % 2 === 1
-    
-    if (isEvenRow) {
-      // Even rows (1, 3, 5...) go right to left, so sort by X descending
-      vertices.sort((a, b) => b.x - a.x)
-    } else {
-      // Odd rows (0, 2, 4...) go left to right, so sort by X ascending
-      vertices.sort((a, b) => a.x - b.x)
-    }
-    
-    rows.push(vertices)
-  })
-  
-  return rows
-}
+
 
 /**
  * Calculate structural connections (stitches built on other stitches)
