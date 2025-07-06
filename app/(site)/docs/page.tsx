@@ -1,585 +1,200 @@
-"use client"
+import type { Metadata } from "next"
+import DocsClient from "./client"
 
-import Link from "next/link"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, BookOpen, Code, Play, Zap, Box, Layers } from "lucide-react"
-import CrochetLegend from "@/components/crochet-legend"
+export const metadata: Metadata = {
+  title: "Documentation | CrocheTeX API, Developer Guides & Technical Reference | le Crochet",
+  description: "Complete technical documentation for le Crochet platform. CrocheTeX language reference, API documentation, developer guides, integration tutorials, and comprehensive technical specifications for building with our platform.",
+  
+  keywords: [
+    // Primary documentation keywords
+    "CrocheTeX documentation",
+    "API documentation",
+    "developer guide",
+    "technical reference",
+    "integration guide",
+    "platform documentation",
+    
+    // CrocheTeX language
+    "CrocheTeX syntax",
+    "CrocheTeX language reference",
+    "pattern language docs",
+    "stitch notation guide",
+    "code examples",
+    "syntax highlighting",
+    
+    // API and integration
+    "REST API documentation",
+    "API endpoints",
+    "authentication guide",
+    "SDK documentation",
+    "webhook documentation",
+    "rate limiting",
+    
+    // Developer resources
+    "getting started guide",
+    "quick start tutorial",
+    "code samples",
+    "example projects",
+    "best practices",
+    "troubleshooting guide",
+    
+    // Technical specifications
+    "architecture overview",
+    "system requirements",
+    "performance specifications",
+    "security guidelines",
+    "deployment guide",
+    "configuration options",
+    
+    // Integration types
+    "third-party integrations",
+    "plugin development",
+    "custom extensions",
+    "marketplace integration",
+    "export formats",
+    "import specifications",
+    
+    // Advanced topics
+    "compiler architecture",
+    "3D rendering engine",
+    "pattern optimization",
+    "algorithm documentation",
+    "data structures",
+    "rendering pipeline",
+    
+    // Platform features
+    "feature documentation",
+    "component library",
+    "UI framework",
+    "theming guide",
+    "localization support",
+    "accessibility features",
+    
+    // Version information
+    "changelog",
+    "release notes",
+    "version history",
+    "migration guide",
+    "breaking changes",
+    "deprecation notices"
+  ],
+  
+  authors: [
+    { name: "le Crochet Engineering Team" },
+    { name: "Technical Writers" }
+  ],
+  creator: "le Crochet Platform",
+  publisher: "le Crochet Inc.",
+  
+  category: "Technical Documentation, Developer Resources, API Reference",
+  classification: "Documentation, Technical Guides, Developer Tools",
+  
+  alternates: {
+    canonical: "/docs",
+    languages: {
+      "en-US": "/docs",
+      "en-GB": "/en-gb/docs",
+      "fr": "/fr/docs",
+      "es": "/es/docs"
+    }
+  },
+  
+  openGraph: {
+    type: "website",
+    siteName: "le Crochet Documentation",
+    title: "Complete Technical Documentation | CrocheTeX API & Developer Guides",
+    description: "Comprehensive documentation for developers and integrators. CrocheTeX language reference, API docs, integration guides, and technical specifications. Everything you need to build with le Crochet.",
+    url: "/docs",
+    locale: "en_US",
+    images: [
+      {
+        url: "/gallery/docs-overview.png",
+        width: 1200,
+        height: 630,
+        alt: "le Crochet Technical Documentation - API and Developer Guides",
+        type: "image/png"
+      },
+      {
+        url: "/gallery/api-reference.png",
+        width: 1200,
+        height: 630,
+        alt: "CrocheTeX API Documentation and Code Examples",
+        type: "image/png"
+      }
+    ]
+  },
+  
+  twitter: {
+    card: "summary_large_image",
+    title: "Technical Documentation | CrocheTeX API & Dev Guides 🛠️📚",
+    description: "Comprehensive docs for developers! CrocheTeX language reference, API docs, integration guides & technical specs. Build amazing things! #CrocheTeX #API #DevDocs #Documentation",
+    images: ["/gallery/docs-overview.png"]
+  },
+  
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1
+    }
+  },
+  
+  other: {
+    // Documentation metadata
+    "docs:version": "2.0",
+    "docs:last_updated": "2024-01-01",
+    "docs:sections": "25",
+    "docs:pages": "200+",
+    
+    // Technical metadata
+    "api:version": "v2",
+    "api:format": "REST",
+    "api:authentication": "OAuth2",
+    "api:rate_limit": "1000/hour",
+    
+    // Schema.org technical documentation
+    "schema:TechArticle": JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "le Crochet Technical Documentation",
+      "description": "Comprehensive technical documentation and API reference for le Crochet platform",
+      "author": {
+        "@type": "Organization",
+        "name": "le Crochet Engineering Team"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "le Crochet Inc."
+      },
+      "dateModified": "2024-01-01",
+      "about": "Software Documentation"
+    }),
+    
+    "schema:SoftwareSourceCode": JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareSourceCode",
+      "name": "CrocheTeX Language Specification",
+      "description": "Complete language specification and documentation for CrocheTeX pattern language",
+      "programmingLanguage": "CrocheTeX",
+      "runtimePlatform": "Web Browser",
+      "codeRepository": "https://github.com/lecrochet/crochetex"
+    }),
+    
+    "schema:APIReference": JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebAPI",
+      "name": "le Crochet API",
+      "description": "RESTful API for integrating with le Crochet platform",
+      "documentation": "https://lecrochet.com/docs/api",
+      "termsOfService": "https://lecrochet.com/terms"
+    })
+  }
+};
 
 export default function DocsPage() {
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Home
-                </Button>
-              </Link>
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-6 w-6 text-grey-600" />
-                <h1 className="text-2xl font-extralight">Documentation</h1>
-              </div>
-            </div>
-            <Link href="/create">
-              <Button>
-                <Play className="h-4 w-4 mr-2" />
-                Try it Now
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-6 py-8 max-w-4xl">
-        {/* Introduction */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-extralight mb-4">Welcome to le Crochet</h2>
-          <p className="text-lg text-gray-600 mb-6">
-            A modern crochet pattern designer that lets you write patterns using CrocheTeX 
-            and see them rendered as beautiful visual diagrams in real-time.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Code className="h-8 w-8 text-grey-600 mx-auto mb-3" />
-                <h3 className="font-semibold mb-2">Write Code</h3>
-                <p className="text-sm text-gray-600">Use structured CrocheTeX syntax with blocks and functions</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Layers className="h-8 w-8 text-grey-600 mx-auto mb-3" />
-                <h3 className="font-semibold mb-2">2D Diagrams</h3>
-                <p className="text-sm text-gray-600">Traditional crochet symbol charts with pan and zoom</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Box className="h-8 w-8 text-grey-600 mx-auto mb-3" />
-                <h3 className="font-semibold mb-2">3D Visualization</h3>
-                <p className="text-sm text-gray-600">Interactive 3D view showing stitch structure and yarn flow</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Zap className="h-8 w-8 text-grey-600 mx-auto mb-3" />
-                <h3 className="font-semibold mb-2">Interactive</h3>
-                <p className="text-sm text-gray-600">Real-time preview with multiple viewing modes</p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Getting Started */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-extralight mb-6">Getting Started</h2>
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">Basic Workflow</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ol className="list-decimal list-inside space-y-2 text-gray-700">
-                <li>Navigate to the <Link href="/create" className="text-grey-600 underline">Create page</Link></li>
-                <li>Choose an example pattern or start writing your own CrocheTeX</li>
-                <li>Watch your pattern render in real-time in the preview panel</li>
-                <li>Use drag and zoom controls to explore your pattern diagram</li>
-                <li>Download your pattern when you&apos;re satisfied</li>
-              </ol>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* CrocheTeX Syntax */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-extralight mb-6">CrocheTeX Syntax</h2>
-          
-          {/* Basic Stitches */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">Basic Stitches</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2">Common Stitches (Function Call Syntax)</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                    <Badge variant="outline">ch(n) - Chain</Badge>
-                    <Badge variant="outline">sc(n) - Single Crochet</Badge>
-                    <Badge variant="outline">hdc(n) - Half Double</Badge>
-                    <Badge variant="outline">dc(n) - Double Crochet</Badge>
-                    <Badge variant="outline">tr(n) - Treble</Badge>
-                    <Badge variant="outline">dtr(n) - Double Treble</Badge>
-                    <Badge variant="outline">sl_st(n) - Slip Stitch</Badge>
-                    <Badge variant="outline">fpdc(n) - Front Post DC</Badge>
-                  </div>
-                </div>
-                
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium mb-2">Example: Basic Foundation Chain</h4>
-                  <code className="text-sm">
-                    ch(20)<br/>
-                    turn<br/><br/>
-                    sc(19)<br/>
-                    turn
-                  </code>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Block Structure */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">Block Structure</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2">Core Blocks</h4>
-                  <div className="space-y-3">
-                    <div className="bg-gray-50 p-3 rounded">
-                      <strong className="text-sm">magic_ring &#123; &#125;</strong>
-                      <p className="text-xs text-gray-600 mt-1">Start circular patterns with adjustable ring</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded">
-                      <strong className="text-sm">round &#123; &#125;</strong>
-                      <p className="text-xs text-gray-600 mt-1">Define a round in circular patterns</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded">
-                      <strong className="text-sm">row &#123; &#125;</strong>
-                      <p className="text-xs text-gray-600 mt-1">Define a row in linear patterns</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded">
-                      <strong className="text-sm">repeat(n) &#123; &#125;</strong>
-                      <p className="text-xs text-gray-600 mt-1">Repeat enclosed stitches n times</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-2">Control Keywords</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                    <Badge variant="outline">join - Join round</Badge>
-                    <Badge variant="outline">turn - Turn work</Badge>
-                    <Badge variant="outline">end - End pattern</Badge>
-                    <Badge variant="outline">skip - Skip stitch</Badge>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Pattern Examples */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">Pattern Examples</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <h4 className="font-medium mb-2">Linear Pattern (Scarf)</h4>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <code className="text-sm">
-                      {`// Simple scarf pattern`}<br/>
-                      ch(31)<br/>
-                      turn<br/><br/>
-                      
-                      sc(30)<br/>
-                      turn<br/><br/>
-                      
-                      repeat(50) &#123;<br/>
-                      &nbsp;&nbsp;ch(1)<br/>
-                      &nbsp;&nbsp;sc(30)<br/>
-                      &nbsp;&nbsp;turn<br/>
-                      &#125;<br/><br/>
-                      
-                      end
-                    </code>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Circular Pattern (Hat Crown)</h4>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <code className="text-sm">
-                      {`// Basic hat crown`}<br/>
-                      magic_ring &#123;<br/>
-                      &nbsp;&nbsp;sc(6)<br/>
-                      &nbsp;&nbsp;join<br/>
-                      &#125;<br/><br/>
-                      
-                      round &#123;<br/>
-                      &nbsp;&nbsp;repeat(6) &#123;<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;sc(2)<br/>
-                      &nbsp;&nbsp;&#125;<br/>
-                      &nbsp;&nbsp;join<br/>
-                      &#125;<br/><br/>
-                      
-                      round &#123;<br/>
-                      &nbsp;&nbsp;repeat(6) &#123;<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;sc(1)<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;sc(2)<br/>
-                      &nbsp;&nbsp;&#125;<br/>
-                      &nbsp;&nbsp;join<br/>
-                      &#125;<br/><br/>
-                      
-                      end
-                    </code>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Classic Granny Square</h4>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <code className="text-sm">
-                      {`// Classic Granny Square`}<br/>
-                      {`// Start with magic ring`}<br/>
-                      magic_ring &#123;<br/>
-                      &nbsp;&nbsp;{`// Round 1: Foundation`}<br/>
-                      &nbsp;&nbsp;ch(3)<br/>
-                      &nbsp;&nbsp;dc(2)<br/>
-                      &nbsp;&nbsp;ch(2)<br/>
-                      &nbsp;&nbsp;repeat(3) &#123;<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;dc(3)<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
-                      &nbsp;&nbsp;&#125;<br/>
-                      &nbsp;&nbsp;join<br/>
-                      &#125;<br/><br/>
-                      
-                      {`// Round 2: Corner shells`}<br/>
-                      round &#123;<br/>
-                      &nbsp;&nbsp;ch(3)<br/>
-                      &nbsp;&nbsp;repeat(4) &#123;<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;shell(5)<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
-                      &nbsp;&nbsp;&#125;<br/>
-                      &nbsp;&nbsp;join<br/>
-                      &#125;<br/><br/>
-                      
-                      {`// Round 3: Sides and corners`}<br/>
-                      round &#123;<br/>
-                      &nbsp;&nbsp;repeat(4) &#123;<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;dc(3)<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;ch(1)<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;shell(5)<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
-                      &nbsp;&nbsp;&#125;<br/>
-                      &nbsp;&nbsp;join<br/>
-                      &#125;<br/><br/>
-                      
-                      end
-                    </code>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Special Stitches */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">Special Stitches & Techniques</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-medium mb-2">Decreases</h4>
-                  <div className="space-y-1 text-sm">
-                    <Badge variant="outline">sc2tog() - SC 2 together</Badge>
-                    <Badge variant="outline">dc2tog() - DC 2 together</Badge>
-                    <Badge variant="outline">sc3tog() - SC 3 together</Badge>
-                    <Badge variant="outline">dc3tog() - DC 3 together</Badge>
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-2">Clusters & Shells</h4>
-                  <div className="space-y-1 text-sm">
-                    <Badge variant="outline">cluster(n) - n DC cluster</Badge>
-                    <Badge variant="outline">shell(n) - n DC shell</Badge>
-                    <Badge variant="outline">popcorn(n) - n DC popcorn</Badge>
-                    <Badge variant="outline">v_stitch() - V-stitch</Badge>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <h4 className="font-medium mb-2">Special Stitch Examples</h4>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <code className="text-sm">
-                    {`// Using special stitches`}<br/>
-                    round &#123;<br/>
-                    &nbsp;&nbsp;repeat(8) &#123;<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;shell(5)&nbsp;&nbsp;&nbsp;&nbsp;{`// 5 DC shell`}<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;cluster(3)&nbsp;&nbsp;{`// 3 DC cluster`}<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;ch(2)<br/>
-                    &nbsp;&nbsp;&#125;<br/>
-                    &nbsp;&nbsp;join<br/>
-                    &#125;
-                  </code>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* Preview Controls */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-extralight mb-6">Using the Preview Panel</h2>
-          
-          {/* View Mode Toggle */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">View Modes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium mb-2 flex items-center gap-2">
-                      <Layers className="h-4 w-4" />
-                      2D Diagram View
-                    </h4>
-                    <ul className="text-sm space-y-1 text-gray-700">
-                      <li>• Traditional crochet symbol charts</li>
-                      <li>• Pan and zoom navigation</li>
-                      <li>• Perfect for following patterns</li>
-                      <li>• Drag to move, scroll to zoom</li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2 flex items-center gap-2">
-                      <Box className="h-4 w-4" />
-                      3D Visualization
-                    </h4>
-                    <ul className="text-sm space-y-1 text-gray-700">
-                      <li>• Interactive 3D structure view</li>
-                      <li>• Vertices represent stitches</li>
-                      <li>• Edges show yarn flow connections</li>
-                      <li>• Rotate, pan, and zoom in 3D space</li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                  <p className="text-sm text-purple-800">
-                    <strong>New Feature:</strong> Toggle between 2D and 3D views using the view mode buttons 
-                    in the preview panel header. The 3D view helps visualize complex stitch relationships 
-                    and yarn flow patterns.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 3D Controls */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">3D View Controls</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <h4 className="font-medium mb-2">Mouse Controls</h4>
-                    <ul className="text-sm space-y-1 text-gray-700">
-                      <li><strong>Left Click + Drag:</strong> Rotate view</li>
-                      <li><strong>Right Click + Drag:</strong> Pan view</li>
-                      <li><strong>Mouse Wheel:</strong> Zoom in/out</li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Display Options</h4>
-                    <ul className="text-sm space-y-1 text-gray-700">
-                      <li><strong>Vertices:</strong> Show/hide stitches</li>
-                      <li><strong>Edges:</strong> Show/hide connections</li>
-                      <li><strong>Opacity:</strong> Adjust edge transparency</li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Connection Types</h4>
-                    <ul className="text-sm space-y-1 text-gray-700">
-                      <li><span className="inline-block w-3 h-3 bg-amber-500 rounded-full mr-2"></span>Yarn Flow</li>
-                      <li><span className="inline-block w-3 h-3 bg-gray-500 rounded-full mr-2"></span>Structural</li>
-                      <li><span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>Joins</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Traditional Controls */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">General Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium mb-2">Pattern Statistics</h4>
-                    <ul className="text-sm space-y-1 text-gray-700">
-                      <li><strong>Stitch Count:</strong> Total stitches in pattern</li>
-                      <li><strong>Round Count:</strong> Number of rounds (circular patterns)</li>
-                      <li><strong>Vertex Count:</strong> 3D vertices displayed</li>
-                      <li><strong>Connection Count:</strong> 3D edges shown</li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Performance</h4>
-                    <ul className="text-sm space-y-1 text-gray-700">
-                      <li><strong>Compilation:</strong> Real-time pattern processing</li>
-                      <li><strong>Optimization:</strong> Automatic edge optimization</li>
-                      <li><strong>Limits:</strong> Max 200 vertices in 3D for performance</li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-800">
-                    <strong>Performance Tip:</strong> Large patterns are automatically optimized. 
-                    Use the 2D view for very complex patterns and 3D view to understand 
-                    structure and stitch relationships.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* Symbol Legend */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-extralight mb-6">Symbol Reference</h2>
-          <CrochetLegend />
-        </section>
-
-        {/* Examples */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-extralight mb-6">Quick Start Patterns</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold">Simple Dishcloth</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-gray-50 p-4 rounded-lg text-sm">
-                  <code>
-                    ch(31)<br/>
-                    turn<br/><br/>
-                    
-                    repeat(30) &#123;<br/>
-                    &nbsp;&nbsp;sc(30)<br/>
-                    &nbsp;&nbsp;turn<br/>
-                    &#125;<br/><br/>
-                    
-                    end
-                  </code>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold">Basic Coaster</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-gray-50 p-4 rounded-lg text-sm">
-                  <code>
-                    magic_ring &#123;<br/>
-                    &nbsp;&nbsp;sc(6)<br/>
-                    &nbsp;&nbsp;join<br/>
-                    &#125;<br/><br/>
-                    
-                    repeat(4) &#123;<br/>
-                    &nbsp;&nbsp;round &#123;<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;repeat(6) &#123;<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sc(2)<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&#125;<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;join<br/>
-                    &nbsp;&nbsp;&#125;<br/>
-                    &#125;<br/><br/>
-                    
-                    end
-                  </code>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Tips */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-extralight mb-6">Tips & Best Practices</h2>
-          <Card>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-medium mb-3 text-green-700">Do&apos;s</h4>
-                  <ul className="text-sm space-y-1 text-gray-700">
-                    <li>✓ Use clear block structure with proper nesting</li>
-                    <li>✓ Add comments to explain complex sections</li>
-                    <li>✓ Start with example patterns to learn syntax</li>
-                    <li>✓ Use consistent indentation for readability</li>
-                    <li>✓ Always end patterns with &apos;end&apos; keyword</li>
-                  </ul>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-3 text-red-700">Don&apos;ts</h4>
-                  <ul className="text-sm space-y-1 text-gray-700">
-                    <li>✗ Don&apos;t forget closing braces &#125;</li>
-                    <li>✗ Don&apos;t mix circular and linear structures</li>
-                    <li>✗ Don&apos;t use undefined stitch functions</li>
-                    <li>✗ Don&apos;t create deeply nested repeat blocks</li>
-                    <li>✗ Don&apos;t forget &apos;join&apos; in circular patterns</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="mt-6 bg-amber-50 p-4 rounded-lg border border-amber-200">
-                <h4 className="font-medium mb-2 text-amber-800">Syntax Notes</h4>
-                <ul className="text-sm space-y-1 text-amber-700">
-                  <li>• All stitch functions use parentheses: dc(3), not dc 3</li>
-                  <li>• Block structures use curly braces: round &#123; &#125;</li>
-                  <li>• Comments start with // and continue to end of line</li>
-                  <li>• Use underscore for compound names: magic_ring, sl_st</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* Get Started CTA */}
-        <section className="text-center">
-          <Card className="bg-grey-50 border-grey-200">
-            <CardContent className="p-8">
-              <h3 className="text-xl font-semibold mb-4">Ready to Create?</h3>
-              <p className="text-gray-600 mb-6">
-                Start designing your crochet patterns with our interactive editor and structured CrocheTeX syntax.
-              </p>
-              <Link href="/create">
-                <Button size="lg" className="bg-grey-600 hover:bg-grey-700">
-                  <Play className="h-5 w-5 mr-2" />
-                  Open Pattern Editor
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </section>
-      </main>
-    </div>
-  )
+  return <DocsClient />
 } 

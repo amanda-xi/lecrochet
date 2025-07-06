@@ -1,388 +1,401 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ArrowRight } from "lucide-react"
-import { motion, Variants, Variant } from "framer-motion"
-import { signIn } from "next-auth/react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Code, Eye, Zap } from "lucide-react"
-import Image from "next/image"
+import { Metadata } from "next"
+import CrochetPlatformClient from "./client"
 
-export default function CrochetPlatform() {
-  // Animation variants
-  const fadeInUp: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
+// Comprehensive SEO configuration for the homepage
+export const metadata: Metadata = {
+  title: {
+    default: "le Crochet - Revolutionary Crochet Pattern Designer & Builder Platform",
+    template: "%s | le Crochet"
+  },
+  description: "Create stunning crochet patterns with le Crochet's revolutionary CrocheTeX platform. Design, visualize in 3D, and share beautiful patterns with our intuitive pattern builder. From simple scarves to complex amigurumi - bring your crochet vision to life instantly.",
+  
+  // Comprehensive keyword optimization
+  keywords: [
+    // Primary keywords
+    "crochet pattern designer",
+    "crochet pattern builder",
+    "crochet pattern creator",
+    "CrocheTeX",
+    "crochet pattern maker",
+    
+    // Pattern types
+    "amigurumi pattern designer",
+    "granny square patterns",
+    "circular crochet patterns", 
+    "linear crochet patterns",
+    "crochet diagram maker",
+    "crochet chart creator",
+    
+    // Features
+    "3D crochet visualization",
+    "real-time pattern preview",
+    "interactive crochet designer",
+    "crochet pattern compiler",
+    "visual crochet editor",
+    "crochet symbol library",
+    
+    // User intent
+    "how to design crochet patterns",
+    "crochet pattern software",
+    "digital crochet patterns",
+    "crochet pattern templates",
+    "professional crochet design",
+    "crochet business tools",
+    
+    // Related crafts
+    "fiber arts designer",
+    "yarn craft patterns",
+    "handmade pattern creator",
+    "DIY crochet tools",
+    
+    // Technical terms
+    "pattern visualization software",
+    "textile design platform",
+    "craft pattern generator",
+    "stitch diagram creator",
+    "pattern development tools",
+    
+    // Community aspects
+    "crochet community platform",
+    "share crochet patterns",
+    "crochet marketplace",
+    "pattern collaboration tools"
+  ],
+  
+  // Author and publisher information
+  authors: [
+    { name: "le Crochet Team", url: "https://lecrochet.com/about" },
+    { name: "Pattern Design Experts" }
+  ],
+  creator: "le Crochet Platform",
+  publisher: "le Crochet Inc.",
+  
+  // Content classification
+  category: "Crafts & Design Software",
+  classification: "Design Tools, Crafts, Fiber Arts, Pattern Making",
+  
+  // URL and canonical settings
+  metadataBase: new URL("https://lecrochet.com"),
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en-US": "/",
+      "en-GB": "/en-gb",
+      "fr": "/fr",
+      "es": "/es",
+      "de": "/de"
     }
+  },
+  
+  // Open Graph optimization for social sharing
+  openGraph: {
+    type: "website",
+    siteName: "le Crochet - Crochet Pattern Designer",
+    title: "le Crochet - Revolutionary Crochet Pattern Designer & 3D Visualization Platform",
+    description: "Design stunning crochet patterns with our intuitive CrocheTeX platform. Create amigurumi, granny squares, and complex patterns with real-time 3D visualization. Join thousands of creators bringing their crochet visions to life.",
+    url: "/",
+    locale: "en_US",
+    countryName: "United States",
+    images: [
+      {
+        url: "/gallery/01.png",
+        width: 1200,
+        height: 630,
+        alt: "le Crochet Pattern Designer - Create Beautiful Crochet Patterns",
+        type: "image/png"
+      },
+      {
+        url: "/gallery/02.png", 
+        width: 1200,
+        height: 630,
+        alt: "3D Crochet Pattern Visualization - le Crochet Platform",
+        type: "image/png"
+      },
+      {
+        url: "/gallery/03.png",
+        width: 1200, 
+        height: 630,
+        alt: "CrocheTeX Code Editor - Intuitive Pattern Design",
+        type: "image/png"
+      },
+      {
+        url: "/yarn.gif",
+        width: 800,
+        height: 600,
+        alt: "Animated crochet creation process - le Crochet demo",
+        type: "image/gif"
+      }
+    ],
+    videos: [
+      {
+        url: "/yarn.mov",
+        width: 1920,
+        height: 1080,
+        type: "video/quicktime"
+      }
+    ]
+  },
+  
+  // Twitter Card optimization
+  twitter: {
+    card: "summary_large_image",
+    site: "@lecrochet",
+    creator: "@lecrochet", 
+    title: "le Crochet - Revolutionary Crochet Pattern Designer & 3D Visualization",
+    description: "Design stunning crochet patterns with intuitive CrocheTeX platform. Create amigurumi, granny squares & complex patterns with real-time 3D visualization. Join thousands of creators! 🧶✨",
+    images: {
+      url: "/gallery/01.png",
+      alt: "le Crochet Pattern Designer - Create Beautiful Crochet Patterns"
+    }
+  },
+  
+  // Advanced robot directives
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1
+    }
+  },
+  
+  // Verification codes for major search engines
+  verification: {
+    google: "lecrochet-google-verification-2024",
+    yandex: "lecrochet-yandex-verification-2024", 
+    yahoo: "lecrochet-yahoo-verification-2024"
+  },
+  
+  // App-specific metadata
+  appleWebApp: {
+    capable: true,
+    title: "le Crochet Designer",
+    statusBarStyle: "default",
+    startupImage: [
+      {
+        url: "/gallery/01.png",
+        media: "(device-width: 768px) and (device-height: 1024px)"
+      }
+    ]
+  },
+  
+  // Format detection settings
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+    date: false,
+    url: false
+  },
+  
+  // Additional structured metadata
+  other: {
+    // Business information
+    "business:contact_data:street_address": "123 Craft Street",
+    "business:contact_data:locality": "Design City", 
+    "business:contact_data:region": "CA",
+    "business:contact_data:postal_code": "90210",
+    "business:contact_data:country_name": "United States",
+    
+    // App store information  
+    "al:ios:app_store_id": "lecrochet-ios-app",
+    "al:android:package": "com.lecrochet.android",
+    "al:web:url": "https://lecrochet.com",
+    
+    // Pricing and availability
+    "product:price:amount": "0.00",
+    "product:price:currency": "USD",
+    "product:availability": "instock",
+    
+    // Content rating
+    "rating": "general",
+    "target_audience": "crafters, designers, artists, hobbyists",
+    
+    // Technical specifications
+    "mobile-web-app-capable": "yes",
+    "mobile-web-app-status-bar-style": "black-translucent",
+    "application-name": "le Crochet",
+    
+    // Schema.org structured data hints
+    "schema:WebSite": JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "le Crochet",
+      "description": "Revolutionary crochet pattern designer and builder platform",
+      "url": "https://lecrochet.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://lecrochet.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }),
+    
+    "schema:Organization": JSON.stringify({
+      "@context": "https://schema.org", 
+      "@type": "Organization",
+      "name": "le Crochet",
+      "description": "Leading platform for crochet pattern design and visualization",
+      "url": "https://lecrochet.com",
+      "logo": "https://lecrochet.com/logo.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": ["English", "Spanish", "French"]
+      }
+    }),
+    
+    "schema:SoftwareApplication": JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication", 
+      "name": "le Crochet Pattern Designer",
+      "description": "Professional crochet pattern design software with 3D visualization",
+      "category": "DesignApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    })
+  },
+  
+  // Manifest reference
+  manifest: "/manifest.json",
+  
+  // Archive and referrer settings
+  referrer: "origin-when-cross-origin",
+  archives: ["https://lecrochet.com/archive"],
+  
+  // Booking and app linking
+  bookmarks: "https://lecrochet.com/bookmarks",
+  
+  // Icon configurations
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" }
+    ],
+    apple: [
+      { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" }
+    ],
+    shortcut: "/favicon.ico"
   }
+}
 
-  const staggerContainer: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1
+// JSON-LD structured data for enhanced SEO
+const jsonLdData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://lecrochet.com/#website",
+      "url": "https://lecrochet.com/",
+      "name": "le Crochet",
+      "description": "Revolutionary crochet pattern designer and builder platform with 3D visualization",
+      "publisher": {
+        "@id": "https://lecrochet.com/#organization"
+      },
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://lecrochet.com/search?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      ],
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lecrochet.com/#organization", 
+      "name": "le Crochet",
+      "url": "https://lecrochet.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "inLanguage": "en-US",
+        "@id": "https://lecrochet.com/#/schema/logo/image/",
+        "url": "https://lecrochet.com/logo.png",
+        "contentUrl": "https://lecrochet.com/logo.png",
+        "width": 512,
+        "height": 512,
+        "caption": "le Crochet"
+      },
+      "image": {
+        "@id": "https://lecrochet.com/#/schema/logo/image/"
+      },
+      "sameAs": [
+        "https://twitter.com/lecrochet",
+        "https://facebook.com/lecrochet",
+        "https://instagram.com/lecrochet"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://lecrochet.com/#webpage",
+      "url": "https://lecrochet.com/",
+      "name": "le Crochet - Revolutionary Crochet Pattern Designer & Builder Platform",
+      "isPartOf": {
+        "@id": "https://lecrochet.com/#website"
+      },
+      "about": {
+        "@id": "https://lecrochet.com/#organization"
+      },
+      "description": "Create stunning crochet patterns with le Crochet's revolutionary CrocheTeX platform. Design, visualize in 3D, and share beautiful patterns with our intuitive pattern builder.",
+      "breadcrumb": {
+        "@id": "https://lecrochet.com/#breadcrumb"
+      },
+      "inLanguage": "en-US",
+      "potentialAction": [
+        {
+          "@type": "ReadAction",
+          "target": ["https://lecrochet.com/"]
+        }
+      ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "le Crochet Pattern Designer",
+      "operatingSystem": "Web Browser",
+      "category": "DesignApplication",
+      "description": "Professional crochet pattern design software with real-time 3D visualization and CrocheTeX coding language",
+      "screenshot": "https://lecrochet.com/gallery/01.png",
+      "featureList": [
+        "CrocheTeX Pattern Language",
+        "Real-time 3D Visualization", 
+        "Interactive Pattern Editor",
+        "Pattern Marketplace",
+        "Collaborative Design Tools",
+        "Export to Multiple Formats"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
       }
     }
-  }
+  ]
+}
 
-  const floatingAnimation: Variant = {
-    y: [0, -10, 0],
-    transition: {
-      duration: 3,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  }
-
+export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* Hero Section */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="relative w-full h-full z-0">
-          <video
-            src="/yarn.mov"
-            autoPlay
-            muted
-            playsInline
-className="w-full h-full object-cover"
-          />
-        </div>
-      </div>
-      <section className="py-32 md:py-46 overflow-hidden relative">
-
-        {/* Content */}
-        <div className="container mx-auto px-6 relative z-10">
-          <motion.div 
-            className="max-w-4xl mx-auto text-center"
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-          >
-            <motion.div variants={fadeInUp}>
-              <Badge 
-                variant="outline" 
-                className="mb-6 border-gray-300 text-xs font-light px-3 py-1 relative overflow-hidden group bg-white/80 backdrop-blur-sm"
-              >
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-100 to-transparent"
-                  initial={{ x: "-100%" }}
-                  animate={{ x: "100%" }}
-                  transition={{ 
-                    duration: 2, 
-                    repeat: Infinity, 
-                    repeatDelay: 3,
-                    ease: "easeInOut"
-                  }}
-                />
-                <span className="relative z-10">The only pattern builder you&rsquo;ll ever need</span>
-              </Badge>
-            </motion.div>
-
-            <motion.h1 
-              className="text-4xl md:text-6xl font-extralight tracking-tight mb-6 leading-tight"
-              variants={fadeInUp}
-            >
-              <motion.span 
-                className="inline-block"
-                animate={floatingAnimation}
-              >
-                Create, Visualize, and Share
-              </motion.span>
-              <br />
-              <motion.span 
-                className="font-light inline-block"
-                animate={{
-                  ...floatingAnimation,
-                  transition: {
-                    ...floatingAnimation.transition,
-                    delay: 0.5
-                  }
-                }}
-              >
-                Crochet Patterns
-              </motion.span>
-            </motion.h1>
-
-            <motion.p 
-              className="text-lg md:text-xl text-gray-600 font-light mb-8 max-w-2xl mx-auto leading-relaxed"
-              variants={fadeInUp}
-            >
-              Transform your ideas into detailed crochet patterns using natural language. 
-              Visualize in 3D, collaborate with others, and share in our marketplace.
-            </motion.p>
-
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-              variants={fadeInUp}
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <Button 
-                onClick={() => signIn("google", { callbackUrl: "/create" })} 
-                className="bg-black text-white hover:bg-gray-800 px-8 py-3 text-sm font-light group shadow-lg">
-                  Start building your pattern 
-                  <motion.div
-                    className="ml-2"
-                    animate={{ x: [0, 3, 0] }}
-                    transition={{ 
-                      duration: 1.5, 
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <ArrowRight className="w-4 h-4" />
-                  </motion.div>
-                </Button>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Floating Elements */}
-        <motion.div
-          className="absolute top-20 left-10 w-2 h-2 bg-gray-200 rounded-full opacity-60"
-          animate={{
-            y: [0, -20, 0],
-            x: [0, 10, 0],
-            opacity: [0.6, 0.3, 0.6]
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="absolute top-32 right-20 w-1 h-1 bg-gray-300 rounded-full opacity-40"
-          animate={{
-            y: [0, 15, 0],
-            x: [0, -8, 0],
-            opacity: [0.4, 0.1, 0.4]
-          }}
-          transition={{
-            duration: 3.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-        />
-      </section>
-
-      <section className="mb-20 container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extralight mb-4">Why Choose le Crochet?</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Modern tools for traditional crafts. Our platform bridges the gap between 
-              code and creativity, making pattern design accessible to everyone.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="border-0">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Code className="h-8 w-8 text-black" />
-                </div>
-                <CardTitle className="text-xl font-semibold">Simple Syntax</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600">
-                  Write patterns using intuitive CrocheTeX syntax. No complex formatting, 
-                  just clean, readable code that describes your stitches.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 ">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Eye className="h-8 w-8 text-black" />
-                </div>
-                <CardTitle className="text-xl font-semibold">Live Preview</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600">
-                  See your pattern rendered instantly as you type. Visual feedback helps 
-                  you catch errors early and perfect your designs.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 ">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Zap className="h-8 w-8 text-black" />
-                </div>
-                <CardTitle className="text-xl font-semibold">Interactive</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600">
-                  Drag to pan, scroll to zoom, and explore every detail of your pattern. 
-                  Perfect for analyzing complex designs and sharing with others.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Pattern Types */}
-        <section className="mb-20 container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extralight mb-4">Supports All Pattern Types</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              From simple scarves to complex amigurumi, le Crochet handles linear, 
-              circular, and granny square patterns with ease.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-xl  border">
-              <h3 className="font-semibold mb-3">Linear Patterns</h3>
-              <div className="bg-gray-50 p-3 rounded-lg text-sm font-mono">
-                <div className="text-gray-500">pattern: linear</div>
-                <div>ch 21</div>
-                <div>row 1: sc 20, turn</div>
-                <div>row 2: ch 1, sc 20</div>
-              </div>
-              <p className="text-sm text-gray-600 mt-3">Perfect for scarves, blankets, and flat pieces</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl border">
-              <h3 className="font-semibold mb-3">Circular Patterns</h3>
-              <div className="bg-gray-50 p-3 rounded-lg text-sm font-mono">
-                <div className="text-gray-500">pattern: circular</div>
-                <div>magic-ring</div>
-                <div>round 1: sc 6</div>
-                <div>round 2: sc 2 in each</div>
-              </div>
-              <p className="text-sm text-gray-600 mt-3">Ideal for hats, amigurumi, and round motifs</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl border">
-              <h3 className="font-semibold mb-3">Granny Squares</h3>
-              <div className="bg-gray-50 p-3 rounded-lg text-sm font-mono">
-                <div className="text-gray-500">pattern: granny-square</div>
-                <div>magic-ring</div>
-                <div>round 1: ch 3, dc 2</div>
-                <div>ch 2, *dc 3, ch 2*</div>
-              </div>
-              <p className="text-sm text-gray-600 mt-3">Classic granny square construction</p>
-            </div>
-          </div>
-        </section>
-
-      {/* CTA Section */}
-      <motion.section 
-        className="py-20 "
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true, margin: "-100px" }}
-      >
-       <div className="relative">
-  {/* SVG Background */}
-  <Image
-  src="/yarn.svg"
-  alt="Yarn"
-  aria-hidden="true"
-  className="absolute left-30 top-0 h-full w-auto"
-  draggable={false}
-  width={200}
-  height={400}
-/>
-
-  {/* Content */}
-  <div className="container mx-auto px-6 text-center relative z-10">
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-    >
-      <motion.h2
-        className="text-3xl md:text-4xl font-extralight mb-6"
-        variants={fadeInUp}
-      >
-        Ready to Transform Your <br />
-        <motion.span
-          className="inline-block"
-          animate={{
-            backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
-          }}
-          style={{
-            background: "linear-gradient(90deg, #000, #666, #000)",
-            backgroundSize: "200% 100%",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent"
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        >
-          Crochet Experience?
-        </motion.span>
-      </motion.h2>
-
-      <motion.p
-        className="text-gray-600 font-light mb-8 max-w-2xl mx-auto"
-        variants={fadeInUp}
-      >
-        Join thousands of creators who are already using le crochet to bring their visions to life.
-      </motion.p>
-
-      <motion.div
-        className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
-        variants={fadeInUp}
-      >
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        >
-          <Button
-            onClick={() => signIn("google", { callbackUrl: "/create" })}
-            className="bg-white text-black border border-gray-300 hover:bg-gray-800 hover:text-white px-8 text-sm font-light whitespace-nowrap relative overflow-hidden group"
-          >
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-              initial={{ x: "-100%" }}
-              whileHover={{ x: "100%" }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-            />
-            <span className="relative z-10">Get Started Free</span>
-          </Button>
-        </motion.div>
-      </motion.div>
-
-      <motion.p
-        className="text-xs text-gray-500 font-light mt-4"
-        variants={fadeInUp}
-        animate={{
-          opacity: [0.7, 1, 0.7]
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLdData)
         }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      >
-        No credit card required. Start creating in minutes.
-      </motion.p>
-    </motion.div>
-  </div>
-</div>
-      </motion.section>
-    </div>
+      />
+      <CrochetPlatformClient />
+    </>
   )
 }

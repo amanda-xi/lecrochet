@@ -9,7 +9,7 @@ export default function ContactPage() {
                         <h2 className="text-3xl md:text-4xl font-extralight mb-4">Contact Us</h2>
                         <p className="text-gray-600 font-light">We&apos;d love to hear from you.</p>
                     </div>
-
+<p>HI</p>
                     <div className="max-w-4xl mx-auto">
                       <p className="text-center">Contact form will be here.</p>
                     </div>
