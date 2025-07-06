@@ -46,27 +46,156 @@ function calculateYarnConnections(
 ): Edge3D[] {
   const edges: Edge3D[] = []
   
-  for (let i = 0; i < vertices.length - 1; i++) {
-    const current = vertices[i]
-    const next = vertices[i + 1]
+  if (patternType === 'linear') {
+    // For linear patterns, we need to handle turns properly
+    // Group vertices by rows to handle turns correctly
+    const rowGroups = groupVerticesByRow(vertices)
     
-    // Skip magic ring connections as they're handled separately
-    if (current.stitchType === 'magic-ring' || next.stitchType === 'magic-ring') {
-      continue
+    // Connect stitches within each row
+    rowGroups.forEach(row => {
+      for (let i = 0; i < row.length - 1; i++) {
+        const current = row[i]
+        const next = row[i + 1]
+        
+        // Skip magic ring connections as they're handled separately
+        if (current.stitchType === 'magic-ring' || next.stitchType === 'magic-ring') {
+          continue
+        }
+        
+        const distance = calculateDistance(current, next)
+        
+        if (distance <= rules.maxYarnDistance) {
+          edges.push({
+            fromVertex: current.id,
+            toVertex: next.id,
+            connectionType: 'yarn'
+          })
+        }
+      }
+    })
+    
+    // Connect between rows (end of one row to start of next)
+    for (let i = 0; i < rowGroups.length - 1; i++) {
+      const currentRow = rowGroups[i]
+      const nextRow = rowGroups[i + 1]
+      
+      if (currentRow.length > 0 && nextRow.length > 0) {
+        const endOfCurrentRow = currentRow[currentRow.length - 1]
+        const startOfNextRow = nextRow[0]
+        
+        const distance = calculateDistance(endOfCurrentRow, startOfNextRow)
+        
+        if (distance <= rules.maxYarnDistance) {
+          edges.push({
+            fromVertex: endOfCurrentRow.id,
+            toVertex: startOfNextRow.id,
+            connectionType: 'yarn'
+          })
+        }
+      }
+    }
+  } else if (patternType === 'circular' || patternType === 'granny-square') {
+    // For circular patterns, connect stitches within rounds and between rounds
+    const rounds = groupVerticesByRound(vertices, patternType)
+    
+    // Connect stitches within each round
+    rounds.forEach(round => {
+      for (let i = 0; i < round.length - 1; i++) {
+        const current = round[i]
+        const next = round[i + 1]
+        
+        // Skip magic ring connections as they're handled separately
+        if (current.stitchType === 'magic-ring' || next.stitchType === 'magic-ring') {
+          continue
+        }
+        
+        const distance = calculateDistance(current, next)
+        
+        if (distance <= rules.maxYarnDistance) {
+          edges.push({
+            fromVertex: current.id,
+            toVertex: next.id,
+            connectionType: 'yarn'
+          })
+        }
+      }
+    })
+    
+    // Connect between rounds (last stitch of one round to first stitch of next)
+    for (let i = 0; i < rounds.length - 1; i++) {
+      const currentRound = rounds[i]
+      const nextRound = rounds[i + 1]
+      
+      if (currentRound.length > 0 && nextRound.length > 0) {
+        // Find the connection point between rounds
+        const lastStitchOfCurrentRound = currentRound[currentRound.length - 1]
+        const firstStitchOfNextRound = nextRound[0]
+        
+        // Skip magic ring connections
+        if (lastStitchOfCurrentRound.stitchType === 'magic-ring' || 
+            firstStitchOfNextRound.stitchType === 'magic-ring') {
+          continue
+        }
+        
+        const distance = calculateDistance(lastStitchOfCurrentRound, firstStitchOfNextRound)
+        
+        if (distance <= rules.maxYarnDistance * 1.5) { // Allow longer connections between rounds
+          edges.push({
+            fromVertex: lastStitchOfCurrentRound.id,
+            toVertex: firstStitchOfNextRound.id,
+            connectionType: 'yarn'
+          })
+        }
+      }
     }
     
-    const distance = calculateDistance(current, next)
-    
-    if (distance <= rules.maxYarnDistance) {
-      edges.push({
-        fromVertex: current.id,
-        toVertex: next.id,
-        connectionType: 'yarn'
+    // Connect from magic ring to first round
+    const magicRingVertex = vertices.find(v => v.stitchType === 'magic-ring' || v.stitchType === 'ring')
+    if (magicRingVertex && rounds.length > 0) {
+      const firstRound = rounds[0]
+      firstRound.forEach(vertex => {
+        if (vertex.stitchType !== 'magic-ring' && vertex.stitchType !== 'ring') {
+          const distance = calculateDistance(magicRingVertex, vertex)
+          if (distance <= rules.maxYarnDistance) {
+            edges.push({
+              fromVertex: magicRingVertex.id,
+              toVertex: vertex.id,
+              connectionType: 'yarn'
+            })
+          }
+        }
       })
     }
   }
   
   return edges
+}
+
+/**
+ * Group vertices by row based on their Y coordinates
+ */
+function groupVerticesByRow(vertices: Vertex3D[]): Vertex3D[][] {
+  const rows: Vertex3D[][] = []
+  const rowMap = new Map<number, Vertex3D[]>()
+  
+  vertices.forEach(vertex => {
+    const rowY = Math.round(vertex.y / 35) * 35 // Group by row height intervals (adjusted for better grouping)
+    
+    if (!rowMap.has(rowY)) {
+      rowMap.set(rowY, [])
+    }
+    rowMap.get(rowY)!.push(vertex)
+  })
+  
+  // Sort rows by Y coordinate and sort vertices within each row by X coordinate
+  Array.from(rowMap.entries())
+    .sort(([aY], [bY]) => aY - bY)
+    .forEach(([, vertices]) => {
+      vertices.sort((a, b) => a.x - b.x)
+      rows.push(vertices)
+    })
+  
+  return rows
 }
 
 /**
@@ -167,24 +296,24 @@ function groupVerticesByRound(
   const rounds: Vertex3D[][] = []
   
   if (patternType === 'circular') {
-    // Group by distance from center
-    const byDistance = vertices.map(v => ({
+    // Group by Z-coordinate (round level) first, then by distance as fallback
+    const byZCoordinate = vertices.map(v => ({
       vertex: v,
-      distance: Math.sqrt(v.x * v.x + v.y * v.y)
+      zLevel: Math.round(v.z / 10) // Group by height levels
     }))
     
-    byDistance.sort((a, b) => a.distance - b.distance)
+    byZCoordinate.sort((a, b) => a.zLevel - b.zLevel)
     
     let currentRound: Vertex3D[] = []
-    let currentDistance = -1
+    let currentZLevel = -1
     
-    byDistance.forEach(({ vertex, distance }) => {
-      if (currentDistance === -1 || Math.abs(distance - currentDistance) > 20) {
+    byZCoordinate.forEach(({ vertex, zLevel }) => {
+      if (currentZLevel === -1 || zLevel !== currentZLevel) {
         if (currentRound.length > 0) {
           rounds.push(currentRound)
         }
         currentRound = [vertex]
-        currentDistance = distance
+        currentZLevel = zLevel
       } else {
         currentRound.push(vertex)
       }
@@ -192,6 +321,36 @@ function groupVerticesByRound(
     
     if (currentRound.length > 0) {
       rounds.push(currentRound)
+    }
+    
+    // If Z-coordinate grouping doesn't work well, fall back to distance grouping
+    if (rounds.length === 1 && vertices.length > 8) {
+      const byDistance = vertices.map(v => ({
+        vertex: v,
+        distance: Math.sqrt(v.x * v.x + v.y * v.y)
+      }))
+      
+      byDistance.sort((a, b) => a.distance - b.distance)
+      
+      rounds.length = 0 // Clear the single group
+      currentRound = []
+      let currentDistance = -1
+      
+      byDistance.forEach(({ vertex, distance }) => {
+        if (currentDistance === -1 || Math.abs(distance - currentDistance) > 30) {
+          if (currentRound.length > 0) {
+            rounds.push(currentRound)
+          }
+          currentRound = [vertex]
+          currentDistance = distance
+        } else {
+          currentRound.push(vertex)
+        }
+      })
+      
+      if (currentRound.length > 0) {
+        rounds.push(currentRound)
+      }
     }
   } else if (patternType === 'granny-square') {
     // Group by layer (square ring)

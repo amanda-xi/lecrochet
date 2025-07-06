@@ -34,7 +34,8 @@ export interface CrochetGeometry {
 export function calculateStitchPosition(
   stitchType: string,
   index: number,
-  patternType: 'linear' | 'circular' | 'granny-square'
+  patternType: 'linear' | 'circular' | 'granny-square',
+  patternSequence?: string[]
 ): Vertex3D {
   const baseHeight = getStitchHeight(stitchType)
   const baseWidth = getStitchWidth(stitchType)
@@ -44,17 +45,33 @@ export function calculateStitchPosition(
   let z = 0
 
   if (patternType === 'linear') {
-    // Linear arrangement
-    x = index * baseWidth * 1.2
-    y = 0
-    z = baseHeight * 0.5
+    // Linear arrangement with proper turn handling
+    if (patternSequence) {
+      const position = calculateLinearPositionWithTurns(patternSequence, index, baseWidth)
+      x = position.x
+      y = position.y
+      z = position.z
+    } else {
+      // Fallback to simple linear
+      x = index * baseWidth * 1.2
+      y = 0
+      z = baseHeight * 0.5
+    }
   } else if (patternType === 'circular') {
-    // Circular arrangement
-    const radius = Math.max(50, index * 5)
-    const angle = (index * 2 * Math.PI) / Math.max(6, index)
-    x = Math.cos(angle) * radius
-    y = Math.sin(angle) * radius
-    z = baseHeight * 0.5
+    // Circular arrangement with proper round handling
+    if (patternSequence) {
+      const position = calculateCircularPositionWithRounds(patternSequence, index)
+      x = position.x
+      y = position.y
+      z = position.z
+    } else {
+      // Fallback to simple circular
+      const radius = Math.max(50, index * 5)
+      const angle = (index * 2 * Math.PI) / Math.max(6, index)
+      x = Math.cos(angle) * radius
+      y = Math.sin(angle) * radius
+      z = baseHeight * 0.5
+    }
   } else if (patternType === 'granny-square') {
     // Granny square specific positioning
     const layer = Math.floor(index / 12) + 1
@@ -93,6 +110,149 @@ export function calculateStitchPosition(
     id: `stitch-${index}`,
     stitchType
   }
+}
+
+/**
+ * Calculate linear position with proper turn handling
+ */
+function calculateLinearPositionWithTurns(
+  patternSequence: string[],
+  targetIndex: number,
+  baseWidth: number
+): { x: number; y: number; z: number } {
+  let currentX = 0
+  let currentY = 0
+  const currentZ = 0
+  let rowHeight = 0
+  let direction = 1 // 1 for right, -1 for left
+  let stitchesProcessed = 0
+  let stitchesInCurrentRow = 0
+  
+  // Process the sequence to find the target stitch position
+  for (let i = 0; i < patternSequence.length; i++) {
+    const stitchType = patternSequence[i]
+    
+    if (stitchType === 'turn') {
+      // Handle turn: move to next row and reverse direction
+      currentY += rowHeight + 30
+      rowHeight = 0
+      direction *= -1
+      
+      // Position at start of new row, considering direction
+      if (direction === -1) {
+        // Going right to left, start at the right edge of previous row
+        currentX = (stitchesInCurrentRow - 1) * baseWidth * 1.2
+      } else {
+        // Going left to right, start at the left edge
+        currentX = 0
+      }
+      
+      stitchesInCurrentRow = 0
+      continue
+    }
+    
+    // If this is our target stitch, return its position
+    if (stitchesProcessed === targetIndex) {
+      return { 
+        x: currentX, 
+        y: currentY, 
+        z: currentZ + getStitchHeight(stitchType) * 0.5
+      }
+    }
+    
+    // Update position for next stitch
+    const stitchWidth = getStitchWidth(stitchType)
+    const stitchHeight = getStitchHeight(stitchType)
+    
+    currentX += stitchWidth * 1.2 * direction
+    rowHeight = Math.max(rowHeight, stitchHeight)
+    stitchesProcessed++
+    stitchesInCurrentRow++
+  }
+  
+  // If we didn't find the target, return the last position
+  return { x: currentX, y: currentY, z: currentZ }
+}
+
+/**
+ * Calculate circular position with proper round handling
+ */
+function calculateCircularPositionWithRounds(
+  patternSequence: string[],
+  targetIndex: number
+): { x: number; y: number; z: number } {
+  // Parse pattern into rounds based on join commands
+  const rounds: string[][] = []
+  let currentRound: string[] = []
+  
+  // Group pattern into rounds
+  for (let i = 0; i < patternSequence.length; i++) {
+    const stitchType = patternSequence[i]
+    
+    if (stitchType === 'join') {
+      if (currentRound.length > 0) {
+        rounds.push([...currentRound])
+        currentRound = []
+      }
+    } else {
+      currentRound.push(stitchType)
+    }
+  }
+  
+  // Add remaining stitches as final round
+  if (currentRound.length > 0) {
+    rounds.push(currentRound)
+  }
+  
+  // Find which round and position within round our target stitch is in
+  let targetRound = 0
+  let positionInRound = 0
+  let tempIndex = 0
+  
+  for (let roundIndex = 0; roundIndex < rounds.length; roundIndex++) {
+    const round = rounds[roundIndex]
+    
+    if (tempIndex + round.length > targetIndex) {
+      targetRound = roundIndex
+      positionInRound = targetIndex - tempIndex
+      break
+    }
+    
+    tempIndex += round.length
+  }
+  
+  // Handle positioning for each round
+  if (targetRound < rounds.length) {
+    const round = rounds[targetRound]
+    const stitchType = round[positionInRound]
+    
+    // Special handling for magic ring (center)
+    if (stitchType === 'magic-ring' || stitchType === 'ring') {
+      return {
+        x: 0,
+        y: 0,
+        z: getStitchHeight(stitchType) * 0.5
+      }
+    }
+    
+    // Calculate position on circle for this round
+    const baseRadius = 40
+    const radiusIncrement = 50
+    const currentRadius = baseRadius + (targetRound * radiusIncrement)
+    
+    const totalStitchesInRound = round.length
+    const angleIncrement = (2 * Math.PI) / totalStitchesInRound
+    const currentAngle = positionInRound * angleIncrement
+    
+    const x = Math.cos(currentAngle) * currentRadius
+    const y = Math.sin(currentAngle) * currentRadius
+    const z = getStitchHeight(stitchType) * 0.5 + (targetRound * 5) // Slight height variation per round
+    
+    return { x, y, z }
+  }
+  
+  // Fallback if something goes wrong
+  return { x: 0, y: 0, z: 10 }
 }
 
 /**

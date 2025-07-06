@@ -237,7 +237,7 @@ export default function Crochet3DRenderer({
           {geometry.vertices.length} vertices, {geometry.edges.length} connections
         </div>
         <div className="text-gray-500 text-xs">
-          Use mouse to rotate, zoom, and pan
+          Use mouse to rotate, zoom, and hold command to pan
         </div>
       </div>
     </div>
