@@ -68,23 +68,33 @@ function generateVertices(
   scale: number
 ): Vertex3D[] {
   const vertices: Vertex3D[] = []
+  let vertexIndex = 0 // Track actual stitch count (excluding turns and joins)
   
-  patternSequence.forEach((stitchType, index) => {
+  patternSequence.forEach((stitchType) => {
+    // Skip turn and join instructions as they don't create vertices
+    if (stitchType === 'turn' || stitchType === 'join') {
+      return
+    }
+    
     const position = calculateStitchPosition(
       stitchType,
-      index,
-      patternType
+      vertexIndex, // Use vertex index for position calculation
+      patternType,
+      patternSequence // Pass the full sequence for turn handling
     )
     
-    // Apply scaling
+    // Apply scaling and create vertex with proper ID
     const scaledPosition: Vertex3D = {
       ...position,
       x: position.x * scale,
       y: position.y * scale,
-      z: position.z * scale
+      z: position.z * scale,
+      id: `stitch-${vertexIndex}`, // Use vertex index for ID
+      stitchType
     }
     
     vertices.push(scaledPosition)
+    vertexIndex++
   })
   
   return vertices
