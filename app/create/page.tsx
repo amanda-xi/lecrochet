@@ -12,11 +12,11 @@ import PreviewPanel from "@/components/create/preview-panel"
 
 
 export default function CreatePage() {
-  const [code, setCode] = useState(EXAMPLE_PATTERNS["granny-square"].code)
+  const [code, setCode] = useState(EXAMPLE_PATTERNS["circular-doily"].code)
   const [compilerResult, setCompilerResult] = useState<CompilerResult | null>(null)
   const [isCompiling, setIsCompiling] = useState(false)
   const [autoCompile, setAutoCompile] = useState(true)
-  const [selectedExample, setSelectedExample] = useState("granny-square")
+  const [selectedExample, setSelectedExample] = useState("circular-doily")
   const { theme } = useTheme()
 
   const handleCompile = useCallback(async (crochetCode: string) => {
