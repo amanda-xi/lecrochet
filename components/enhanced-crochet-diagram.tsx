@@ -256,9 +256,9 @@ export default function EnhancedCrochetDiagram({
           })}
 
           {/* Pattern info overlay */}
-          <text x="10" y="20" fontSize="12" fill="#6b7280" className="select-none">
+          {/* <text x="10" y="20" fontSize="12" fill="#6b7280" className="select-none">
             Pattern: {patternType} | Stitches: {patternSequence.length}
-          </text>
+          </text> */}
           
           {patternSequence.length === 0 && (
             <text 

@@ -133,11 +133,11 @@ turn
 
 // Ribbing pattern
 repeat(8) {
-  fpdc(2)
-  bpdc(2)
+  dc(2)
+  tr(2)
   repeat(5) {
-    fpdc(2)
-    bpdc(2)
+    dc(2)
+    tr(2)
   }
   ch(3)
   turn

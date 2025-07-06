@@ -129,8 +129,8 @@ function calculateLinearPositions(patternSequence: string[]): StitchPosition[] {
       return
     }
 
-    // Calculate stitch width and position
-    const stitchWidth = Math.max(stitchInfo.width * 0.9, 35)
+    // Calculate stitch width and position - reduced spacing for better alignment
+    const stitchWidth = Math.max(stitchInfo.width * 0.7, 28)
     
     if (workingLeftToRight) {
       // Working left to right: place stitch at current position, then move right

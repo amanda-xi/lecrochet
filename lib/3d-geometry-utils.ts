@@ -133,15 +133,15 @@ function calculateLinearPositionWithTurns(
     const stitchType = patternSequence[i]
     
     if (stitchType === 'turn') {
-      // Handle turn: move to next row and reverse direction
-      currentY += rowHeight + 30
+      // Handle turn: move to next row and reverse direction - reduced row spacing
+      currentY += rowHeight
       rowHeight = 0
       direction *= -1
       
       // Position at start of new row, considering direction
       if (direction === -1) {
         // Going right to left, start at the right edge of previous row
-        currentX = (stitchesInCurrentRow - 1) * baseWidth * 1.2
+        currentX = (stitchesInCurrentRow - 1) * baseWidth * 1.0
       } else {
         // Going left to right, start at the left edge
         currentX = 0
@@ -160,11 +160,11 @@ function calculateLinearPositionWithTurns(
       }
     }
     
-    // Update position for next stitch
+    // Update position for next stitch - reduced horizontal spacing
     const stitchWidth = getStitchWidth(stitchType)
     const stitchHeight = getStitchHeight(stitchType)
     
-    currentX += stitchWidth * 1.2 * direction
+    currentX += stitchWidth * 1.0 * direction
     rowHeight = Math.max(rowHeight, stitchHeight)
     stitchesProcessed++
     stitchesInCurrentRow++
