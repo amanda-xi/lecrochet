@@ -24,17 +24,21 @@ export function useDiagramTransform() {
     const deltaX = e.clientX - lastMousePos.x
     const deltaY = e.clientY - lastMousePos.y
     
-    // Apply sensitivity multiplier to reduce drag sensitivity
-    const sensitivity = 0.5 // Lower value = less sensitive
+    // Dynamic sensitivity based on zoom level
+    // More zoomed in = faster panning for coverage
+    // More zoomed out = slower panning for precision
+    const baseSensitivity = 0.5
+    const zoomFactor = Math.max(0.1, Math.min(2, transform.scale))
+    const dynamicSensitivity = baseSensitivity * zoomFactor
     
     setTransform(prev => ({
       ...prev,
-      x: prev.x + (deltaX * sensitivity) / prev.scale,
-      y: prev.y + (deltaY * sensitivity) / prev.scale
+      x: prev.x + (deltaX * dynamicSensitivity),
+      y: prev.y + (deltaY * dynamicSensitivity)
     }))
     
     setLastMousePos({ x: e.clientX, y: e.clientY })
-  }, [isDragging, lastMousePos])
+  }, [isDragging, lastMousePos, transform.scale])
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false)
@@ -66,13 +70,17 @@ export function useDiagramTransform() {
       const deltaX = e.clientX - lastMousePos.x
       const deltaY = e.clientY - lastMousePos.y
       
-      // Apply sensitivity multiplier to reduce drag sensitivity
-      const sensitivity = 0.5 // Lower value = less sensitive
+      // Dynamic sensitivity based on zoom level
+      // More zoomed in = faster panning for coverage
+      // More zoomed out = slower panning for precision
+      const baseSensitivity = 0.5
+      const zoomFactor = Math.max(0.1, Math.min(2, transform.scale))
+      const dynamicSensitivity = baseSensitivity * zoomFactor
       
       setTransform(prev => ({
         ...prev,
-        x: prev.x + (deltaX * sensitivity) / prev.scale,
-        y: prev.y + (deltaY * sensitivity) / prev.scale
+        x: prev.x + (deltaX * dynamicSensitivity),
+        y: prev.y + (deltaY * dynamicSensitivity)
       }))
       
       setLastMousePos({ x: e.clientX, y: e.clientY })
