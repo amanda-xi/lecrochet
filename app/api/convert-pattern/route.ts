@@ -42,7 +42,7 @@ Convert the following pattern to CrocheTeX. Keep it concise and use proper synta
         { role: "system", content: systemPrompt },
         { role: "user", content: pattern }
       ],
-      max_tokens: 500,
+      max_tokens: 2000,
       temperature: 0.3,
     })
 
