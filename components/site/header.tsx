@@ -225,19 +225,21 @@ function AuthButtons() {
 
   return (
     <div className="flex items-center space-x-4">
-      <Button 
+
+      <Link href="/create">
+        <Button className="bg-gray-200 text-black hover:bg-gray-300 text-sm font-light px-6 transition-colors duration-200 ease-in-out">
+          Create
+        </Button>
+      </Link>
+
+      {/* <Button 
         onClick={() => signIn("google", { callbackUrl: "/create" })} 
         variant="ghost" 
         className="text-sm font-light transition-colors duration-200 ease-in-out hover:text-gray-700 hover:bg-gray-200"
       >
         Sign In
-      </Button>
-      {/* <Button 
-        onClick={() => signIn("google", { callbackUrl: "/create" })} 
-        className="bg-black text-white hover:bg-gray-800 text-sm font-light px-6 transition-colors duration-200 ease-in-out"
-      >
-        Get Started
       </Button> */}
+      
     </div>
   )
 }
