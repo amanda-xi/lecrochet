@@ -95,27 +95,46 @@ function calculateLinearPositions(patternSequence: string[]): StitchPosition[] {
   let currentX = 50
   let currentY = 150
   let rowHeight = 0
+  let workingLeftToRight = true // Track direction of work
 
   patternSequence.forEach((stitchType) => {
     const stitchInfo = STITCH_SVG_MAP[stitchType] || STITCH_SVG_MAP['unknown']
     
     // Handle row breaks and turns
     if (stitchType === 'turn') {
-      currentX = 50
+      // Move to next row
       currentY += rowHeight + 30
       rowHeight = 0
+      
+      // Flip direction - stay at current X position (end of previous row)
+      workingLeftToRight = !workingLeftToRight
       return
     }
 
-    positions.push({
-      x: currentX,
-      y: currentY,
-      rotation: 0,
-      stitchType
-    })
+    // Calculate stitch width and position
+    const stitchWidth = Math.max(stitchInfo.width * 0.9, 35)
+    
+    if (workingLeftToRight) {
+      // Working left to right: place stitch at current position, then move right
+      positions.push({
+        x: currentX,
+        y: currentY,
+        rotation: 0,
+        stitchType
+      })
+      currentX += stitchWidth
+    } else {
+      // Working right to left: move left first, then place stitch
+      currentX -= stitchWidth
+      positions.push({
+        x: currentX,
+        y: currentY,
+        rotation: 0,
+        stitchType
+      })
+    }
 
-    // Update position for next stitch
-    currentX += Math.max(stitchInfo.width * 0.9, 35) // Spacing between stitches
+    // Update row height
     rowHeight = Math.max(rowHeight, stitchInfo.height)
   })
 
