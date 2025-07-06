@@ -540,7 +540,7 @@ export class EnhancedCrochetScriptCompiler {
     // Function calls with multiple parameters: stitch(count, modifier)
     const complexFunctionMatch = codeOnly.match(/^(\w+)\s*\(\s*(\d+)(?:\s*,\s*(\w+))?\s*\)/)
     if (complexFunctionMatch) {
-      const [, stitchType, countStr, modifier] = complexFunctionMatch
+      const [, , countStr, modifier] = complexFunctionMatch
       const count = parseInt(countStr, 10)
       
       if (modifier) {

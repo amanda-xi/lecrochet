@@ -92,10 +92,6 @@ export default function EnhancedCrochetDiagram({
       e.stopPropagation()
       
       // Convert to React wheel event format and call handleWheel
-      const scaleFactor = e.deltaY > 0 ? 0.9 : 1.1
-      const newScale = Math.max(0.1, Math.min(5, transform.scale * scaleFactor))
-      
-      // Update transform directly
       const event = {
         preventDefault: () => {},
         stopPropagation: () => {},

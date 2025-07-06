@@ -305,12 +305,14 @@ export default function CrochetPlatform() {
       >
        <div className="relative">
   {/* SVG Background */}
-  <img
+  <Image
   src="/yarn.svg"
   alt="Yarn"
   aria-hidden="true"
   className="absolute left-30 top-0 h-full w-auto"
   draggable={false}
+  width={200}
+  height={400}
 />
 
   {/* Content */}

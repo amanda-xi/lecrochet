@@ -49,17 +49,30 @@ function calculateCircularPositions(
   if (currentRound.length > 0) {
     rounds.push(currentRound)
   }
+
+  // Calculate base radius for each round based on stitch count
+  const baseRadiusPerStitch = 25 // Base spacing between stitches
   
   // Position each round
-  rounds.forEach((round) => {
+  rounds.forEach((round, roundIndex) => {
     const totalStitchesInRound = round.length
+    
+    // Calculate radius based on stitch count and round progression
+    if (roundIndex > 0) {
+      // For subsequent rounds, calculate radius to maintain consistent spacing
+      const minRadiusForStitches = (totalStitchesInRound * baseRadiusPerStitch) / (2 * Math.PI)
+      const minRadiusFromPreviousRound = currentRadius + 40 // Minimum gap between rounds
+      
+      // Use the larger of the two to ensure proper spacing
+      currentRadius = Math.max(minRadiusForStitches, minRadiusFromPreviousRound)
+    }
     
     round.forEach((stitchType, stitchIndex) => {
       // Special handling for magic ring start
       if (stitchType === 'magic-ring' || stitchType === 'ring') {
         positions.push({
-          x: centerX - 38, // Move a little more left to center properly
-          y: centerY - 14, // Adjusted for visual centering
+          x: centerX - 16, // Center the magic ring properly
+          y: centerY - 16,
           rotation: 0,
           stitchType
         })
@@ -70,10 +83,15 @@ function calculateCircularPositions(
       const angleIncrement = (2 * Math.PI) / totalStitchesInRound
       const currentStitchAngle = stitchIndex * angleIncrement
       
-      const x = centerX + Math.cos(currentStitchAngle) * currentRadius - 16
-      const y = centerY + Math.sin(currentStitchAngle) * currentRadius - 16
-      // Rotate stitches so bottoms face toward center (angle + 90 degrees)
-      const rotation = (currentStitchAngle * 180 / Math.PI) + 90
+      // Add slight rotation offset for better visual distribution
+      const rotationOffset = roundIndex * (Math.PI / 16) // Small offset per round
+      const adjustedAngle = currentStitchAngle + rotationOffset
+      
+      const x = centerX + Math.cos(adjustedAngle) * currentRadius - 16
+      const y = centerY + Math.sin(adjustedAngle) * currentRadius - 16
+      
+      // Rotate stitches so they point toward center
+      const rotation = (adjustedAngle * 180 / Math.PI) + 90
 
       positions.push({
         x,
@@ -83,8 +101,8 @@ function calculateCircularPositions(
       })
     })
     
-    // Move to next radius for next round
-    currentRadius += 50
+    // Ensure minimum radius increment for next round
+    currentRadius += Math.max(35, totalStitchesInRound * 3)
   })
   
   return positions
