@@ -179,13 +179,11 @@ end`
     description: "Simple magic ring with basic stitches for testing centering",
     code: `// Magic Ring Test
 magic_ring {
-  ch(3)
   dc(11)
   join
 }
 
 round {
-  ch(3)
   repeat(12) {
     dc(2)
   }
