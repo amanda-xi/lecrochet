@@ -25,7 +25,7 @@ export default function CodeEditorPanel({
       <CardHeader className="pb-4">
         <CardTitle className="text-xl font-extralight flex items-center gap-2">
           <FileCode className="h-5 w-5" />
-          CrochetScript Code
+          CrocheTeX Code
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 p-0">

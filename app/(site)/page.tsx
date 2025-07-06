@@ -211,7 +211,7 @@ export default function CrochetPlatform() {
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-gray-600">
-                  Write patterns using intuitive CrochetScript syntax. No complex formatting, 
+                  Write patterns using intuitive CrocheTeX syntax. No complex formatting, 
                   just clean, readable code that describes your stitches.
                 </p>
               </CardContent>

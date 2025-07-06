@@ -239,7 +239,7 @@ export default function EnhancedCrochetDiagram({
               fill="#9ca3af"
               className="select-none"
             >
-              Write CrochetScript to see your pattern
+              Write CrocheTeX to see your pattern
             </text>
           )}
 

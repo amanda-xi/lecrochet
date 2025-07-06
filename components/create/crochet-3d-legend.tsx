@@ -108,7 +108,7 @@ export default function CrochetLegend({ patternSequence, className = "" }: Croch
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-2">
-          <Info className="h-4 w-4 text-blue-600" />
+          <Info className="h-4 w-4 text-gray-600" />
           <span className="font-medium text-sm">Stitch Legend</span>
           <span className="text-xs text-gray-500">({totalStitches} total)</span>
         </div>

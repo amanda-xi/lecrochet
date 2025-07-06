@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useTheme } from "next-themes"
-import { compileEnhancedCrochetScript, type CompilerResult } from "@/lib/enhanced-crochet-compiler"
+import { compileEnhancedCrocheTeX, type CompilerResult } from "@/lib/enhanced-crochet-compiler"
 import { EXAMPLE_PATTERNS } from "@/lib/pattern-examples"
 import CreateHeader from "@/components/create/create-header"
 import ExamplePatternsSelector from "@/components/create/example-patterns-selector"
@@ -26,7 +26,7 @@ export default function CreatePage() {
     try {
       // Simulate compilation delay for better UX
       await new Promise(resolve => setTimeout(resolve, 100))
-      const result = compileEnhancedCrochetScript(crochetCode)
+      const result = compileEnhancedCrocheTeX(crochetCode)
       setCompilerResult(result)
     } catch (error) {
       console.error("Compilation error:", error)
@@ -83,7 +83,7 @@ export default function CreatePage() {
         <div className="mb-6">
           <h1 className="text-3xl md:text-4xl font-extralight tracking-tight leading-tight mb-2">Create Pattern</h1>
           <p className="text-base text-gray-600 font-light leading-relaxed">
-            Write your crochet pattern using CrochetScript and see it render in real-time.
+            Write your crochet pattern using CrocheTeX and see it render in real-time.
           </p>
         </div>
 

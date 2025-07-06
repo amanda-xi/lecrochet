@@ -112,11 +112,11 @@ export default function CrochetCodeEditor({
       document.head.appendChild(style)
     }
 
-    // Register CrochetScript language
-    monaco.languages.register({ id: "crochetscript" })
+    // Register CrocheTeX language
+    monaco.languages.register({ id: "CrocheTeX" })
 
-    // Define CrochetScript syntax highlighting
-    monaco.languages.setMonarchTokensProvider("crochetscript", {
+    // Define CrocheTeX syntax highlighting
+    monaco.languages.setMonarchTokensProvider("CrocheTeX", {
       tokenizer: {
         root: [
           // Comments
@@ -158,7 +158,7 @@ export default function CrochetCodeEditor({
       },
     })
 
-    // Define CrochetScript theme
+    // Define CrocheTeX theme
     monaco.editor.defineTheme("crochet-light", {
       base: "vs",
       inherit: true,
@@ -202,7 +202,7 @@ export default function CrochetCodeEditor({
     })
 
     // Set up autocomplete
-    monaco.languages.registerCompletionItemProvider("crochetscript", {
+    monaco.languages.registerCompletionItemProvider("CrocheTeX", {
       provideCompletionItems: (model, position) => {
         const word = model.getWordUntilPosition(position)
         const range = {
@@ -329,7 +329,7 @@ export default function CrochetCodeEditor({
     <div className="w-full h-full border border-gray-200 rounded-lg overflow-hidden">
       <Editor
         height="100%"
-        language="crochetscript"
+        language="CrocheTeX"
         value={value}
         onMount={handleEditorDidMount}
         options={{

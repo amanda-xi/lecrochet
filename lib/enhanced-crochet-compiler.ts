@@ -1,4 +1,4 @@
-// Enhanced CrochetScript Compiler
+// Enhanced CrocheTeX Compiler
 // Handles complex patterns including granny squares, circular patterns, and advanced stitches
 
 // Safety limits to prevent system crashes
@@ -28,7 +28,7 @@ export interface CompilerResult {
   }
 }
 
-export class EnhancedCrochetScriptCompiler {
+export class EnhancedCrocheTeXCompiler {
   private errors: CompilerError[] = []
   private patternSequence: string[] = []
   private patternType: "linear" | "circular" | "granny-square" = "linear"
@@ -588,9 +588,9 @@ export class EnhancedCrochetScriptCompiler {
 }
 
 // Export a singleton instance for easy use
-export const enhancedCrochetCompiler = new EnhancedCrochetScriptCompiler()
+export const enhancedCrochetCompiler = new EnhancedCrocheTeXCompiler()
 
 // Helper function for quick compilation
-export function compileEnhancedCrochetScript(code: string): CompilerResult {
+export function compileEnhancedCrocheTeX(code: string): CompilerResult {
   return enhancedCrochetCompiler.compile(code)
 }
