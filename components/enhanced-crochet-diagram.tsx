@@ -25,11 +25,6 @@ export default function EnhancedCrochetDiagram({
   const [stitchPositions, setStitchPositions] = useState<StitchPosition[]>([])
   const [svgsLoaded, setSvgsLoaded] = useState(false)
   
-  // Find the index of the first turn command
-  const firstTurnIndex = patternSequence.findIndex(stitch => 
-    stitch.toLowerCase().includes('turn')
-  )
-  
   const {
     transform,
     isDragging,

@@ -8,6 +8,16 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { useState } from "react"
 import type { CompilerResult } from "@/lib/enhanced-crochet-compiler"
+import { useSession, signIn, signOut } from "next-auth/react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface CreateHeaderProps {
   isCompiling: boolean
@@ -177,13 +187,7 @@ export default function CreateHeader({
 
             <Separator orientation="vertical" className="h-6" />
 
-            <Button variant="ghost" size="sm" className="text-sm font-light">
-              Sign In
-            </Button>
-
-            <Button size="sm" className="bg-black text-white hover:bg-gray-800 text-sm font-light px-6">
-              Sign Up
-            </Button>
+            <AuthButtons />
           </div>
 
           {/* Mobile/Tablet actions */}
@@ -242,19 +246,125 @@ export default function CreateHeader({
 
               <Separator className="my-3" />
 
-              <div className="grid grid-cols-2 gap-2">
-                <Button variant="ghost" size="sm" className="text-sm font-light justify-start">
-                  Sign In
-                </Button>
-
-                <Button size="sm" className="bg-black text-white hover:bg-gray-800 text-sm font-light justify-start">
-                  Sign Up
-                </Button>
-              </div>
+              <MobileAuthButtons onClose={() => setMobileMenuOpen(false)} />
             </div>
           </div>
         )}
       </div>
     </header>
+  )
+}
+
+function AuthButtons() {
+  const { data: session } = useSession()
+
+  if (session && session.user) {
+    return (
+      <div className="flex items-center space-x-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={session.user.image!} alt={session.user.name ?? ""} />
+                <AvatarFallback>{session.user.name?.[0]}</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">{session.user.name}</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  {session.user.email}
+                </p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link href="/profile">Profile</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => signOut()}>
+              Sign Out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex items-center space-x-4">
+      <Button 
+        onClick={() => signIn("google", { callbackUrl: "/create" })} 
+        variant="ghost" 
+        size="sm"
+        className="text-sm font-light"
+      >
+        Sign In
+      </Button>
+      
+      <Button 
+        onClick={() => signIn("google", { callbackUrl: "/create" })} 
+        size="sm" 
+        className="bg-black text-white hover:bg-gray-800 text-sm font-light px-6"
+      >
+        Sign Up
+      </Button>
+    </div>
+  )
+}
+
+function MobileAuthButtons({ onClose }: { onClose: () => void }) {
+  const { data: session } = useSession()
+
+  if (session && session.user) {
+    return (
+      <div className="space-y-4">
+        {/* User Info */}
+        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-sm">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={session.user.image!} alt={session.user.name ?? ""} />
+            <AvatarFallback>{session.user.name?.[0]}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">{session.user.name}</p>
+            <p className="text-xs text-gray-500 truncate">{session.user.email}</p>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="space-y-3">
+          <Link href="/profile" onClick={onClose}>
+            <Button variant="outline" className="w-full text-sm font-light py-3 transition-all duration-200 ease-in-out hover:scale-105 rounded-sm">
+              Profile
+            </Button>
+          </Link>
+          <Button 
+            onClick={() => {
+              signOut()
+              onClose()
+            }}
+            variant="ghost" 
+            className="w-full text-sm font-light py-3 text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200 ease-in-out"
+          >
+            Sign Out
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      <Button 
+        onClick={() => {
+          signIn("google", { callbackUrl: "/create" })
+          onClose()
+        }}
+        className="w-full bg-black text-white hover:bg-gray-800 text-sm font-light py-3 transition-all duration-200 ease-in-out hover:scale-105"
+      >
+        Sign In with Google
+      </Button>
+    </div>
   )
 }

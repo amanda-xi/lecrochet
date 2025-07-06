@@ -133,7 +133,7 @@ export default function PatternConverterModal({
                     transition={{ delay: 0.3, duration: 0.3 }}
                     className="text-sm text-gray-600 mb-3"
                   >
-                    Paste a traditional crochet pattern and I'll convert it to CrocheTeX format for you.
+                    Paste a traditional crochet pattern and I&apos;ll convert it to CrocheTeX format for you.
                   </motion.p>
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
