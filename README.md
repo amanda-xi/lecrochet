@@ -1,15 +1,15 @@
 # Le Crochet
 
-A modern crochet pattern creation platform that lets you write patterns using CrochetScript and visualize them in real-time with 2D diagrams and 3D models.
+A modern crochet pattern creation platform that lets you write patterns using CrocheTeX and visualize them in real-time with 2D diagrams and 3D models.
 
 ## 🧶 Overview
 
-Le Crochet transforms crochet pattern creation into a coding experience. Write patterns using our CrochetScript language on the left side of the screen and watch your diagrams render in real-time on the right, similar to Overleaf's LaTeX editor. The platform supports both traditional 2D symbol charts and innovative 3D visualizations.
+Le Crochet transforms crochet pattern creation into a coding experience. Write patterns using our CrocheTeX language on the left side of the screen and watch your diagrams render in real-time on the right, similar to Overleaf's LaTeX editor. The platform supports both traditional 2D symbol charts and innovative 3D visualizations.
 
 ## ✨ Current Features
 
-### CrochetScript Language & Compiler
-- **Custom Language**: CrochetScript syntax specifically designed for crochet patterns
+### CrocheTeX Language & Compiler
+- **Custom Language**: CrocheTeX syntax specifically designed for crochet patterns
 - **Real-time Compilation**: See your pattern update as you type with live error checking
 - **Pattern Types**: Support for linear, circular, and granny square patterns
 - **Advanced Stitches**: Comprehensive stitch library including post stitches, clusters, and shells
@@ -17,7 +17,7 @@ Le Crochet transforms crochet pattern creation into a coding experience. Write p
 
 ### Interactive Code Editor
 - **Monaco Editor**: Professional code editing experience with syntax highlighting
-- **Auto-completion**: Smart suggestions for stitches and CrochetScript syntax
+- **Auto-completion**: Smart suggestions for stitches and CrocheTeX syntax
 - **Error Highlighting**: Real-time error and warning indicators
 - **Pattern Examples**: Pre-built examples to get started quickly
 
@@ -29,7 +29,7 @@ Le Crochet transforms crochet pattern creation into a coding experience. Write p
 
 ### Pattern Management
 - **Example Patterns**: Built-in library including basic scarf, granny square, circular doily
-- **Download Patterns**: Export your CrochetScript code as text files
+- **Download Patterns**: Export your CrocheTeX code as text files
 - **Pattern Validation**: Comprehensive error checking and suggestions
 
 ### User Experience
@@ -95,7 +95,7 @@ NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your_nextauth_secret"
 ```
 
-## 💡 CrochetScript Language
+## 💡 CrocheTeX Language
 
 ### Basic Syntax
 ```crochet
@@ -178,7 +178,7 @@ le-crochet/
 │   ├── ui/                        # Reusable UI components
 │   └── site/                      # Site-wide components
 ├── lib/
-│   ├── enhanced-crochet-compiler.ts  # CrochetScript compiler
+│   ├── enhanced-crochet-compiler.ts  # CrocheTeX compiler
 │   ├── 3d-pattern-processor.ts      # 3D geometry processing
 │   ├── pattern-examples.ts          # Example patterns
 │   └── stitch-mappings.ts           # Stitch-to-SVG mappings

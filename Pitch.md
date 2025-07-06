@@ -14,12 +14,12 @@ This is the reality for millions of crocheters worldwide - a $4.5 billion indust
 ### **Our Solution (25 seconds)**
 "Meet le Crochet - the first platform that lets you code crochet patterns and see them come to life instantly. Think Overleaf for crochet, or GitHub for crafters.
 
-We've created CrochetScript, a programming language designed specifically for crochet patterns. You write your pattern on the left, and watch it render in real-time on the right - both as traditional 2D diagrams and revolutionary 3D models."
+We've created CrocheTeX, a programming language designed specifically for crochet patterns. You write your pattern on the left, and watch it render in real-time on the right - both as traditional 2D diagrams and revolutionary 3D models."
 
 ### **Live Demo (45 seconds)**
 "Let me show you how it works. [Demo the platform]
 
-Here's a simple granny square pattern in CrochetScript:
+Here's a simple granny square pattern in CrocheTeX:
 ```
 magic_ring {
   ch(3), dc(2), ch(2)
@@ -45,7 +45,7 @@ This isn't just visualization - it's a complete development environment for croc
 But here's the kicker: there's no dominant platform for pattern creation and sharing. Pinterest has patterns, but no creation tools. Ravelry has community, but outdated interfaces. We're building the missing piece - the creative hub."
 
 ### **Technical Innovation (35 seconds)**
-"Our secret sauce isn't just the visual interface - it's the compiler architecture. CrochetScript understands crochet logic: it knows when increases create curves, how post stitches create texture, and can validate pattern mathematically before you start crocheting.
+"Our secret sauce isn't just the visual interface - it's the compiler architecture. CrocheTeX understands crochet logic: it knows when increases create curves, how post stitches create texture, and can validate pattern mathematically before you start crocheting.
 
 We're using Three.js for 3D rendering, Monaco Editor for the coding experience, and Next.js for performance. But the real innovation is our stitch-to-geometry engine that translates crochet instructions into accurate 3D models - something nobody else has solved."
 
@@ -66,7 +66,7 @@ The path to scale is clear: capture creators first, then build the community aro
 - First-ever crochet programming language
 
 ## **DEMO POINTS:**
-1. Show CrochetScript syntax
+1. Show CrocheTeX syntax
 2. Real-time compilation
 3. 2D to 3D view switch
 4. Error detection and suggestions
