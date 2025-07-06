@@ -30,11 +30,29 @@ function calculateCircularPositions(
   const positions: StitchPosition[] = []
   let currentRadius = 60
   
-  // First, group pattern into rounds based on join commands
+  // Check if pattern starts with magic ring
+  let hasMagicRing = false
+  let sequenceWithoutMagicRing = patternSequence
+  
+  if (patternSequence.length > 0 && (patternSequence[0] === 'magic-ring' || patternSequence[0] === 'ring')) {
+    hasMagicRing = true
+    sequenceWithoutMagicRing = patternSequence.slice(1) // Remove magic ring from sequence
+    
+    // Position magic ring at center
+    const magicRingInfo = STITCH_SVG_MAP[patternSequence[0]] || STITCH_SVG_MAP['unknown']
+    positions.push({
+      x: centerX - magicRingInfo.width / 2,
+      y: centerY - magicRingInfo.height / 2,
+      rotation: 0,
+      stitchType: patternSequence[0]
+    })
+  }
+  
+  // Group remaining pattern into rounds based on join commands
   const rounds: string[][] = []
   let currentRound: string[] = []
   
-  patternSequence.forEach((stitchType) => {
+  sequenceWithoutMagicRing.forEach((stitchType) => {
     if (stitchType === 'join') {
       if (currentRound.length > 0) {
         rounds.push([...currentRound])
@@ -68,17 +86,10 @@ function calculateCircularPositions(
     }
     
     round.forEach((stitchType, stitchIndex) => {
-      // Special handling for magic ring start
-      if (stitchType === 'magic-ring' || stitchType === 'ring') {
-        positions.push({
-          x: centerX - 16, // Center the magic ring properly
-          y: centerY - 16,
-          rotation: 0,
-          stitchType
-        })
-        return
-      }
-
+      const stitchInfo = STITCH_SVG_MAP[stitchType] || STITCH_SVG_MAP['unknown']
+      const halfWidth = stitchInfo.width / 2
+      const halfHeight = stitchInfo.height / 2
+      
       // Calculate position on circle
       const angleIncrement = (2 * Math.PI) / totalStitchesInRound
       const currentStitchAngle = stitchIndex * angleIncrement
@@ -87,8 +98,8 @@ function calculateCircularPositions(
       const rotationOffset = roundIndex * (Math.PI / 16) // Small offset per round
       const adjustedAngle = currentStitchAngle + rotationOffset
       
-      const x = centerX + Math.cos(adjustedAngle) * currentRadius - 16
-      const y = centerY + Math.sin(adjustedAngle) * currentRadius - 16
+      const x = centerX + Math.cos(adjustedAngle) * currentRadius - halfWidth
+      const y = centerY + Math.sin(adjustedAngle) * currentRadius - halfHeight
       
       // Rotate stitches so they point toward center
       const rotation = (adjustedAngle * 180 / Math.PI) + 90

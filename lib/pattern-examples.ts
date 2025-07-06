@@ -173,5 +173,26 @@ repeat(5) {
 turn
 
 end`
+  },
+
+  "magic-ring-test": {
+    name: "Magic Ring Test",
+    description: "Simple magic ring with basic stitches for testing centering",
+    code: `// Magic Ring Test
+magic_ring {
+  ch(3)
+  dc(11)
+  join
+}
+
+round {
+  ch(3)
+  repeat(12) {
+    dc(2)
+  }
+  join
+}
+
+end`
   }
 } 

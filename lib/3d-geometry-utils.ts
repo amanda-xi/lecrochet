@@ -169,13 +169,34 @@ function calculateCircularPositionWithRounds(
   patternSequence: string[],
   targetIndex: number
 ): { x: number; y: number; z: number } {
-  // Parse pattern into rounds based on join commands
+  // Check if pattern starts with magic ring
+  let hasMagicRing = false
+  let sequenceWithoutMagicRing = patternSequence
+  
+  if (patternSequence.length > 0 && (patternSequence[0] === 'magic-ring' || patternSequence[0] === 'ring')) {
+    hasMagicRing = true
+    sequenceWithoutMagicRing = patternSequence.slice(1) // Remove magic ring from sequence
+    
+    // If target is the magic ring (index 0), return center position
+    if (targetIndex === 0) {
+      return {
+        x: 0,
+        y: 0,
+        z: getStitchHeight(patternSequence[0]) * 0.5
+      }
+    }
+    
+    // Adjust target index for remaining sequence
+    targetIndex = targetIndex - 1
+  }
+  
+  // Parse remaining pattern into rounds based on join commands
   const rounds: string[][] = []
   let currentRound: string[] = []
   
   // Group pattern into rounds
-  for (let i = 0; i < patternSequence.length; i++) {
-    const stitchType = patternSequence[i]
+  for (let i = 0; i < sequenceWithoutMagicRing.length; i++) {
+    const stitchType = sequenceWithoutMagicRing[i]
     
     if (stitchType === 'join') {
       if (currentRound.length > 0) {
@@ -213,15 +234,6 @@ function calculateCircularPositionWithRounds(
   if (targetRound < rounds.length) {
     const round = rounds[targetRound]
     const stitchType = round[positionInRound]
-    
-    // Special handling for magic ring (center)
-    if (stitchType === 'magic-ring' || stitchType === 'ring') {
-      return {
-        x: 0,
-        y: 0,
-        z: getStitchHeight(stitchType) * 0.5
-      }
-    }
     
     // Calculate position on circle for this round
     const baseRadius = 40

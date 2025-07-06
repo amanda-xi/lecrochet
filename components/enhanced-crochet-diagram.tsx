@@ -181,18 +181,46 @@ export default function EnhancedCrochetDiagram({
           {/* Render connecting lines for circular patterns */}
           {stitchPositions.length > 1 && patternType === "circular" && (
             <g className="connections">
-              {stitchPositions.slice(1).map((position, index) => (
-                <line
-                  key={`connection-${index}`}
-                  x1={centerX}
-                  y1={centerY}
-                  x2={position.x + 16}
-                  y2={position.y + 16}
-                  stroke="#cbd5e1"
-                  strokeWidth="1"
-                  opacity="0.4"
-                />
-              ))}
+              {stitchPositions.slice(1).map((position, index) => {
+                const stitchInfo = STITCH_SVG_MAP[position.stitchType] || STITCH_SVG_MAP['unknown']
+                const halfWidth = stitchInfo.width / 2
+                const halfHeight = stitchInfo.height / 2
+                
+                // Find the magic ring position (should be first stitch if present)
+                const magicRingPosition = stitchPositions.find(p => p.stitchType === 'magic-ring' || p.stitchType === 'ring')
+                if (magicRingPosition) {
+                  const magicRingInfo = STITCH_SVG_MAP[magicRingPosition.stitchType] || STITCH_SVG_MAP['unknown']
+                  const magicRingHalfWidth = magicRingInfo.width / 2
+                  const magicRingHalfHeight = magicRingInfo.height / 2
+                  
+                  return (
+                    <line
+                      key={`connection-${index}`}
+                      x1={magicRingPosition.x + magicRingHalfWidth}
+                      y1={magicRingPosition.y + magicRingHalfHeight}
+                      x2={position.x + halfWidth}
+                      y2={position.y + halfHeight}
+                      stroke="#cbd5e1"
+                      strokeWidth="1"
+                      opacity="0.4"
+                    />
+                  )
+                } else {
+                  // Fallback to center point if no magic ring
+                  return (
+                    <line
+                      key={`connection-${index}`}
+                      x1={centerX}
+                      y1={centerY}
+                      x2={position.x + halfWidth}
+                      y2={position.y + halfHeight}
+                      stroke="#cbd5e1"
+                      strokeWidth="1"
+                      opacity="0.4"
+                    />
+                  )
+                }
+              })}
             </g>
           )}
 
@@ -203,14 +231,17 @@ export default function EnhancedCrochetDiagram({
             
             if (!svgContent && svgsLoaded) {
               // Fallback rendering when SVG not found
+              const halfWidth = stitchInfo.width / 2
+              const halfHeight = stitchInfo.height / 2
+              
               return (
                 <g
                   key={`stitch-fallback-${index}`}
-                  transform={`translate(${position.x}, ${position.y}) rotate(${position.rotation}, 16, 16)`}
+                  transform={`translate(${position.x}, ${position.y}) rotate(${position.rotation}, ${halfWidth}, ${halfHeight})`}
                 >
                   <circle
-                    cx={16}
-                    cy={16}
+                    cx={halfWidth}
+                    cy={halfHeight}
                     r="8"
                     fill="#e5e7eb"
                     stroke="#9ca3af"
