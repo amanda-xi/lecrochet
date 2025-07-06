@@ -124,13 +124,10 @@ export default function DocsPage() {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-medium mb-2">Example: Basic Foundation Chain</h4>
                   <code className="text-sm">
-                    foundation_chain &#123;<br/>
-                    &nbsp;&nbsp;ch(20)<br/>
-                    &#125;<br/><br/>
-                    row &#123;<br/>
-                    &nbsp;&nbsp;sc(19)<br/>
-                    &nbsp;&nbsp;turn<br/>
-                    &#125;
+                    ch(20)<br/>
+                    turn<br/><br/>
+                    sc(19)<br/>
+                    turn
                   </code>
                 </div>
               </div>
@@ -191,21 +188,16 @@ export default function DocsPage() {
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <code className="text-sm">
                       {`// Simple scarf pattern`}<br/>
-                      foundation_chain &#123;<br/>
-                      &nbsp;&nbsp;ch(31)<br/>
-                      &#125;<br/><br/>
+                      ch(31)<br/>
+                      turn<br/><br/>
                       
-                      row &#123;<br/>
-                      &nbsp;&nbsp;sc(30)<br/>
-                      &nbsp;&nbsp;turn<br/>
-                      &#125;<br/><br/>
+                      sc(30)<br/>
+                      turn<br/><br/>
                       
                       repeat(50) &#123;<br/>
-                      &nbsp;&nbsp;row &#123;<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;ch(1)<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;sc(30)<br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;turn<br/>
-                      &nbsp;&nbsp;&#125;<br/>
+                      &nbsp;&nbsp;ch(1)<br/>
+                      &nbsp;&nbsp;sc(30)<br/>
+                      &nbsp;&nbsp;turn<br/>
                       &#125;<br/><br/>
                       
                       end
@@ -485,15 +477,12 @@ export default function DocsPage() {
               <CardContent>
                 <div className="bg-gray-50 p-4 rounded-lg text-sm">
                   <code>
-                    foundation_chain &#123;<br/>
-                    &nbsp;&nbsp;ch(31)<br/>
-                    &#125;<br/><br/>
+                    ch(31)<br/>
+                    turn<br/><br/>
                     
                     repeat(30) &#123;<br/>
-                    &nbsp;&nbsp;row &#123;<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;sc(30)<br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;turn<br/>
-                    &nbsp;&nbsp;&#125;<br/>
+                    &nbsp;&nbsp;sc(30)<br/>
+                    &nbsp;&nbsp;turn<br/>
                     &#125;<br/><br/>
                     
                     end
