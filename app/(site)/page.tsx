@@ -7,11 +7,8 @@ import { signIn } from "next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Code, Eye, Zap } from "lucide-react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
 
 export default function CrochetPlatform() {
-  const [showGif, setShowGif] = useState(true);
-
   // Animation variants
   const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 20 },
@@ -42,34 +39,21 @@ export default function CrochetPlatform() {
     }
   }
 
-  useEffect(() => {
-    // Set timeout based on your GIF duration (e.g., 3 seconds)
-    const timer = setTimeout(() => {
-      setShowGif(false);
-    }, 3000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Hero Section */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="relative w-full h-full z-0">
-          {showGif && (
-            <Image
-              src="/yarn.gif"
-              alt="Yarn animation"
-              fill
-              className="object-contain"
-              priority
-              unoptimized
-            />
-          )}
+          <video
+            src="/yarn.mov"
+            autoPlay
+            muted
+            playsInline
+className="w-full h-full object-cover"
+          />
         </div>
       </div>
       <section className="py-32 md:py-46 overflow-hidden relative">
-        {/* Yarn GIF Overlay */}
 
         {/* Content */}
         <div className="container mx-auto px-6 relative z-10">
