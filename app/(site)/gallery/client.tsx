@@ -5,6 +5,54 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Download, Eye, Heart, Star } from "lucide-react";
 import Image from "next/image";
 
+const galleryItems = [
+    {
+        id: 1,
+        image: "/gallery/01.png",
+        title: "Vintage Doily Pattern",
+        description: "Elegant vintage-inspired doily with intricate lacework details.",
+        likes: 24,
+        rating: 4.8,
+        price: "$4.99"
+    },
+    {
+        id: 2,
+        image: "/gallery/02.png",
+        title: "Granny Square Blanket",
+        description: "Classic granny square design perfect for beginners and experts alike.",
+        likes: 32,
+        rating: 4.7,
+        price: "$6.99"
+    },
+    {
+        id: 3,
+        image: "/gallery/03.png",
+        title: "Flower Motif Collection",
+        description: "Beautiful floral motifs that can be combined for stunning projects.",
+        likes: 18,
+        rating: 4.9,
+        price: "$3.99"
+    },
+    {
+        id: 4,
+        image: "/gallery/04.png",
+        title: "Mandala Circle Pattern",
+        description: "Intricate mandala design with detailed color work and texture.",
+        likes: 41,
+        rating: 4.6,
+        price: "$7.99"
+    },
+    {
+        id: 5,
+        image: "/gallery/05.png",
+        title: "Lace Edging Design",
+        description: "Delicate lace edging perfect for finishing blankets and garments.",
+        likes: 27,
+        rating: 4.8,
+        price: "$2.99"
+    }
+];
+
 export default function GalleryPage() {
     return (
         <div className="min-h-screen bg-white text-black">
@@ -17,13 +65,13 @@ export default function GalleryPage() {
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {[1, 2, 3, 4, 5, 6].map((item) => (
-                            <Card key={item} className="border-gray-200 hover:shadow-sm transition-shadow group">
+                        {galleryItems.map((item) => (
+                            <Card key={item.id} className="border-gray-200 hover:shadow-sm transition-shadow group">
                                 <CardContent className="p-0">
                                     <div className="aspect-square bg-gray-100 border-b border-gray-200 flex items-center justify-center">
                                         <Image
-                                            src="/placeholder.svg"
-                                            alt="Pattern preview"
+                                            src={item.image}
+                                            alt={item.title}
                                             width={300}
                                             height={300}
                                             className="w-full h-full object-cover"
@@ -31,19 +79,19 @@ export default function GalleryPage() {
                                     </div>
                                     <div className="p-6">
                                         <div className="flex items-center justify-between mb-2">
-                                            <h3 className="font-light">Vintage Doily Pattern</h3>
+                                            <h3 className="font-light">{item.title}</h3>
                                             <div className="flex items-center space-x-2">
                                                 <Heart className="w-4 h-4 text-gray-400" />
-                                                <span className="text-xs text-gray-500">24</span>
+                                                <span className="text-xs text-gray-500">{item.likes}</span>
                                             </div>
                                         </div>
                                         <p className="text-sm text-gray-600 font-light mb-4">
-                                            Elegant vintage-inspired doily with intricate lacework details.
+                                            {item.description}
                                         </p>
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-2">
                                                 <Star className="w-4 h-4 text-black fill-current" />
-                                                <span className="text-sm font-light">4.8</span>
+                                                <span className="text-sm font-light">{item.rating}</span>
                                             </div>
                                             <div className="flex items-center space-x-2">
                                                 <Button variant="ghost" size="sm" className="text-xs font-light">
@@ -52,7 +100,7 @@ export default function GalleryPage() {
                                                 </Button>
                                                 <Button variant="ghost" size="sm" className="text-xs font-light">
                                                     <Download className="w-3 h-3 mr-1" />
-                                                    $4.99
+                                                    {item.price}
                                                 </Button>
                                             </div>
                                         </div>
