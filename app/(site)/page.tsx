@@ -303,86 +303,99 @@ export default function CrochetPlatform() {
         transition={{ duration: 0.8 }}
         viewport={{ once: true, margin: "-100px" }}
       >
-        <div className="container mx-auto px-6 text-center">
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
+       <div className="relative">
+  {/* SVG Background */}
+  <img
+  src="/yarn.svg"
+  alt="Yarn"
+  aria-hidden="true"
+  className="absolute left-30 top-0 h-full w-auto"
+  draggable={false}
+/>
+
+  {/* Content */}
+  <div className="container mx-auto px-6 text-center relative z-10">
+    <motion.div
+      variants={staggerContainer}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+    >
+      <motion.h2
+        className="text-3xl md:text-4xl font-extralight mb-6"
+        variants={fadeInUp}
+      >
+        Ready to Transform Your <br />
+        <motion.span
+          className="inline-block"
+          animate={{
+            backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+          }}
+          style={{
+            background: "linear-gradient(90deg, #000, #666, #000)",
+            backgroundSize: "200% 100%",
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent"
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        >
+          Crochet Experience?
+        </motion.span>
+      </motion.h2>
+
+      <motion.p
+        className="text-gray-600 font-light mb-8 max-w-2xl mx-auto"
+        variants={fadeInUp}
+      >
+        Join thousands of creators who are already using le crochet to bring their visions to life.
+      </motion.p>
+
+      <motion.div
+        className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
+        variants={fadeInUp}
+      >
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
+          <Button
+            onClick={() => signIn("google", { callbackUrl: "/create" })}
+            className="bg-white text-black border border-gray-300 hover:bg-gray-800 hover:text-white px-8 text-sm font-light whitespace-nowrap relative overflow-hidden group"
           >
-            <motion.h2 
-              className="text-3xl md:text-4xl font-extralight mb-6"
-              variants={fadeInUp}
-            >
-              Ready to Transform Your <br />
-              <motion.span
-                className="inline-block"
-                animate={{
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
-                }}
-                style={{
-                  background: "linear-gradient(90deg, #000, #666, #000)",
-                  backgroundSize: "200% 100%",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent"
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                Crochet Experience?
-              </motion.span>
-            </motion.h2>
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+              initial={{ x: "-100%" }}
+              whileHover={{ x: "100%" }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+            />
+            <span className="relative z-10">Get Started Free</span>
+          </Button>
+        </motion.div>
+      </motion.div>
 
-            <motion.p 
-              className="text-gray-600 font-light mb-8 max-w-2xl mx-auto"
-              variants={fadeInUp}
-            >
-              Join thousands of creators who are already using le crochet to bring their visions to life.
-            </motion.p>
-
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
-              variants={fadeInUp}
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <Button 
-                 onClick={() => signIn("google", { callbackUrl: "/create" })} 
-                className="bg-white text-black border border-gray-300 hover:bg-gray-800 hover:text-white px-8 text-sm font-light whitespace-nowrap relative overflow-hidden group">
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "100%" }}
-                    transition={{ duration: 0.6, ease: "easeInOut" }}
-                  />
-                  <span className="relative z-10">Get Started Free</span>
-                </Button>
-              </motion.div>
-            </motion.div>
-
-            <motion.p 
-              className="text-xs text-gray-500 font-light mt-4"
-              variants={fadeInUp}
-              animate={{
-                opacity: [0.7, 1, 0.7]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              No credit card required. Start creating in minutes.
-            </motion.p>
-          </motion.div>
-        </div>
+      <motion.p
+        className="text-xs text-gray-500 font-light mt-4"
+        variants={fadeInUp}
+        animate={{
+          opacity: [0.7, 1, 0.7]
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      >
+        No credit card required. Start creating in minutes.
+      </motion.p>
+    </motion.div>
+  </div>
+</div>
       </motion.section>
     </div>
   )
