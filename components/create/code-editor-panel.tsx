@@ -1,8 +1,11 @@
 "use client"
 
-import { FileCode } from "lucide-react"
+import { useState } from "react"
+import { FileCode, Bot } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import CrochetCodeEditor from "@/components/crochet-code-editor"
+import PatternConverterModal from "./pattern-converter-modal"
 import type { CompilerResult } from "@/lib/enhanced-crochet-compiler"
 
 interface CodeEditorPanelProps {
@@ -20,25 +23,51 @@ export default function CodeEditorPanel({
   theme,
   compilerResult
 }: CodeEditorPanelProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handlePatternConverted = (convertedPattern: string) => {
+    // Replace the current code with the converted pattern
+    onCodeChange(convertedPattern)
+  }
+
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-extralight flex items-center gap-2">
-          <FileCode className="h-5 w-5" />
-          CrocheTeX Code
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 p-0">
-        <div className="h-full px-6 pb-6">
-          <CrochetCodeEditor
-            value={code}
-            onChange={onCodeChange}
-            onCompile={onCompile}
-            theme={theme === "dark" ? "dark" : "light"}
-            compilerResult={compilerResult}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <>
+      <Card className="flex flex-col">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-xl font-extralight flex items-center gap-2">
+              <FileCode className="h-5 w-5" />
+              CrocheTeX Code
+            </CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Bot className="h-4 w-4" />
+              Convert Pattern
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="flex-1 p-0">
+          <div className="h-full px-6 pb-6">
+            <CrochetCodeEditor
+              value={code}
+              onChange={onCodeChange}
+              onCompile={onCompile}
+              theme={theme === "dark" ? "dark" : "light"}
+              compilerResult={compilerResult}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <PatternConverterModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onPatternConverted={handlePatternConverted}
+      />
+    </>
   )
 } 
