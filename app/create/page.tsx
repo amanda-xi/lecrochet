@@ -91,7 +91,6 @@ export default function CreatePage() {
           <ExamplePatternsSelector
             selectedExample={selectedExample}
             onExampleChange={handleExampleChange}
-            compilerResult={compilerResult}
           />
         </div>
 

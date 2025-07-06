@@ -170,11 +170,9 @@ function calculateCircularPositionWithRounds(
   targetIndex: number
 ): { x: number; y: number; z: number } {
   // Check if pattern starts with magic ring
-  let hasMagicRing = false
   let sequenceWithoutMagicRing = patternSequence
   
   if (patternSequence.length > 0 && (patternSequence[0] === 'magic-ring' || patternSequence[0] === 'ring')) {
-    hasMagicRing = true
     sequenceWithoutMagicRing = patternSequence.slice(1) // Remove magic ring from sequence
     
     // If target is the magic ring (index 0), return center position

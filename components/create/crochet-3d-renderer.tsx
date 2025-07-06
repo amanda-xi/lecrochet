@@ -18,6 +18,9 @@ interface Crochet3DRendererProps {
   patternSequence: string[]
   patternType: 'linear' | 'circular' | 'granny-square'
   className?: string
+  showVertices?: boolean
+  showEdges?: boolean
+  edgeOpacity?: number
 }
 
 // Individual vertex component
@@ -59,12 +62,14 @@ function StitchEdge({
   fromPosition, 
   toPosition, 
   color, 
-  connectionType 
+  connectionType,
+  opacity = 0.6
 }: { 
   fromPosition: [number, number, number]
   toPosition: [number, number, number]
   color: string
   connectionType: 'yarn' | 'structure' | 'join'
+  opacity?: number
 }) {
   const points = useMemo(() => {
     const from = new THREE.Vector3(...fromPosition)
@@ -97,14 +102,14 @@ function StitchEdge({
     return tubeGeometry
   }, [curve])
 
-  const opacity = connectionType === 'yarn' ? 0.8 : 0.4
+  const finalOpacity = connectionType === 'yarn' ? opacity : opacity * 0.5
 
   return (
     <mesh geometry={geometry}>
       <meshBasicMaterial 
         color={color} 
         transparent 
-        opacity={opacity}
+        opacity={finalOpacity}
       />
     </mesh>
   )
@@ -114,11 +119,17 @@ function StitchEdge({
 function CrochetScene({ 
   geometry, 
   cameraPosition, 
-  cameraTarget 
+  cameraTarget,
+  showVertices = true,
+  showEdges = true,
+  edgeOpacity = 0.6
 }: { 
   geometry: CrochetGeometry
   cameraPosition: [number, number, number]
   cameraTarget: [number, number, number]
+  showVertices?: boolean
+  showEdges?: boolean
+  edgeOpacity?: number
 }) {
   const vertexMap = useMemo(() => {
     const map = new Map()
@@ -159,17 +170,17 @@ function CrochetScene({
       <pointLight position={[-50, -50, -50]} intensity={0.4} />
       
       {/* Render vertices */}
-      {geometry.vertices.map((vertex) => (
+      {showVertices && geometry.vertices.map((vertex) => (
         <StitchVertex
           key={vertex.id}
-                     position={[vertex.x, vertex.y, vertex.z]}
-           color={getStitchColor(vertex.stitchType)}
-           size={getVertexSize(vertex.stitchType)}
+          position={[vertex.x, vertex.y, vertex.z]}
+          color={getStitchColor(vertex.stitchType)}
+          size={getVertexSize(vertex.stitchType)}
         />
       ))}
       
       {/* Render edges */}
-      {geometry.edges.map((edge, index) => {
+      {showEdges && geometry.edges.map((edge, index) => {
         const fromVertex = vertexMap.get(edge.fromVertex)
         const toVertex = vertexMap.get(edge.toVertex)
         
@@ -182,6 +193,7 @@ function CrochetScene({
             toPosition={[toVertex.x, toVertex.y, toVertex.z]}
             color={getEdgeColor(edge.connectionType)}
             connectionType={edge.connectionType}
+            opacity={edgeOpacity}
           />
         )
       })}
@@ -192,7 +204,10 @@ function CrochetScene({
 export default function Crochet3DRenderer({ 
   patternSequence, 
   patternType, 
-  className = "" 
+  className = "",
+  showVertices = true,
+  showEdges = true,
+  edgeOpacity = 0.6
 }: Crochet3DRendererProps) {
   const geometry = useMemo(() => {
     return processCrochetPattern(patternSequence, patternType, {
@@ -228,6 +243,9 @@ export default function Crochet3DRenderer({
           geometry={geometry}
           cameraPosition={cameraPosition}
           cameraTarget={cameraTarget}
+          showVertices={showVertices}
+          showEdges={showEdges}
+          edgeOpacity={edgeOpacity}
         />
       </Canvas>
       
@@ -236,6 +254,10 @@ export default function Crochet3DRenderer({
         <div className="font-medium">3D Pattern View</div>
         <div className="text-gray-600">
           {geometry.vertices.length} vertices, {geometry.edges.length} connections
+        </div>
+        <div className="text-gray-500 text-xs">
+          {showVertices ? '✓' : '✗'} Vertices {showEdges ? '✓' : '✗'} Edges
+          {showEdges && ` (${Math.round(edgeOpacity * 100)}% opacity)`}
         </div>
         <div className="text-gray-500 text-xs">
           Use mouse to rotate, zoom, and hold command to pan

@@ -31,11 +31,9 @@ function calculateCircularPositions(
   let currentRadius = 60
   
   // Check if pattern starts with magic ring
-  let hasMagicRing = false
   let sequenceWithoutMagicRing = patternSequence
   
   if (patternSequence.length > 0 && (patternSequence[0] === 'magic-ring' || patternSequence[0] === 'ring')) {
-    hasMagicRing = true
     sequenceWithoutMagicRing = patternSequence.slice(1) // Remove magic ring from sequence
     
     // Position magic ring at center

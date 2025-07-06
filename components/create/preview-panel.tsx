@@ -88,6 +88,9 @@ export default function PreviewPanel({
                 patternSequence={compilerResult?.patternSequence || []}
                 patternType={compilerResult?.patternType || "linear"}
                 className="h-full"
+                showVertices={show3DVertices}
+                showEdges={show3DEdges}
+                edgeOpacity={edgeOpacity}
               />
             )}
           </div>
