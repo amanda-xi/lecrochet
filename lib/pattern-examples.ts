@@ -167,10 +167,9 @@ turn
 
 // Row 3: Shell row  
 repeat(5) {
-  shell(5)
+  dc(5)
   ch(1)
 }
-turn
 
 end`
   },

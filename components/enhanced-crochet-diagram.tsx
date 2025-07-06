@@ -178,52 +178,6 @@ export default function EnhancedCrochetDiagram({
         {/* Main transform group */}
         <g transform={`translate(${transform.x}, ${transform.y}) scale(${transform.scale})`}>
 
-          {/* Render connecting lines for circular patterns */}
-          {stitchPositions.length > 1 && patternType === "circular" && (
-            <g className="connections">
-              {stitchPositions.slice(1).map((position, index) => {
-                const stitchInfo = STITCH_SVG_MAP[position.stitchType] || STITCH_SVG_MAP['unknown']
-                const halfWidth = stitchInfo.width / 2
-                const halfHeight = stitchInfo.height / 2
-                
-                // Find the magic ring position (should be first stitch if present)
-                const magicRingPosition = stitchPositions.find(p => p.stitchType === 'magic-ring' || p.stitchType === 'ring')
-                if (magicRingPosition) {
-                  const magicRingInfo = STITCH_SVG_MAP[magicRingPosition.stitchType] || STITCH_SVG_MAP['unknown']
-                  const magicRingHalfWidth = magicRingInfo.width / 2
-                  const magicRingHalfHeight = magicRingInfo.height / 2
-                  
-                  return (
-                    <line
-                      key={`connection-${index}`}
-                      x1={magicRingPosition.x + magicRingHalfWidth}
-                      y1={magicRingPosition.y + magicRingHalfHeight}
-                      x2={position.x + halfWidth}
-                      y2={position.y + halfHeight}
-                      stroke="#cbd5e1"
-                      strokeWidth="1"
-                      opacity="0.4"
-                    />
-                  )
-                } else {
-                  // Fallback to center point if no magic ring
-                  return (
-                    <line
-                      key={`connection-${index}`}
-                      x1={centerX}
-                      y1={centerY}
-                      x2={position.x + halfWidth}
-                      y2={position.y + halfHeight}
-                      stroke="#cbd5e1"
-                      strokeWidth="1"
-                      opacity="0.4"
-                    />
-                  )
-                }
-              })}
-            </g>
-          )}
-
           {/* Render stitches */}
           {stitchPositions.map((position, index) => {
             const stitchInfo = STITCH_SVG_MAP[position.stitchType] || STITCH_SVG_MAP['unknown']
@@ -267,21 +221,6 @@ export default function EnhancedCrochetDiagram({
                     fill: 'none'
                   }}
                 />
-                
-                {/* Add stitch number for reference */}
-                {patternType === "linear" && 
-                 index < Math.min(100, firstTurnIndex === -1 ? 100 : firstTurnIndex) && (
-                  <text
-                    x={stitchInfo.width / 2}
-                    y={-8}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fill="#6b7280"
-                    className="select-none"
-                  >
-                    {index + 1}
-                  </text>
-                )}
               </g>
             )
           })}
