@@ -120,58 +120,47 @@ function calculateLinearPositionWithTurns(
   targetIndex: number,
   baseWidth: number
 ): { x: number; y: number; z: number } {
+  const standardWidth = 25 // Use consistent width for all stitches for visual clarity
+  const rowHeight = 45 // Standard spacing between rows
+  
   let currentX = 0
   let currentY = 0
-  const currentZ = 0
-  let rowHeight = 0
-  let direction = 1 // 1 for right, -1 for left
+  let direction = 1 // 1 for left-to-right, -1 for right-to-left
   let stitchesProcessed = 0
-  let stitchesInCurrentRow = 0
   
-  // Process the sequence to find the target stitch position
+  // Process the pattern sequence up to our target stitch
   for (let i = 0; i < patternSequence.length; i++) {
     const stitchType = patternSequence[i]
     
     if (stitchType === 'turn') {
-      // Handle turn: move to next row and reverse direction - reduced row spacing
+      // Turn: move to next row and reverse direction
+      // Important: Don't change X position - stay where we were
       currentY += rowHeight
-      rowHeight = 0
       direction *= -1
-      
-      // Position at start of new row, considering direction
-      if (direction === -1) {
-        // Going right to left, start at the right edge of previous row
-        currentX = (stitchesInCurrentRow - 1) * baseWidth * 1.0
-      } else {
-        // Going left to right, start at the left edge
-        currentX = 0
-      }
-      
-      stitchesInCurrentRow = 0
+      continue
+    }
+    
+    if (stitchType === 'start' || stitchType === 'end') {
+      // Skip special commands
       continue
     }
     
     // If this is our target stitch, return its position
     if (stitchesProcessed === targetIndex) {
-      return { 
-        x: currentX, 
-        y: currentY, 
-        z: currentZ + getStitchHeight(stitchType) * 0.5
+      return {
+        x: currentX,
+        y: currentY,
+        z: getStitchHeight(stitchType) * 0.5
       }
     }
     
-    // Update position for next stitch - reduced horizontal spacing
-    const stitchWidth = getStitchWidth(stitchType)
-    const stitchHeight = getStitchHeight(stitchType)
-    
-    currentX += stitchWidth * 1.0 * direction
-    rowHeight = Math.max(rowHeight, stitchHeight)
+    // Move to the next stitch position AFTER we've checked if this is our target
+    currentX += standardWidth * direction
     stitchesProcessed++
-    stitchesInCurrentRow++
   }
   
-  // If we didn't find the target, return the last position
-  return { x: currentX, y: currentY, z: currentZ }
+  // Fallback if we didn't find the target stitch
+  return { x: currentX, y: currentY, z: 10 }
 }
 
 /**
@@ -295,37 +284,8 @@ export function getStitchHeight(stitchType: string): number {
  * Get the width of a stitch type for 3D positioning
  */
 export function getStitchWidth(stitchType: string): number {
-  const widthMap: Record<string, number> = {
-    'chain': 20,
-    'ch': 20,
-    'single-crochet': 15,
-    'sc': 15,
-    'half-double': 18,
-    'hdc': 18,
-    'double-crochet': 20,
-    'dc': 20,
-    'treble': 22,
-    'tr': 22,
-    'double-treble': 24,
-    'dtr': 24,
-    'slip-stitch': 10,
-    'sl': 10,
-    'magic-ring': 25,
-    'ring': 25,
-    'cluster': 30,
-    'shell': 40,
-    'popcorn': 25
-  }
-  
-  // Check for numbered clusters
-  const clusterMatch = stitchType.match(/(\d+)(\w+)-cluster/)
-  if (clusterMatch) {
-    const count = parseInt(clusterMatch[1])
-    const baseWidth = widthMap[clusterMatch[2]] || 15
-    return baseWidth * Math.max(1, count * 0.6)
-  }
-  
-  return widthMap[stitchType] || 15
+  // Return consistent width for all stitches for visual clarity
+  return 25
 }
 
 /**

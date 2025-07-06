@@ -47,51 +47,27 @@ function calculateYarnConnections(
   const edges: Edge3D[] = []
   
   if (patternType === 'linear') {
-    // For linear patterns, we need to handle turns properly
-    // Group vertices by rows to handle turns correctly
-    const rowGroups = groupVerticesByRow(vertices)
+    // For linear patterns with flow-based positioning, connect vertices sequentially
+    // with special handling for row connections
     
-    // Connect stitches within each row
-    rowGroups.forEach(row => {
-      for (let i = 0; i < row.length - 1; i++) {
-        const current = row[i]
-        const next = row[i + 1]
-        
-        // Skip magic ring connections as they're handled separately
-        if (current.stitchType === 'magic-ring' || next.stitchType === 'magic-ring') {
-          continue
-        }
-        
-        const distance = calculateDistance(current, next)
-        
-        if (distance <= rules.maxYarnDistance) {
-          edges.push({
-            fromVertex: current.id,
-            toVertex: next.id,
-            connectionType: 'yarn'
-          })
-        }
-      }
-    })
-    
-    // Connect between rows (end of one row to start of next)
-    for (let i = 0; i < rowGroups.length - 1; i++) {
-      const currentRow = rowGroups[i]
-      const nextRow = rowGroups[i + 1]
+    for (let i = 0; i < vertices.length - 1; i++) {
+      const current = vertices[i]
+      const next = vertices[i + 1]
       
-      if (currentRow.length > 0 && nextRow.length > 0) {
-        const endOfCurrentRow = currentRow[currentRow.length - 1]
-        const startOfNextRow = nextRow[0]
-        
-        const distance = calculateDistance(endOfCurrentRow, startOfNextRow)
-        
-        if (distance <= rules.maxYarnDistance) {
-          edges.push({
-            fromVertex: endOfCurrentRow.id,
-            toVertex: startOfNextRow.id,
-            connectionType: 'yarn'
-          })
-        }
+      // Skip magic ring connections as they're handled separately
+      if (current.stitchType === 'magic-ring' || next.stitchType === 'magic-ring') {
+        continue
+      }
+      
+      const distance = calculateDistance(current, next)
+      
+      // Connect if within reasonable distance (handles both within-row and between-row connections)
+      if (distance <= rules.maxYarnDistance * 1.5) { // Allow slightly longer connections for row turns
+        edges.push({
+          fromVertex: current.id,
+          toVertex: next.id,
+          connectionType: 'yarn'
+        })
       }
     }
   } else if (patternType === 'circular' || patternType === 'granny-square') {
@@ -179,7 +155,7 @@ function groupVerticesByRow(vertices: Vertex3D[]): Vertex3D[][] {
   const rowMap = new Map<number, Vertex3D[]>()
   
   vertices.forEach(vertex => {
-    const rowY = Math.round(vertex.y / 35) * 35 // Group by row height intervals (adjusted for better grouping)
+    const rowY = Math.round(vertex.y / 45) * 45 // Group by row height intervals (updated to match new row spacing)
     
     if (!rowMap.has(rowY)) {
       rowMap.set(rowY, [])
@@ -187,13 +163,24 @@ function groupVerticesByRow(vertices: Vertex3D[]): Vertex3D[][] {
     rowMap.get(rowY)!.push(vertex)
   })
   
-  // Sort rows by Y coordinate and sort vertices within each row by X coordinate
-  Array.from(rowMap.entries())
+  // Sort rows by Y coordinate
+  const sortedRows = Array.from(rowMap.entries())
     .sort(([aY], [bY]) => aY - bY)
-    .forEach(([, vertices]) => {
+  
+  // Sort vertices within each row considering alternating direction
+  sortedRows.forEach(([rowY, vertices], rowIndex) => {
+    const isEvenRow = rowIndex % 2 === 1
+    
+    if (isEvenRow) {
+      // Even rows (1, 3, 5...) go right to left, so sort by X descending
+      vertices.sort((a, b) => b.x - a.x)
+    } else {
+      // Odd rows (0, 2, 4...) go left to right, so sort by X ascending
       vertices.sort((a, b) => a.x - b.x)
-      rows.push(vertices)
-    })
+    }
+    
+    rows.push(vertices)
+  })
   
   return rows
 }
@@ -375,7 +362,7 @@ function groupVerticesByRound(
  */
 function getDefaultRules(): ConnectionRules {
   return {
-    maxYarnDistance: 80,
+    maxYarnDistance: 60, // Increased to accommodate consistent 25-unit spacing and row turns
     maxStructuralDistance: 50,
     enableRoundConnections: true,
     enableLayerConnections: true

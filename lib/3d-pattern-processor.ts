@@ -72,7 +72,7 @@ function generateVertices(
   
   patternSequence.forEach((stitchType) => {
     // Skip turn and join instructions as they don't create vertices
-    if (stitchType === 'turn' || stitchType === 'join') {
+    if (stitchType === 'turn' || stitchType === 'join' || stitchType === 'start' || stitchType === 'end') {
       return
     }
     
