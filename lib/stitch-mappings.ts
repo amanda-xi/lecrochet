@@ -49,6 +49,7 @@ export const STITCH_SVG_MAP: Record<string, { file: string; width: number; heigh
   'start': { file: 'start.svg', width: 24, height: 24 },
   'end': { file: 'end.svg', width: 24, height: 24 },
   'join': { file: 'normal_closing.svg', width: 24, height: 24 },
+  'picot': { file: 'ch3_picot.svg', width: 32, height: 32 },
   
   // Default fallback
   'unknown': { file: 'unknown.svg', width: 32, height: 32 },

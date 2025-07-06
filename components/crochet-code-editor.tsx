@@ -123,8 +123,11 @@ export default function CrochetCodeEditor({
           [/\/\/.*$/, "comment"],
           [/\/\*/, "comment", "@comment"],
 
-          // Keywords
-          [/\b(chain|sc|dc|hdc|tr|dtr|sl|st|repeat|row|magic_ring|join|turn|ch|with_color|pattern|function|let|if|else|for|while|import|as|extends)\b/, "keyword"],
+          // Structural keywords (blue)
+          [/\b(magic_ring|repeat|join|turn|end|round)\b/, "structural"],
+          
+          // Stitch keywords (purple)
+          [/\b(chain|sc|dc|hdc|tr|dtr|sl|st|ch|picot|with_color|pattern|fpdc|bpdc|shell|cluster)\b/, "keyword"],
 
           // Numbers
           [/\d+/, "number"],
@@ -161,6 +164,7 @@ export default function CrochetCodeEditor({
       inherit: true,
       rules: [
         { token: "keyword", foreground: "8b5cf6", fontStyle: "bold" },
+        { token: "structural", foreground: "059669", fontStyle: "bold" },
         { token: "comment", foreground: "6b7280", fontStyle: "italic" },
         { token: "string", foreground: "059669" },
         { token: "number", foreground: "dc2626" },
@@ -181,6 +185,7 @@ export default function CrochetCodeEditor({
       inherit: true,
       rules: [
         { token: "keyword", foreground: "a78bfa", fontStyle: "bold" },
+        { token: "structural", foreground: "10b981", fontStyle: "bold" },
         { token: "comment", foreground: "6b7280", fontStyle: "italic" },
         { token: "string", foreground: "10b981" },
         { token: "number", foreground: "f87171" },
@@ -257,11 +262,27 @@ export default function CrochetCodeEditor({
             range,
           },
           {
+            label: "round",
+            kind: monaco.languages.CompletionItemKind.Keyword,
+            insertText: "round {\n\t${1:stitches}\n\tjoin\n}",
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: "Create a new round",
+            range,
+          },
+          {
             label: "magic_ring",
             kind: monaco.languages.CompletionItemKind.Function,
             insertText: "magic_ring {\n\t${1:stitches}\n\tjoin\n}",
             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
             documentation: "Start with a magic ring",
+            range,
+          },
+          {
+            label: "picot",
+            kind: monaco.languages.CompletionItemKind.Function,
+            insertText: "picot",
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: "Create a picot (ch3 picot)",
             range,
           },
         ]

@@ -5,7 +5,7 @@
 const SAFETY_LIMITS = {
   MAX_SINGLE_OPERATION_STITCHES: 1000,   // Maximum stitches in one operation (e.g., chain(1000))
   MAX_TOTAL_PATTERN_STITCHES: 5000,      // Maximum total stitches in entire pattern
-  WARNING_SINGLE_OPERATION: 100,         // Warn when single operation exceeds this
+  WARNING_SINGLE_OPERATION: 500,         // Warn when single operation exceeds this
   WARNING_TOTAL_PATTERN: 1000            // Warn when pattern exceeds this
 } as const
 
@@ -40,6 +40,8 @@ export class EnhancedCrochetScriptCompiler {
     stitchCount: 0,
     techniques: [] as string[]
   }
+  private repeatWarnings = new Set<string>() // Track warnings already shown for current repeat
+  private isInsideRepeat = false // Track if we're currently processing a repeat block
 
   compile(code: string): CompilerResult {
     this.errors = []
@@ -49,6 +51,8 @@ export class EnhancedCrochetScriptCompiler {
     this.blockContent = {}
     this.blockStartLines = {}
     this.metadata = { rounds: 0, stitchCount: 0, techniques: [] }
+    this.repeatWarnings = new Set<string>()
+    this.isInsideRepeat = false
 
     try {
       // Detect pattern type from code
@@ -324,11 +328,27 @@ export class EnhancedCrochetScriptCompiler {
           this.blockContent[parentBlock].push(...expandedContent)
         } else {
           // Execute the block content the specified number of times
+          this.isInsideRepeat = true
+          this.repeatWarnings.clear() // Clear warnings for this repeat block
+          
+          // Calculate total stitches for the entire repeat block first
+          let totalRepeatStitches = 0
+          for (const statement of blockContent) {
+            // Estimate stitches for this statement
+            const estimatedStitches = this.estimateStitchCount(statement)
+            totalRepeatStitches += estimatedStitches * count
+          }
+          
+          // Check safety limits once for the entire repeat
+          this.checkRepeatSafety(totalRepeatStitches, count, startLine)
+          
           for (let i = 0; i < count; i++) {
             for (const statement of blockContent) {
               this.parseStatement(statement, startLine)
             }
           }
+          
+          this.isInsideRepeat = false
         }
         
         // Clean up
@@ -346,51 +366,58 @@ export class EnhancedCrochetScriptCompiler {
     }
 
     // Unknown statement
-    this.errors.push({
-      line: lineNumber,
-      column: 1,
-      message: `Unknown statement: ${statement}`,
-      severity: "warning"
-    })
+    const unknownWarningKey = `unknown-statement-${statement}-${lineNumber}`
+    if (!this.isInsideRepeat || !this.repeatWarnings.has(unknownWarningKey)) {
+      this.errors.push({
+        line: lineNumber,
+        column: 1,
+        message: `Unknown statement: ${statement}`,
+        severity: "warning"
+      })
+      if (this.isInsideRepeat) this.repeatWarnings.add(unknownWarningKey)
+    }
   }
 
   private addStitches(stitchType: string, count: number, lineNumber: number = 1): void {
-    // Safety check for single operation
-    if (count > SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES) {
-      this.errors.push({
-        line: lineNumber,
-        column: 1,
-        message: `Excessive stitch count (${count}). Maximum allowed per operation is ${SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES}. Operation truncated to prevent system crash.`,
-        severity: "error"
-      })
-      count = SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES
-    } else if (count > SAFETY_LIMITS.WARNING_SINGLE_OPERATION) {
-      this.errors.push({
-        line: lineNumber,
-        column: 1,
-        message: `Large stitch count (${count}). Consider breaking into smaller operations for better performance.`,
-        severity: "warning"
-      })
-    }
+    // Skip safety checks if we're inside a repeat block (already checked at repeat level)
+    if (!this.isInsideRepeat) {
+      // Safety check for single operation
+      if (count > SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES) {
+        this.errors.push({
+          line: lineNumber,
+          column: 1,
+          message: `Excessive stitch count (${count}). Maximum allowed per operation is ${SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES}. Operation truncated to prevent system crash.`,
+          severity: "error"
+        })
+        count = SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES
+      } else if (count > SAFETY_LIMITS.WARNING_SINGLE_OPERATION) {
+        this.errors.push({
+          line: lineNumber,
+          column: 1,
+          message: `Large stitch count (${count}). Consider breaking into smaller operations for better performance.`,
+          severity: "warning"
+        })
+      }
 
-    // Safety check for total pattern size
-    const newTotalSize = this.patternSequence.length + count
-    if (newTotalSize > SAFETY_LIMITS.MAX_TOTAL_PATTERN_STITCHES) {
-      const allowedCount = Math.max(0, SAFETY_LIMITS.MAX_TOTAL_PATTERN_STITCHES - this.patternSequence.length)
-      this.errors.push({
-        line: lineNumber,
-        column: 1,
-        message: `Pattern too large. Maximum total stitches is ${SAFETY_LIMITS.MAX_TOTAL_PATTERN_STITCHES}. Only adding ${allowedCount} more stitches to prevent system crash.`,
-        severity: "error"
-      })
-      count = allowedCount
-    } else if (newTotalSize > SAFETY_LIMITS.WARNING_TOTAL_PATTERN) {
-      this.errors.push({
-        line: lineNumber,
-        column: 1,
-        message: `Large pattern detected (${newTotalSize} stitches). Performance may be affected.`,
-        severity: "warning"
-      })
+      // Safety check for total pattern size
+      const newTotalSize = this.patternSequence.length + count
+      if (newTotalSize > SAFETY_LIMITS.MAX_TOTAL_PATTERN_STITCHES) {
+        const allowedCount = Math.max(0, SAFETY_LIMITS.MAX_TOTAL_PATTERN_STITCHES - this.patternSequence.length)
+        this.errors.push({
+          line: lineNumber,
+          column: 1,
+          message: `Pattern too large. Maximum total stitches is ${SAFETY_LIMITS.MAX_TOTAL_PATTERN_STITCHES}. Only adding ${allowedCount} more stitches to prevent system crash.`,
+          severity: "error"
+        })
+        count = allowedCount
+      } else if (newTotalSize > SAFETY_LIMITS.WARNING_TOTAL_PATTERN) {
+        this.errors.push({
+          line: lineNumber,
+          column: 1,
+          message: `Large pattern detected (${newTotalSize} stitches). Performance may be affected.`,
+          severity: "warning"
+        })
+      }
     }
 
     // Don't add any stitches if we've hit the limit
@@ -480,6 +507,84 @@ export class EnhancedCrochetScriptCompiler {
       this.patternSequence.push(mappedStitch)
     }
   }
+
+  private checkRepeatSafety(totalStitches: number, count: number, lineNumber: number): void {
+    if (totalStitches > SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES) {
+      this.errors.push({
+        line: lineNumber,
+        column: 1,
+        message: `Excessive repeat stitches (${totalStitches}). Maximum allowed per operation is ${SAFETY_LIMITS.MAX_SINGLE_OPERATION_STITCHES}. Repeat truncated to prevent system crash.`,
+        severity: "error"
+      })
+    } else if (totalStitches > SAFETY_LIMITS.WARNING_SINGLE_OPERATION) {
+      this.errors.push({
+        line: lineNumber,
+        column: 1,
+        message: `Large repeat detected (${totalStitches} stitches). Performance may be affected.`,
+        severity: "warning"
+      })
+    }
+  }
+
+  private estimateStitchCount(statement: string): number {
+    // Skip empty statements and comments
+    const trimmed = statement.trim()
+    if (!trimmed || trimmed.startsWith('//')) {
+      return 0
+    }
+
+    // Remove inline comments
+    const codeOnly = trimmed.split('//')[0].trim()
+    if (!codeOnly) return 0
+
+    // Function calls with multiple parameters: stitch(count, modifier)
+    const complexFunctionMatch = codeOnly.match(/^(\w+)\s*\(\s*(\d+)(?:\s*,\s*(\w+))?\s*\)/)
+    if (complexFunctionMatch) {
+      const [, stitchType, countStr, modifier] = complexFunctionMatch
+      const count = parseInt(countStr, 10)
+      
+      if (modifier) {
+        // Handle modifiers like dc(3, cluster) or tr(4, together)
+        if (modifier === 'cluster' || modifier === 'together' || modifier === 'tog') {
+          return 1 // These produce single stitches
+        }
+      }
+      
+      return count
+    }
+
+    // Simple function calls: stitch(count)
+    const functionMatch = codeOnly.match(/^(\w+)\s*\(\s*(\d+)\s*\)/)
+    if (functionMatch) {
+      const count = parseInt(functionMatch[2], 10)
+      return count
+    }
+
+    // Post stitch notation, shells, clusters, decreases - all produce 1 stitch
+    if (codeOnly.match(/^([fb]p)(dc|tr|hdc)\s*(?:\(\s*(\d+)\s*\))?/) ||
+        codeOnly.match(/^shell\s*(?:\(\s*(\d+)\s*\))?/) ||
+        codeOnly.match(/^(\d+)(dc|hdc|tr)_cluster/) ||
+        codeOnly.match(/^(sc|dc|hdc|tr)(\d+)tog/) ||
+        codeOnly.match(/^(?:ch3_)?picot/)) {
+      const countMatch = codeOnly.match(/\(\s*(\d+)\s*\)/)
+      return countMatch ? parseInt(countMatch[1], 10) : 1
+    }
+
+    // Simple stitch names without parentheses
+    const stitchMatch = codeOnly.match(/^(\w+)$/)
+    if (stitchMatch) {
+      return 1
+    }
+
+    // Special commands don't add to stitch count for safety purposes
+    const specialCommands = ['turn', 'join', 'sl_st', 'ch', 'start', 'end']
+    if (specialCommands.includes(codeOnly)) {
+      return 0
+    }
+
+    // Unknown statements - assume 1 stitch to be safe
+    return 1
+  }
 }
 
 // Export a singleton instance for easy use
@@ -488,4 +593,4 @@ export const enhancedCrochetCompiler = new EnhancedCrochetScriptCompiler()
 // Helper function for quick compilation
 export function compileEnhancedCrochetScript(code: string): CompilerResult {
   return enhancedCrochetCompiler.compile(code)
-} 
+}

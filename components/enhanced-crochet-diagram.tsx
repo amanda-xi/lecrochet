@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { useDiagramTransform } from "@/hooks/use-diagram-transform"
 import { calculateStitchPositions, type StitchPosition } from "@/lib/pattern-positioning"
 import { loadAllSVGs, getSVGContent, createStitchElement } from "@/lib/svg-utils"
@@ -24,6 +24,11 @@ export default function EnhancedCrochetDiagram({
   const svgRef = useRef<SVGSVGElement>(null)
   const [stitchPositions, setStitchPositions] = useState<StitchPosition[]>([])
   const [svgsLoaded, setSvgsLoaded] = useState(false)
+  
+  // Find the index of the first turn command
+  const firstTurnIndex = patternSequence.findIndex(stitch => 
+    stitch.toLowerCase().includes('turn')
+  )
   
   const {
     transform,
@@ -50,8 +55,91 @@ export default function EnhancedCrochetDiagram({
     }
   }, [patternSequence])
 
+  // Container ref for event listeners
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Prevent page scrolling and zooming when interacting with diagram
+  const handleContainerWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    handleWheel(e)
+  }, [handleWheel])
+
+  const handleContainerContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+  }, [])
+
+  const handleContainerTouchStart = useCallback((e: React.TouchEvent) => {
+    // Prevent default to stop page zooming on mobile
+    if (e.touches.length > 1) {
+      e.preventDefault()
+    }
+  }, [])
+
+  const handleContainerTouchMove = useCallback((e: React.TouchEvent) => {
+    // Prevent default to stop page scrolling on mobile
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
+  // Add native event listeners for better scroll prevention
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const handleNativeWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      
+      // Convert to React wheel event format and call handleWheel
+      const scaleFactor = e.deltaY > 0 ? 0.9 : 1.1
+      const newScale = Math.max(0.1, Math.min(5, transform.scale * scaleFactor))
+      
+      // Update transform directly
+      const event = {
+        preventDefault: () => {},
+        stopPropagation: () => {},
+        deltaY: e.deltaY,
+        clientX: e.clientX,
+        clientY: e.clientY,
+        currentTarget: e.currentTarget,
+        target: e.target
+      } as React.WheelEvent<SVGSVGElement>
+      
+      handleWheel(event)
+    }
+
+    const handleNativeScroll = (e: Event) => {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+
+    // Add listeners with passive: false to ensure preventDefault works
+    container.addEventListener('wheel', handleNativeWheel, { passive: false })
+    container.addEventListener('scroll', handleNativeScroll, { passive: false })
+
+    return () => {
+      container.removeEventListener('wheel', handleNativeWheel)
+      container.removeEventListener('scroll', handleNativeScroll)
+    }
+  }, [handleWheel, transform.scale])
+
   return (
-    <div className="w-full h-full bg-white overflow-hidden relative">
+    <div 
+      ref={containerRef}
+      className="w-full h-full bg-white overflow-hidden relative"
+      onWheel={handleContainerWheel}
+      onContextMenu={handleContainerContextMenu}
+      onTouchStart={handleContainerTouchStart}
+      onTouchMove={handleContainerTouchMove}
+      style={{ 
+        touchAction: 'none', // Disable browser touch gestures
+        userSelect: 'none', // Prevent text selection
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        msUserSelect: 'none'
+      }}
+    >
       {/* Control overlay */}
       <div className="absolute top-2 right-2 z-10 flex gap-2">
         <button
@@ -81,7 +169,7 @@ export default function EnhancedCrochetDiagram({
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onWheel={handleWheel}
+        onWheel={handleContainerWheel}
       >
         {/* Grid background for reference */}
         <defs>
@@ -154,7 +242,8 @@ export default function EnhancedCrochetDiagram({
                 />
                 
                 {/* Add stitch number for reference */}
-                {patternType === "linear" && index < 20 && (
+                {patternType === "linear" && 
+                 index < Math.min(100, firstTurnIndex === -1 ? 100 : firstTurnIndex) && (
                   <text
                     x={stitchInfo.width / 2}
                     y={-8}
