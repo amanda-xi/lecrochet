@@ -94,19 +94,23 @@ export default function CreatePage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-300px)]">
-          <CodeEditorPanel
-            code={code}
-            onCodeChange={handleCodeChange}
-            onCompile={autoCompile ? handleCompile : undefined}
-            theme={theme === "dark" ? "dark" : "light"}
-            compilerResult={compilerResult}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[700px] lg:h-[calc(100vh-300px)]">
+          <div className="min-h-[500px] lg:min-h-0">
+            <CodeEditorPanel
+              code={code}
+              onCodeChange={handleCodeChange}
+              onCompile={autoCompile ? handleCompile : undefined}
+              theme={theme === "dark" ? "dark" : "light"}
+              compilerResult={compilerResult}
+            />
+          </div>
 
-          <PreviewPanel
-            compilerResult={compilerResult}
-            isCompiling={isCompiling}
-          />
+          <div className="min-h-[500px] lg:min-h-0">
+            <PreviewPanel
+              compilerResult={compilerResult}
+              isCompiling={isCompiling}
+            />
+          </div>
         </div>
       </main>
     </div>

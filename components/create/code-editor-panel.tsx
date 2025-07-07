@@ -32,9 +32,9 @@ export default function CodeEditorPanel({
 
   return (
     <>
-      <Card className="flex flex-col">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
+      <Card className="flex flex-col h-full">
+        <CardHeader className="pb-4 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
             <CardTitle className="text-xl font-extralight flex items-center gap-2">
               <FileCode className="h-5 w-5" />
               CrocheTeX Code
@@ -43,14 +43,15 @@ export default function CodeEditorPanel({
               variant="outline"
               size="sm"
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-shrink-0"
             >
               <Bot className="h-4 w-4" />
-              Convert Pattern
+              <span className="hidden sm:inline">Convert Pattern</span>
+              <span className="sm:hidden">Convert</span>
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="flex-1 p-0">
+        <CardContent className="flex-1 p-0 min-h-0">
           <div className="h-full px-6 pb-6">
             <CrochetCodeEditor
               value={code}
