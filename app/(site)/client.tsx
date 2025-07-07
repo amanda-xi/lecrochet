@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight } from "lucide-react"
 import { motion, Variants, Variant } from "framer-motion"
-import { signIn } from "next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Code, Eye, Zap } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function CrochetPlatformClient() {
   // Animation variants
@@ -117,6 +117,7 @@ export default function CrochetPlatformClient() {
               Visualize in 3D, collaborate with others, and share in our marketplace.
             </motion.p>
 
+            <Link href="/create">
             <motion.div 
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
               variants={fadeInUp}
@@ -126,8 +127,9 @@ export default function CrochetPlatformClient() {
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
+             
                 <Button 
-                onClick={() => signIn("google", { callbackUrl: "/create" })} 
+                // onClick={() => signIn("google", { callbackUrl: "/create" })} 
                 className="bg-black text-white hover:bg-gray-800 px-8 py-3 text-sm font-light group shadow-lg">
                   Start building your pattern 
                   <motion.div
@@ -141,9 +143,10 @@ export default function CrochetPlatformClient() {
                   >
                     <ArrowRight className="w-4 h-4" />
                   </motion.div>
-                </Button>
+                  </Button>
+                </motion.div>
               </motion.div>
-            </motion.div>
+            </Link>
           </motion.div>
         </div>
 
@@ -342,6 +345,8 @@ export default function CrochetPlatformClient() {
         Join thousands of creators who are already using le crochet to bring their visions to life.
       </motion.p>
 
+
+    <Link href="/create">
       <motion.div
         className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
         variants={fadeInUp}
@@ -352,7 +357,6 @@ export default function CrochetPlatformClient() {
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
           <Button
-            onClick={() => signIn("google", { callbackUrl: "/create" })}
             className="bg-white text-black border border-gray-300 hover:bg-gray-800 hover:text-white px-8 text-sm font-light whitespace-nowrap relative overflow-hidden group"
           >
             <motion.div
@@ -363,8 +367,9 @@ export default function CrochetPlatformClient() {
             />
             <span className="relative z-10">Get Started Free</span>
           </Button>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </Link>
 
       <motion.p
         className="text-xs text-gray-500 font-light mt-4"
