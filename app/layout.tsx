@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "@/components/site/session-provider";
+import { ToastProvider } from "@/components/ui/toast";
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
@@ -31,9 +32,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <Provider>
-          {children}
-          <Analytics />
-          <SpeedInsights />
+          <ToastProvider>
+            {children}
+            <Analytics />
+            <SpeedInsights />
+          </ToastProvider>
         </Provider>
       </body>
     </html>

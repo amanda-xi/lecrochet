@@ -4,6 +4,7 @@ import { Play, Pause, Download, Share2, Settings, Sun, Moon, Monitor, Save, Eye,
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
+import { useToast } from "@/components/ui/toast"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { useState, useEffect } from "react"
@@ -60,6 +61,7 @@ export default function CreateHeader({
   editingPattern
 }: CreateHeaderProps) {
   const { theme, setTheme } = useTheme()
+  const { addToast } = useToast()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showSaveDialog, setShowSaveDialog] = useState(false)
   const [saveTitle, setSaveTitle] = useState("")
@@ -162,14 +164,22 @@ export default function CreateHeader({
         setSaveDescription("")
         setIsPublic(false)
         onSavePattern?.(data.pattern)
-        alert(isEditing ? 'Pattern updated successfully!' : 'Pattern saved successfully!')
+        addToast({
+          type: 'success',
+          title: 'Success!',
+          message: isEditing ? 'Pattern updated successfully!' : 'Pattern saved successfully!'
+        })
       } else {
         const errorData = await response.json()
         throw new Error(errorData.error || `Failed to ${isEditing ? 'update' : 'save'} pattern`)
       }
     } catch (error) {
       console.error(`Error ${editingPattern ? 'updating' : 'saving'} pattern:`, error)
-      alert(`Error ${editingPattern ? 'updating' : 'saving'} pattern: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: `Failed to ${editingPattern ? 'update' : 'save'} pattern: ${error instanceof Error ? error.message : 'Unknown error'}`
+      })
     } finally {
       setSaving(false)
     }

@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { useState, useEffect } from "react"
+import { useToast } from "@/components/ui/toast"
+import { useConfirm } from "@/components/ui/confirm-dialog"
+import { useState, useEffect, useCallback } from "react"
 import { Edit2, Save, X, Trash2, Eye, Calendar, FileText } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -32,6 +34,8 @@ interface UserProfile {
 
 export function ProfilePage() {
   const { data: session } = useSession()
+  const { addToast } = useToast()
+  const { showConfirm, ConfirmComponent } = useConfirm()
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [patterns, setPatterns] = useState<Pattern[]>([])
   const [isEditingProfile, setIsEditingProfile] = useState(false)
@@ -39,39 +43,53 @@ export function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    if (session?.user && (session.user as { id?: string }).id) {
-      fetchProfile()
-      fetchPatterns()
-    }
-  }, [session])
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const response = await fetch('/api/profile')
       if (response.ok) {
         const data = await response.json()
         setProfile(data.profile)
         setEditedName(data.profile.name || "")
+      } else {
+        throw new Error('Failed to fetch profile')
       }
     } catch (error) {
       console.error('Error fetching profile:', error)
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to load profile data. Please refresh the page.'
+      })
     } finally {
       setLoading(false)
     }
-  }
+  }, [addToast])
 
-  const fetchPatterns = async () => {
+  const fetchPatterns = useCallback(async () => {
     try {
       const response = await fetch('/api/patterns')
       if (response.ok) {
         const data = await response.json()
         setPatterns(data.patterns)
+      } else {
+        throw new Error('Failed to fetch patterns')
       }
     } catch (error) {
       console.error('Error fetching patterns:', error)
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to load patterns. Please refresh the page.'
+      })
     }
-  }
+  }, [addToast])
+
+  useEffect(() => {
+    if (session?.user && (session.user as { id?: string }).id) {
+      fetchProfile()
+      fetchPatterns()
+    }
+  }, [session, fetchProfile, fetchPatterns])
 
   const saveProfile = async () => {
     setSaving(true)
@@ -91,16 +109,36 @@ export function ProfilePage() {
         const data = await response.json()
         setProfile(data.profile)
         setIsEditingProfile(false)
+        addToast({
+          type: 'success',
+          title: 'Success!',
+          message: 'Profile updated successfully!'
+        })
+      } else {
+        throw new Error('Failed to update profile')
       }
     } catch (error) {
       console.error('Error saving profile:', error)
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to update profile. Please try again.'
+      })
     } finally {
       setSaving(false)
     }
   }
 
   const deletePattern = async (patternId: string) => {
-    if (!confirm('Are you sure you want to delete this pattern?')) return
+    const confirmed = await showConfirm({
+      title: 'Delete Pattern',
+      message: 'Are you sure you want to delete this pattern? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    })
+
+    if (!confirmed) return
 
     try {
       const response = await fetch(`/api/patterns/${patternId}`, {
@@ -109,9 +147,21 @@ export function ProfilePage() {
 
       if (response.ok) {
         setPatterns(patterns.filter(p => p.id !== patternId))
+        addToast({
+          type: 'success',
+          title: 'Success!',
+          message: 'Pattern deleted successfully!'
+        })
+      } else {
+        throw new Error('Failed to delete pattern')
       }
     } catch (error) {
       console.error('Error deleting pattern:', error)
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to delete pattern. Please try again.'
+      })
     }
   }
 
@@ -314,6 +364,7 @@ export function ProfilePage() {
           </CardContent>
         </Card>
       </motion.div>
+      <ConfirmComponent />
     </div>
   )
 } 
