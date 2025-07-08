@@ -14,7 +14,13 @@ export async function GET(
     
     const { data: pattern, error } = await supabase
       .from('patterns')
-      .select('*')
+      .select(`
+        *,
+        profiles!patterns_user_id_fkey (
+          name,
+          email
+        )
+      `)
       .eq('id', resolvedParams.id)
       .single()
 
@@ -27,7 +33,19 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    return NextResponse.json({ pattern })
+    // Add author information to the response
+    const patternWithAuthor = {
+      ...pattern,
+      author: pattern.profiles ? {
+        name: pattern.profiles.name,
+        email: pattern.profiles.email
+      } : null
+    }
+
+    // Remove the profiles object from the response as it's now in author
+    delete patternWithAuthor.profiles
+
+    return NextResponse.json({ pattern: patternWithAuthor })
   } catch (error) {
     console.error('Error in GET /api/patterns/[id]:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
