@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/toast"
 import type { CompilerResult } from "@/lib/enhanced-crochet-compiler"
@@ -46,6 +47,7 @@ export default function SavePatternDialog({
   const [saving, setSaving] = useState(false)
   const { data: session } = useSession()
   const { addToast } = useToast()
+  const router = useRouter()
 
   // Initialize form with existing pattern data when editing
   useEffect(() => {
@@ -126,6 +128,14 @@ export default function SavePatternDialog({
           title: 'Success!',
           message: isEditing ? 'Pattern updated successfully!' : 'Pattern saved successfully!'
         })
+
+        // Redirect to the newly saved pattern if this was an initial save
+        if (!isEditing && data.pattern?.id) {
+          // Small delay to ensure the toast is visible before redirect
+          setTimeout(() => {
+            router.push(`/create?pattern=${data.pattern.id}`)
+          }, 500)
+        }
       } else {
         const errorData = await response.json()
         throw new Error(errorData.error || `Failed to ${isEditing ? 'update' : 'save'} pattern`)
