@@ -8,7 +8,7 @@ export const organizationSchema = {
   "url": "https://lecrochet.online",
   "logo": "https://lecrochet.online/yarn.svg",
   "description": "Revolutionary crochet pattern designer platform with 3D visualization and CrocheTeX code editor",
-  "foundingDate": "2024",
+  "foundingDate": "2025",
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "customer service",
