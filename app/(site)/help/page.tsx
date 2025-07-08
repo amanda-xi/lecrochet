@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import HelpPage from "./client";
+import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
 export const metadata: Metadata = {
   title: "Help Center | CrocheTeX Tutorials, Guides & Documentation | le Crochet",
@@ -188,6 +189,22 @@ export const metadata: Metadata = {
   }
 };
 
+// Breadcrumb structured data for help page
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: "Home", url: "/" },
+  { name: "Help Center", url: "/help" }
+]);
+
 export default function Help() {
-    return <HelpPage />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <HelpPage />
+    </>
+  );
 } 

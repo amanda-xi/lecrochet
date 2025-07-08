@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import MarketplacePage from "./client";
+import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
 export const metadata: Metadata = {
   title: "Crochet Pattern Marketplace | Buy & Sell Patterns | le Crochet",
@@ -163,6 +164,22 @@ export const metadata: Metadata = {
   }
 };
 
+// Breadcrumb structured data for marketplace page
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: "Home", url: "/" },
+  { name: "Marketplace", url: "/marketplace" }
+]);
+
 export default function Marketplace() {
-    return <MarketplacePage />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <MarketplacePage />
+    </>
+  );
 } 

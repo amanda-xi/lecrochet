@@ -382,6 +382,18 @@ const jsonLdData = {
         "priceCurrency": "USD",
         "availability": "https://schema.org/InStock"
       }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://lecrochet.online/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lecrochet.online/"
+        }
+      ]
     }
   ]
 }

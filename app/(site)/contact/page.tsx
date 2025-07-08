@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ContactPage from "./client";
+import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
 export const metadata: Metadata = {
   title: "Contact Us | Customer Support & Business Inquiries | le Crochet",
@@ -185,6 +186,22 @@ export const metadata: Metadata = {
   }
 };
 
+// Breadcrumb structured data for contact page
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: "Home", url: "/" },
+  { name: "Contact Us", url: "/contact" }
+]);
+
 export default function Contact() {
-    return <ContactPage />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <ContactPage />
+    </>
+  );
 } 

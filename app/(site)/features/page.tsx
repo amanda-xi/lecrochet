@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import FeaturesPage from "./client";
+import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
 export const metadata: Metadata = {
   title: "Platform Features | CrocheTeX Editor, 3D Visualization & More | le Crochet",
@@ -188,6 +189,22 @@ export const metadata: Metadata = {
   }
 };
 
+// Breadcrumb structured data for features page
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: "Home", url: "/" },
+  { name: "Features", url: "/features" }
+]);
+
 export default function Features() {
-    return <FeaturesPage />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <FeaturesPage />
+    </>
+  );
 } 

@@ -1,5 +1,6 @@
-import { Metadata } from "next"
-import CreateClient from "./client"
+import type { Metadata } from "next";
+import CreatePageClient from "./client";
+import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
 export const metadata: Metadata = {
   title: "Create Crochet Pattern | le Crochet",
@@ -54,6 +55,22 @@ export const metadata: Metadata = {
   }
 }
 
+// Breadcrumb structured data for create page
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: "Home", url: "/" },
+  { name: "Pattern Creator", url: "/create" }
+]);
+
 export default function CreatePage() {
-  return <CreateClient />
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <CreatePageClient />
+    </>
+  );
 }

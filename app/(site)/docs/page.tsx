@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import DocsClient from "./client"
+import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
 export const metadata: Metadata = {
   title: "Documentation | CrocheTeX API, Developer Guides & Technical Reference | le Crochet",
@@ -195,6 +196,22 @@ export const metadata: Metadata = {
   }
 };
 
-export default function DocsPage() {
-  return <DocsClient />
+// Breadcrumb structured data for docs page
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: "Home", url: "/" },
+  { name: "Documentation", url: "/docs" }
+]);
+
+export default function Docs() {
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <DocsClient />
+    </>
+  );
 } 

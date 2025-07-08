@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import GalleryPage from "./client";
+import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
 export const metadata: Metadata = {
   title: "Crochet Pattern Gallery | Inspiring Designs & Community Showcase | le Crochet",
@@ -185,6 +186,22 @@ export const metadata: Metadata = {
   }
 };
 
+// Breadcrumb structured data for gallery page
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: "Home", url: "/" },
+  { name: "Pattern Gallery", url: "/gallery" }
+]);
+
 export default function Gallery() {
-    return <GalleryPage />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <GalleryPage />
+    </>
+  );
 } 

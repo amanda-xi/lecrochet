@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PrivacyPage from "./client";
+import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | Data Protection & User Rights | le Crochet",
@@ -179,6 +180,22 @@ export const metadata: Metadata = {
   }
 };
 
+// Breadcrumb structured data for privacy page
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: "Home", url: "/" },
+  { name: "Privacy Policy", url: "/privacy" }
+]);
+
 export default function Privacy() {
-    return <PrivacyPage />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <PrivacyPage />
+    </>
+  );
 } 

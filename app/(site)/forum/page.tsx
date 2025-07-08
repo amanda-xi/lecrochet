@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ForumPage from "./client";
+import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
 export const metadata: Metadata = {
   title: "Crochet Community Forum | Help, Tips & Pattern Discussions | le Crochet",
@@ -176,6 +177,22 @@ export const metadata: Metadata = {
   }
 };
 
+// Breadcrumb structured data for forum page
+const breadcrumbSchema = createBreadcrumbSchema([
+  { name: "Home", url: "/" },
+  { name: "Community Forum", url: "/forum" }
+]);
+
 export default function Forum() {
-    return <ForumPage />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <ForumPage />
+    </>
+  );
 } 
