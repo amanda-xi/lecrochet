@@ -1,13 +1,17 @@
 - .DS_Store
 - .env.local
 - .gitignore
+- Pitch.md
+- README-database-setup.md
 - README.md
 - app
   - (site)
+    - client.tsx
     - contact
       - client.tsx
       - page.tsx
     - docs
+      - client.tsx
       - page.tsx
     - features
       - client.tsx
@@ -42,57 +46,46 @@
     - auth
       - [...nextauth]
         - route.ts
+    - convert-pattern
+      - route.ts
+    - patterns
+      - [id]
+        - route.ts
+      - route.ts
+    - profile
+      - route.ts
   - create
+    - client.tsx
     - page.tsx
   - favicon.ico
   - globals.css
   - layout.tsx
+  - sitemap.ts
+  - yarn.svg
 - components
   - create
     - code-editor-panel.tsx
     - compilation-messages-panel.tsx
     - create-header.tsx
+    - crochet-3d-legend.tsx
     - crochet-3d-renderer.tsx
+    - crochet-scene.tsx
     - example-patterns-selector.tsx
+    - pattern-converter-modal.tsx
+    - pattern-structure-parser.tsx
     - preview-panel.tsx
+    - stitch-edge.tsx
+    - stitch-tooltip.tsx
+    - stitch-vertex.tsx
     - view-mode-toggle.tsx
-  - crochet
-    - 2 crossed dc with chain.svg
-    - 2 crossed dc.svg
-    - 2 stitch decrease in dc.svg
-    - 3 chain arch .svg
-    - 3 dc cluster.svg
-    - 3 hdc cluster.svg
-    - 5 chain arch .svg
-    - 5 dc popcorn.svg
-    - 5 dc shell.svg
-    - Back post dc.svg
-    - Beginning of work.svg
-    - Decrease in dc.svg
-    - Direction of work (L).svg
-    - Direction of work (R).svg
-    - Double treble.svg
-    - Double.svg
-    - End or bind off.svg
-    - Front post dc.svg
-    - Half double.svg
-    - Joining bar.svg
-    - Treble.svg
-    - Work in back loop only.svg
-    - Work in front loop only.svg
-    - ch 3 picot.svg
-    - chain.svg
-    - dc2tog.svg
-    - dc3tog.svg
-    - sc2tog.svg
-    - sc3tog.svg
-    - single.svg
-    - slip.svg
   - crochet-code-editor.tsx
   - crochet-diagram-2d.tsx
   - crochet-legend.tsx
   - crochet-preview-3d.tsx
   - enhanced-crochet-diagram.tsx
+  - seo
+    - seo-head.tsx
+    - structured-data.tsx
   - site
     - footer.tsx
     - header.tsx
@@ -109,6 +102,8 @@
     - textarea.tsx
 - components.json
 - eslint.config.mjs
+- hooks
+  - use-diagram-transform.ts
 - lib
   - 3d-edge-calculator.ts
   - 3d-geometry-utils.ts
@@ -116,16 +111,29 @@
   - auth.ts
   - enhanced-crochet-compiler.ts
   - pattern-examples.ts
+  - pattern-positioning.ts
+  - stitch-mappings.ts
+  - supabase.ts
+  - svg-utils.ts
   - utils.ts
 - next-env.d.ts
 - next.config.ts
 - package-lock.json
 - package.json
 - postcss.config.mjs
+- project_structure.text
 - public
   - file.svg
+  - gallery
+    - 01.png
+    - 02.png
+    - 03.png
+    - 04.png
+    - 05.png
   - globe.svg
+  - manifest.json
   - next.svg
+  - robots.txt
   - stitches
     - 3dc_cluster.svg
     - 3hdc_cluster.svg
@@ -247,7 +255,7 @@
     - tcc.svg
     - tds2tog.svg
     - tfs.svg
-    - thb.sv
+    - thb.svg
     - tks.svg
     - tksp.svg
     - tps.svg
@@ -261,6 +269,8 @@
   - window.svg
   - yarn.gif
   - yarn.mov
-- todo
+  - yarn.svg
+- scripts
+  - setup-database.sql
 - tsconfig.json
 - tsconfig.tsbuildinfo

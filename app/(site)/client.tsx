@@ -291,17 +291,38 @@ export default function CrochetPlatformClient() {
         transition={{ duration: 0.8 }}
         viewport={{ once: true, margin: "-100px" }}
       >
-       <div className="relative">
-  {/* SVG Background */}
-  <Image
-  src="/yarn.svg"
-  alt="Yarn"
-  aria-hidden="true"
-  className="absolute left-30 top-0 h-full w-auto"
-  draggable={false}
-  width={200}
-  height={400}
-/>
+       <div className="relative overflow-hidden">
+  {/* SVG Background - Fixed responsive positioning */}
+  <div className="absolute inset-0 pointer-events-none">
+    <Image
+      src="/yarn.svg"
+      alt="Yarn"
+      aria-hidden="true"
+      className="absolute opacity-20 select-none
+                 hidden md:block
+                 left-4 lg:left-12 xl:left-20 
+                 top-1/2 transform -translate-y-1/2
+                 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56"
+      draggable={false}
+      width={224}
+      height={224}
+    />
+    
+    {/* Additional decorative yarn on the right for larger screens */}
+    <Image
+      src="/yarn.svg"
+      alt="Yarn"
+      aria-hidden="true"
+      className="absolute opacity-10 select-none
+                 hidden xl:block
+                 right-12 
+                 top-1/4 transform -translate-y-1/4
+                 w-24 h-24 rotate-45"
+      draggable={false}
+      width={96}
+      height={96}
+    />
+  </div>
 
   {/* Content */}
   <div className="container mx-auto px-6 text-center relative z-10">
@@ -391,4 +412,4 @@ export default function CrochetPlatformClient() {
       </motion.section>
     </div>
   )
-} 
+}

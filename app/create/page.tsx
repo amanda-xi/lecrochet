@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import CreatePageClient from "./client";
 import { createBreadcrumbSchema } from "@/components/seo/structured-data";
 
@@ -70,7 +71,9 @@ export default function CreatePage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <CreatePageClient />
+      <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="animate-pulse text-gray-500">Loading pattern editor...</div></div>}>
+        <CreatePageClient />
+      </Suspense>
     </>
   );
 }
