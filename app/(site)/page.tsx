@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   
   // Author and publisher information
   authors: [
-    { name: "le Crochet Team", url: "https://lecrochet.com/about" },
+    { name: "le Crochet Team", url: "https://lecrochet.online/about" },
     { name: "Pattern Design Experts" }
   ],
   creator: "le Crochet Platform",
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
   classification: "Design Tools, Crafts, Fiber Arts, Pattern Making",
   
   // URL and canonical settings
-  metadataBase: new URL("https://lecrochet.com"),
+  metadataBase: new URL("https://lecrochet.online"),
   alternates: {
     canonical: "/",
     languages: {
@@ -205,7 +205,7 @@ export const metadata: Metadata = {
     // App store information  
     "al:ios:app_store_id": "lecrochet-ios-app",
     "al:android:package": "com.lecrochet.android",
-    "al:web:url": "https://lecrochet.com",
+    "al:web:url": "https://lecrochet.online",
     
     // Pricing and availability
     "product:price:amount": "0.00",
@@ -227,10 +227,10 @@ export const metadata: Metadata = {
       "@type": "WebSite",
       "name": "le Crochet",
       "description": "Revolutionary crochet pattern designer and builder platform",
-      "url": "https://lecrochet.com",
+      "url": "https://lecrochet.online",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://lecrochet.com/search?q={search_term_string}",
+        "target": "https://lecrochet.online/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     }),
@@ -240,8 +240,8 @@ export const metadata: Metadata = {
       "@type": "Organization",
       "name": "le Crochet",
       "description": "Leading platform for crochet pattern design and visualization",
-      "url": "https://lecrochet.com",
-      "logo": "https://lecrochet.com/logo.png",
+      "url": "https://lecrochet.online",
+      "logo": "https://lecrochet.online/logo.png",
       "contactPoint": {
         "@type": "ContactPoint",
         "contactType": "customer service",
@@ -269,10 +269,10 @@ export const metadata: Metadata = {
   
   // Archive and referrer settings
   referrer: "origin-when-cross-origin",
-  archives: ["https://lecrochet.com/archive"],
+  archives: ["https://lecrochet.online/archive"],
   
   // Booking and app linking
-  bookmarks: "https://lecrochet.com/bookmarks",
+  bookmarks: "https://lecrochet.online/bookmarks",
   
   // Icon configurations
   icons: {
@@ -295,19 +295,19 @@ const jsonLdData = {
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": "https://lecrochet.com/#website",
-      "url": "https://lecrochet.com/",
+      "@id": "https://lecrochet.online/#website",
+      "url": "https://lecrochet.online/",
       "name": "le Crochet",
       "description": "Revolutionary crochet pattern designer and builder platform with 3D visualization",
       "publisher": {
-        "@id": "https://lecrochet.com/#organization"
+        "@id": "https://lecrochet.online/#organization"
       },
       "potentialAction": [
         {
           "@type": "SearchAction",
           "target": {
             "@type": "EntryPoint",
-            "urlTemplate": "https://lecrochet.com/search?q={search_term_string}"
+            "urlTemplate": "https://lecrochet.online/search?q={search_term_string}"
           },
           "query-input": "required name=search_term_string"
         }
@@ -316,21 +316,21 @@ const jsonLdData = {
     },
     {
       "@type": "Organization",
-      "@id": "https://lecrochet.com/#organization", 
+      "@id": "https://lecrochet.online/#organization", 
       "name": "le Crochet",
-      "url": "https://lecrochet.com/",
+      "url": "https://lecrochet.online/",
       "logo": {
         "@type": "ImageObject",
         "inLanguage": "en-US",
-        "@id": "https://lecrochet.com/#/schema/logo/image/",
-        "url": "https://lecrochet.com/logo.png",
-        "contentUrl": "https://lecrochet.com/logo.png",
+        "@id": "https://lecrochet.online/#/schema/logo/image/",
+        "url": "https://lecrochet.online/logo.png",
+        "contentUrl": "https://lecrochet.online/logo.png",
         "width": 512,
         "height": 512,
         "caption": "le Crochet"
       },
       "image": {
-        "@id": "https://lecrochet.com/#/schema/logo/image/"
+        "@id": "https://lecrochet.online/#/schema/logo/image/"
       },
       "sameAs": [
         "https://twitter.com/lecrochet",
@@ -340,24 +340,24 @@ const jsonLdData = {
     },
     {
       "@type": "WebPage",
-      "@id": "https://lecrochet.com/#webpage",
-      "url": "https://lecrochet.com/",
+      "@id": "https://lecrochet.online/#webpage",
+      "url": "https://lecrochet.online/",
       "name": "le Crochet - Revolutionary Crochet Pattern Designer & Builder Platform",
       "isPartOf": {
-        "@id": "https://lecrochet.com/#website"
+        "@id": "https://lecrochet.online/#website"
       },
       "about": {
-        "@id": "https://lecrochet.com/#organization"
+        "@id": "https://lecrochet.online/#organization"
       },
       "description": "Create stunning crochet patterns with le Crochet's revolutionary CrocheTeX platform. Design, visualize in 3D, and share beautiful patterns with our intuitive pattern builder.",
       "breadcrumb": {
-        "@id": "https://lecrochet.com/#breadcrumb"
+        "@id": "https://lecrochet.online/#breadcrumb"
       },
       "inLanguage": "en-US",
       "potentialAction": [
         {
           "@type": "ReadAction",
-          "target": ["https://lecrochet.com/"]
+          "target": ["https://lecrochet.online/"]
         }
       ]
     },
@@ -367,7 +367,7 @@ const jsonLdData = {
       "operatingSystem": "Web Browser",
       "category": "DesignApplication",
       "description": "Professional crochet pattern design software with real-time 3D visualization and CrocheTeX coding language",
-      "screenshot": "https://lecrochet.com/gallery/01.png",
+      "screenshot": "https://lecrochet.online/gallery/01.png",
       "featureList": [
         "CrocheTeX Pattern Language",
         "Real-time 3D Visualization", 

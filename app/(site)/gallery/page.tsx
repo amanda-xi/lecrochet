@@ -163,7 +163,7 @@ export const metadata: Metadata = {
       "@type": "ImageGallery",
       "name": "le Crochet Pattern Gallery",
       "description": "Community showcase of beautiful crochet patterns and finished projects",
-      "url": "https://lecrochet.com/gallery",
+      "url": "https://lecrochet.online/gallery",
       "mainEntity": {
         "@type": "CollectionPage",
         "name": "Crochet Pattern Showcase",

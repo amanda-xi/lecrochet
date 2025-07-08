@@ -151,7 +151,7 @@ export const metadata: Metadata = {
       "@type": "WebPage",
       "name": "le Crochet Privacy Policy",
       "description": "Comprehensive privacy policy covering data protection, user rights, and regulatory compliance",
-      "url": "https://lecrochet.com/privacy",
+      "url": "https://lecrochet.online/privacy",
       "dateModified": "2024-01-01",
       "mainEntity": {
         "@type": "Article",
@@ -168,13 +168,13 @@ export const metadata: Metadata = {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "le Crochet Inc.",
-      "url": "https://lecrochet.com",
+      "url": "https://lecrochet.online",
       "contactPoint": {
         "@type": "ContactPoint",
         "contactType": "privacy officer",
-        "email": "privacy@lecrochet.com"
+        "email": "privacy@lecrochet.online"
       },
-      "privacyPolicy": "https://lecrochet.com/privacy"
+      "privacyPolicy": "https://lecrochet.online/privacy"
     })
   }
 };

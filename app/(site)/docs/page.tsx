@@ -189,8 +189,8 @@ export const metadata: Metadata = {
       "@type": "WebAPI",
       "name": "le Crochet API",
       "description": "RESTful API for integrating with le Crochet platform",
-      "documentation": "https://lecrochet.com/docs/api",
-      "termsOfService": "https://lecrochet.com/terms"
+      "documentation": "https://lecrochet.online/docs/api",
+      "termsOfService": "https://lecrochet.online/terms"
     })
   }
 };

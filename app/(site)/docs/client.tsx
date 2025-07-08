@@ -575,7 +575,7 @@ export default function DocsClient() {
                   <h4 className="font-medium mb-2">Direct Support</h4>
                   <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
                     <li><Link href="/contact" className="text-grey-600 underline">Contact Form</Link> - Direct support requests</li>
-                    <li><strong>Email Support</strong> - help@lecrochet.com</li>
+                    <li><strong>Email Support</strong> - help@lecrochet.online</li>
                     <li><strong>Bug Reports</strong> - GitHub issues for technical problems</li>
                     <li><strong>Feature Requests</strong> - Submit ideas for new features</li>
                   </ul>

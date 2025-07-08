@@ -171,7 +171,7 @@ export const metadata: Metadata = {
         "Automatic Error Detection",
         "Professional Design Tools"
       ],
-      "screenshot": "https://lecrochet.com/gallery/features-overview.png"
+      "screenshot": "https://lecrochet.online/gallery/features-overview.png"
     }),
     
     "schema:TechArticle": JSON.stringify({

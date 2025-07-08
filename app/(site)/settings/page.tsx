@@ -158,7 +158,7 @@ export const metadata: Metadata = {
       "@type": "WebPage",
       "name": "Account Settings",
       "description": "User account management and preferences dashboard",
-      "url": "https://lecrochet.com/settings",
+      "url": "https://lecrochet.online/settings",
       "isPartOf": {
         "@type": "WebSite",
         "name": "le Crochet"

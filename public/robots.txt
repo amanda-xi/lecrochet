@@ -1,0 +1,45 @@
+# Robots.txt for le Crochet - Comprehensive SEO Configuration
+
+# Allow all crawlers to access the site
+User-agent: *
+Allow: /
+
+# Specific directives for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
+
+# Block access to sensitive areas
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /private/
+Disallow: /.well-known/
+Disallow: /scripts/
+
+# Allow access to important static resources
+Allow: /api/sitemap
+Allow: /_next/static/
+Allow: /favicon.ico
+Allow: /public/
+Allow: /gallery/
+Allow: /stitches/
+
+# Sitemap location
+Sitemap: https://lecrochet.online/sitemap.xml
+Sitemap: https://lecrochet.online/sitemap-index.xml
+
+# Additional search engine specific sitemaps
+Sitemap: https://lecrochet.online/image-sitemap.xml
+Sitemap: https://lecrochet.online/video-sitemap.xml
+
+# Host directive (preferred domain)
+Host: https://lecrochet.online 

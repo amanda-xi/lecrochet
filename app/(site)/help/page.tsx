@@ -154,7 +154,7 @@ export const metadata: Metadata = {
       "@type": "WebSite",
       "name": "le Crochet Help Center",
       "description": "Comprehensive help and tutorial resources for CrocheTeX and pattern creation",
-      "url": "https://lecrochet.com/help",
+      "url": "https://lecrochet.online/help",
       "mainEntity": {
         "@type": "ItemList",
         "name": "Help Topics",

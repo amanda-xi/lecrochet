@@ -127,7 +127,7 @@ export const metadata: Metadata = {
     "contact:availability": "24/7",
     
     // Business information
-    "business:email": "support@lecrochet.com",
+    "business:email": "support@lecrochet.online",
     "business:phone": "+1-555-CROCHET",
     "business:address": "123 Craft Street, Design City, CA 90210",
     
@@ -137,7 +137,7 @@ export const metadata: Metadata = {
       "@type": "ContactPage",
       "name": "Contact le Crochet",
       "description": "Customer support and business contact information",
-      "url": "https://lecrochet.com/contact",
+      "url": "https://lecrochet.online/contact",
       "mainEntity": {
         "@type": "Organization",
         "name": "le Crochet",
@@ -145,18 +145,18 @@ export const metadata: Metadata = {
           {
             "@type": "ContactPoint",
             "contactType": "customer service",
-            "email": "support@lecrochet.com",
+            "email": "support@lecrochet.online",
             "availableLanguage": ["English", "Spanish", "French"]
           },
           {
             "@type": "ContactPoint",
             "contactType": "technical support",
-            "email": "tech@lecrochet.com"
+            "email": "tech@lecrochet.online"
           },
           {
             "@type": "ContactPoint",
             "contactType": "sales",
-            "email": "business@lecrochet.com"
+            "email": "business@lecrochet.online"
           }
         ]
       }
@@ -166,11 +166,11 @@ export const metadata: Metadata = {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "le Crochet Inc.",
-      "url": "https://lecrochet.com",
+      "url": "https://lecrochet.online",
       "contactPoint": {
         "@type": "ContactPoint",
         "contactType": "customer service",
-        "email": "support@lecrochet.com",
+        "email": "support@lecrochet.online",
         "telephone": "+1-555-CROCHET"
       },
       "address": {

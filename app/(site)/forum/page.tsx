@@ -155,10 +155,10 @@ export const metadata: Metadata = {
       "@type": "WebSite",
       "name": "le Crochet Community Forum",
       "description": "Community forum for crochet patterns, techniques, and CrocheTeX help",
-      "url": "https://lecrochet.com/forum",
+      "url": "https://lecrochet.online/forum",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://lecrochet.com/forum/search?q={search_term_string}",
+        "target": "https://lecrochet.online/forum/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     }),

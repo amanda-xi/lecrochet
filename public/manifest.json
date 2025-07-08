@@ -1,0 +1,116 @@
+{
+  "name": "le Crochet - Crochet Pattern Designer",
+  "short_name": "le Crochet",
+  "description": "Revolutionary crochet pattern designer with 3D visualization. Create stunning patterns with CrocheTeX platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["productivity", "design", "lifestyle", "crafts"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon",
+      "purpose": "favicon"
+    },
+    {
+      "src": "/gallery/01.png", 
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/gallery/02.png",
+      "sizes": "512x512", 
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/yarn.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/gallery/01.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Pattern Designer Interface"
+    },
+    {
+      "src": "/gallery/02.png", 
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "3D Pattern Visualization"
+    },
+    {
+      "src": "/gallery/03.png",
+      "sizes": "1280x720", 
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "CrocheTeX Code Editor"
+    },
+    {
+      "src": "/gallery/04.png",
+      "sizes": "750x1334",
+      "type": "image/png", 
+      "form_factor": "narrow",
+      "label": "Pattern Gallery"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Create Pattern",
+      "short_name": "Create",
+      "description": "Start creating a new crochet pattern",
+      "url": "/create",
+      "icons": [
+        {
+          "src": "/yarn.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Gallery",
+      "short_name": "Gallery", 
+      "description": "Browse pattern gallery",
+      "url": "/gallery",
+      "icons": [
+        {
+          "src": "/gallery/01.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Marketplace",
+      "short_name": "Shop",
+      "description": "Browse pattern marketplace", 
+      "url": "/marketplace",
+      "icons": [
+        {
+          "src": "/yarn.svg",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
+} 

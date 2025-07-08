@@ -135,7 +135,7 @@ export const metadata: Metadata = {
     "product:category": "Digital Patterns",
     
     // Business metadata
-    "business:contact_data:website": "https://lecrochet.com/marketplace",
+    "business:contact_data:website": "https://lecrochet.online/marketplace",
     
     // Schema.org hints for marketplace
     "schema:Marketplace": JSON.stringify({
@@ -143,10 +143,10 @@ export const metadata: Metadata = {
       "@type": "WebSite",
       "name": "le Crochet Marketplace",
       "description": "Premium crochet pattern marketplace connecting designers with crafters",
-      "url": "https://lecrochet.com/marketplace",
+      "url": "https://lecrochet.online/marketplace",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://lecrochet.com/marketplace/search?q={search_term_string}",
+        "target": "https://lecrochet.online/marketplace/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     }),
