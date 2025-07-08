@@ -54,6 +54,8 @@
       - route.ts
     - profile
       - route.ts
+    - sync-profile
+      - route.ts
   - create
     - client.tsx
     - page.tsx
