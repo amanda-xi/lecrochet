@@ -73,14 +73,11 @@ export default function PatternConverterModal({
           onClick={onClose}
         >
 <motion.div
-  drag
-  dragConstraints={{ top: -300, bottom: 300, left: -300, right: 300 }}
   initial={{ opacity: 0, scale: 0.9, y: 20 }}
-  dragTransition={{ bounceStiffness: 1000, bounceDamping: 1000, power: 0, timeConstant: 0 }}
   animate={{ opacity: 1, scale: 1, y: 0 }}
   exit={{ opacity: 0, scale: 0.9, y: 20 }}
   onClick={(e) => e.stopPropagation()}
-  className="w-full max-w-md cursor-grab active:cursor-grabbing"
+  className="w-full max-w-md"
 >
             <Card className="bg-white shadow-xl">
               <CardHeader className="pb-4">
