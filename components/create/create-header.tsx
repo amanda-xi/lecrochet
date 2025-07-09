@@ -173,7 +173,7 @@ export default function CreateHeader({
               Export
             </Button>
 
-            {/* Hide Save/Update button for other people's patterns */}
+            {/* Save/Update button for own patterns */}
             {!isViewingOthersPattern && (
               <Button 
                 variant="ghost" 
@@ -184,6 +184,20 @@ export default function CreateHeader({
               >
                 <Save className="h-4 w-4 mr-2" />
                 {editingPattern ? 'Update' : 'Save'}
+              </Button>
+            )}
+
+            {/* Save as Copy button for other people's patterns */}
+            {isViewingOthersPattern && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-sm font-light"
+                onClick={() => setShowSaveDialog(true)}
+                disabled={!session?.user || !patternCode?.trim()}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save
               </Button>
             )}
 
@@ -216,6 +230,7 @@ export default function CreateHeader({
             compilerResult={compilerResult}
             editingPattern={editingPattern}
             onSavePattern={onSavePattern}
+            isCopyMode={!!isViewingOthersPattern}
           />
 
           {/* Mobile/Tablet actions */}
@@ -231,6 +246,7 @@ export default function CreateHeader({
               patternCode={patternCode}
               editingPattern={editingPattern}
               onShowSaveDialog={() => setShowSaveDialog(true)}
+              isViewingOthersPattern={!!isViewingOthersPattern}
             />
           </div>
         </div>
@@ -239,6 +255,7 @@ export default function CreateHeader({
           patternCode={patternCode}
           editingPattern={editingPattern}
           onShowSaveDialog={() => setShowSaveDialog(true)}
+          isViewingOthersPattern={!!isViewingOthersPattern}
         />
       </div>
     </header>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useTheme } from "next-themes"
 import { useSearchParams } from "next/navigation"
+import { useSession } from "next-auth/react"
 import { compileEnhancedCrocheTeX, type CompilerResult } from "@/lib/enhanced-crochet-compiler"
 import { EXAMPLE_PATTERNS } from "@/lib/pattern-examples"
 import CreateHeader from "@/components/create/create-header"
@@ -18,11 +19,17 @@ interface Pattern {
   is_public: boolean
   created_at: string
   updated_at: string
+  user_id?: string
+  author?: {
+    name: string | null
+    email: string
+  } | null
 }
 
 export default function CreatePage() {
   const searchParams = useSearchParams()
   const patternId = searchParams.get('pattern')
+  const { data: session } = useSession()
   
   const [code, setCode] = useState(EXAMPLE_PATTERNS["circular-doily"].code)
   const [compilerResult, setCompilerResult] = useState<CompilerResult | null>(null)
@@ -156,6 +163,28 @@ export default function CreatePage() {
   }, [code, handleCompile])
 
   const isEditMode = !!editingPattern
+  const isOwnPattern = editingPattern && (
+    editingPattern.user_id === session?.user?.email || 
+    editingPattern.author?.email === session?.user?.email
+  )
+  const isViewingOthersPattern = editingPattern && !isOwnPattern
+
+  const getPageTitle = () => {
+    if (!isEditMode) return 'Create Pattern'
+    if (isViewingOthersPattern) return `View: ${editingPattern.title}`
+    return `Edit: ${editingPattern.title}`
+  }
+
+  const getPageDescription = () => {
+    if (!isEditMode) {
+      return 'Write your crochet pattern using CrocheTeX and see it render in real-time.'
+    }
+    if (isViewingOthersPattern) {
+      const authorName = editingPattern.author?.name || 'Unknown Author'
+      return `You're viewing ${authorName}'s pattern. You can save a copy to your account to make edits.`
+    }
+    return 'Editing your saved pattern. Changes will update the existing pattern.'
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -174,13 +203,10 @@ export default function CreatePage() {
       <main className="container mx-auto px-6 py-6 max-w-none">
         <div className="mb-6">
           <h1 className="text-3xl md:text-4xl font-extralight tracking-tight leading-tight mb-2">
-            {isEditMode ? `Edit: ${editingPattern.title}` : 'Create Pattern'}
+            {getPageTitle()}
           </h1>
           <p className="text-base text-gray-600 font-light leading-relaxed">
-            {isEditMode 
-              ? `Editing your saved pattern. Changes will update the existing pattern.`
-              : 'Write your crochet pattern using CrocheTeX and see it render in real-time.'
-            }
+            {getPageDescription()}
           </p>
         </div>
 

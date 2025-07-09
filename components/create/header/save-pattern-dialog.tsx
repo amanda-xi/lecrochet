@@ -31,6 +31,7 @@ interface SavePatternDialogProps {
     created_at: string
     updated_at: string
   }) => void
+  isCopyMode?: boolean
 }
 
 export default function SavePatternDialog({
@@ -39,7 +40,8 @@ export default function SavePatternDialog({
   patternCode,
   compilerResult,
   editingPattern,
-  onSavePattern
+  onSavePattern,
+  isCopyMode = false
 }: SavePatternDialogProps) {
   const [saveTitle, setSaveTitle] = useState("")
   const [saveDescription, setSaveDescription] = useState("")
@@ -49,9 +51,9 @@ export default function SavePatternDialog({
   const { addToast } = useToast()
   const router = useRouter()
 
-  // Initialize form with existing pattern data when editing
+  // Initialize form with existing pattern data when editing (but not in copy mode)
   useEffect(() => {
-    if (editingPattern) {
+    if (editingPattern && !isCopyMode) {
       setSaveTitle(editingPattern.title)
       setSaveDescription(editingPattern.description || "")
       setIsPublic(editingPattern.is_public)
@@ -60,14 +62,14 @@ export default function SavePatternDialog({
       setSaveDescription("")
       setIsPublic(false)
     }
-  }, [editingPattern])
+  }, [editingPattern, isCopyMode])
 
   const handleSavePattern = async () => {
     if (!session?.user || !patternCode || !saveTitle.trim()) return
 
     setSaving(true)
     try {
-      const isEditing = !!editingPattern
+      const isEditing = !!editingPattern && !isCopyMode
       const url = isEditing ? `/api/patterns/${editingPattern.id}` : '/api/patterns'
       const method = isEditing ? 'PUT' : 'POST'
 
@@ -126,7 +128,7 @@ export default function SavePatternDialog({
         addToast({
           type: 'success',
           title: 'Success!',
-          message: isEditing ? 'Pattern updated successfully!' : 'Pattern saved successfully!'
+          message: isCopyMode ? 'Pattern copied successfully!' : isEditing ? 'Pattern updated successfully!' : 'Pattern saved successfully!'
         })
 
         // Redirect to the newly saved pattern if this was an initial save
@@ -171,7 +173,7 @@ export default function SavePatternDialog({
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-lg font-medium mb-4 text-black">
-                {editingPattern ? 'Update Pattern' : 'Save Pattern'}
+                {isCopyMode ? 'Save' : editingPattern ? 'Update Pattern' : 'Save Pattern'}
               </h3>
               
               <div className="space-y-4">
@@ -231,7 +233,10 @@ export default function SavePatternDialog({
                   disabled={saving || !saveTitle.trim()}
                   className="bg-black text-white hover:bg-gray-800"
                 >
-                  {saving ? (editingPattern ? "Updating..." : "Saving...") : (editingPattern ? "Update Pattern" : "Save Pattern")}
+                  {saving 
+                    ? (isCopyMode ? "Saving Copy..." : editingPattern ? "Updating..." : "Saving...") 
+                    : (isCopyMode ? "Save" : editingPattern ? "Update Pattern" : "Save Pattern")
+                  }
                 </Button>
               </div>
             </motion.div>

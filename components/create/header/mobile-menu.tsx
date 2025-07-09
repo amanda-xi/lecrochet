@@ -22,12 +22,14 @@ interface MobileMenuProps {
     updated_at: string
   } | null
   onShowSaveDialog: () => void
+  isViewingOthersPattern?: boolean
 }
 
 export default function MobileMenu({ 
   patternCode, 
   editingPattern, 
-  onShowSaveDialog
+  onShowSaveDialog,
+  isViewingOthersPattern = false
 }: MobileMenuProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { data: session } = useSession()
@@ -122,7 +124,7 @@ export default function MobileMenu({
                     disabled={!session?.user || !patternCode?.trim()}
                   >
                     <Save className="h-4 w-4 mr-2" />
-                    {editingPattern ? 'Update' : 'Save'}
+                    {isViewingOthersPattern ? 'Save' : editingPattern ? 'Update' : 'Save'}
                   </Button>
                 </motion.div>
 
