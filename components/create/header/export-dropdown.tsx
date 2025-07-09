@@ -55,29 +55,38 @@ export default function ExportDropdown({
       const ctx = canvas.getContext('2d')
       if (!ctx) return null
       
-      // Set canvas size
-      canvas.width = 30
-      canvas.height = 30
+             // Canvas size will be set based on image natural dimensions
       
       // Create an image from SVG
       const img = new Image()
       const svgBlob = new Blob([svgText], { type: 'image/svg+xml' })
       const url = URL.createObjectURL(svgBlob)
       
-      return new Promise((resolve) => {
-        img.onload = () => {
-          ctx.fillStyle = 'white'
-          ctx.fillRect(0, 0, canvas.width, canvas.height)
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-          URL.revokeObjectURL(url)
-          resolve(canvas.toDataURL('image/png'))
-        }
-        img.onerror = () => {
-          URL.revokeObjectURL(url)
-          resolve(null)
-        }
-        img.src = url
-      })
+             return new Promise((resolve) => {
+         img.onload = () => {
+           // Use natural dimensions instead of fixed size
+           canvas.width = img.naturalWidth || 100
+           canvas.height = img.naturalHeight || 100
+           
+           const ctx = canvas.getContext('2d')
+           if (!ctx) {
+             URL.revokeObjectURL(url)
+             resolve(null)
+             return
+           }
+           
+           ctx.fillStyle = 'white'
+           ctx.fillRect(0, 0, canvas.width, canvas.height)
+           ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+           URL.revokeObjectURL(url)
+           resolve(canvas.toDataURL('image/png'))
+         }
+         img.onerror = () => {
+           URL.revokeObjectURL(url)
+           resolve(null)
+         }
+         img.src = url
+       })
     } catch (error) {
       console.error('Error converting SVG to data URL:', error)
       return null
@@ -119,16 +128,76 @@ export default function ExportDropdown({
     }
 
     try {
-      // Wait a moment for any animations to settle
-      await new Promise(resolve => setTimeout(resolve, 300))
+      // Ensure the diagram is fully rendered before capture
+      element.scrollIntoView({ behavior: 'instant', block: 'nearest' })
+      await new Promise(requestAnimationFrame) // Wait for one frame
+      await new Promise(resolve => setTimeout(resolve, 500)) // Extra time for SVG rendering
       
-      const canvas = await html2canvas(element)
+             // Try html2canvas first with robust options
+       try {
+         const canvas = await html2canvas(element)
+        
+        if (canvas && canvas.width > 0 && canvas.height > 0) {
+          return canvas
+        }
+      } catch (html2canvasError) {
+        console.warn('html2canvas failed, trying SVG fallback:', html2canvasError)
+      }
       
-      return canvas
+      // Fallback: Manual SVG to PNG conversion
+      const svg = element.querySelector('svg') as SVGElement
+      if (svg) {
+        return await convertSvgToPng(svg)
+      }
+      
+      return null
     } catch (error) {
       console.error(`Error capturing ${selector}:`, error)
       return null
     }
+  }
+
+  const convertSvgToPng = async (svg: SVGElement): Promise<HTMLCanvasElement | null> => {
+    return new Promise((resolve) => {
+      try {
+        const data = new XMLSerializer().serializeToString(svg)
+        const blob = new Blob([data], { type: "image/svg+xml;charset=utf-8" })
+        const url = URL.createObjectURL(blob)
+        const img = new Image()
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas")
+          const rect = svg.getBoundingClientRect()
+          canvas.width = rect.width * 2 // 2x scale for quality
+          canvas.height = rect.height * 2
+          
+          const ctx = canvas.getContext("2d")
+          if (!ctx) {
+            URL.revokeObjectURL(url)
+            resolve(null)
+            return
+          }
+          
+          ctx.scale(2, 2) // Apply scale
+          ctx.fillStyle = '#ffffff'
+          ctx.fillRect(0, 0, rect.width, rect.height)
+          ctx.drawImage(img, 0, 0, rect.width, rect.height)
+          
+          URL.revokeObjectURL(url)
+          resolve(canvas)
+        }
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url)
+          resolve(null)
+        }
+
+        img.src = url
+      } catch (error) {
+        console.error('SVG conversion failed:', error)
+        resolve(null)
+      }
+    })
   }
 
   const downloadAsPDF = async () => {
@@ -145,26 +214,37 @@ export default function ExportDropdown({
       // Try to load the yarn logo
       const logoDataUrl = await convertSvgToDataUrl('/yarn.svg')
       
-      // Add yarn logo
+      // Add yarn logo with dynamic sizing
+      let logoWidth = 10
+      let logoHeight = 10
       if (logoDataUrl) {
         try {
-          pdf.addImage(logoDataUrl, 'PNG', margin, margin + 2, 10, 10)
+          // Try to get natural dimensions for better logo scaling
+          const tempImg = new Image()
+          tempImg.src = logoDataUrl
+          const aspectRatio = tempImg.naturalWidth / tempImg.naturalHeight || 1
+          logoHeight = 10
+          logoWidth = logoHeight * aspectRatio
+          
+          pdf.addImage(logoDataUrl, 'PNG', margin, margin + 2, logoWidth, logoHeight)
         } catch (error) {
           console.warn('Failed to add logo:', error)
+          logoWidth = 10 // fallback
         }
       }
       
-      // Add Le Crochet branding header
+      // Add Le Crochet branding header (positioned after logo)
+      const textXPosition = margin + logoWidth + 5
       pdf.setFontSize(24)
       pdf.setFont('helvetica', 'bold')
       pdf.setTextColor(0, 0, 0) // Black color
-      pdf.text('Le Crochet', margin + 15, margin + 12)
+      pdf.text('Le Crochet', textXPosition, margin + 12)
       
       // Add subtitle
       pdf.setFontSize(10)
       pdf.setFont('helvetica', 'normal')
       pdf.setTextColor(80, 80, 80) // Dark gray
-      pdf.text('CrocheTeX Pattern Generator', margin + 15, margin + 20)
+      pdf.text('CrocheTeX Pattern Generator', textXPosition, margin + 20)
       
       // Add separator line
       pdf.setDrawColor(0, 0, 0) // Black line
@@ -217,6 +297,13 @@ export default function ExportDropdown({
       const diagramElement = document.querySelector('[data-testid="2d-diagram"]') as HTMLElement
       if (diagramElement) {
         const diagramCanvas = await capturePreviewElement('[data-testid="2d-diagram"]')
+        
+        // Add section title
+        pdf.setFontSize(14)
+        pdf.setFont('helvetica', 'bold')
+        pdf.text('2D Pattern Diagram', margin, yPosition)
+        yPosition += 10
+        
         if (diagramCanvas) {
           // Calculate dimensions to fit on page
           const canvasRatio = diagramCanvas.width / diagramCanvas.height
@@ -230,16 +317,19 @@ export default function ExportDropdown({
             imgWidth = imgHeight * canvasRatio
           }
           
-          // Add section title
-          pdf.setFontSize(14)
-          pdf.setFont('helvetica', 'bold')
-          pdf.text('2D Pattern Diagram', margin, yPosition)
-          yPosition += 10
-          
           // Add image
           const imgData = diagramCanvas.toDataURL('image/png')
           pdf.addImage(imgData, 'PNG', margin, yPosition, imgWidth, imgHeight)
           yPosition += imgHeight + 15
+        } else {
+          // Fallback message when capture fails
+          pdf.setFontSize(10)
+          pdf.setFont('helvetica', 'normal')
+          pdf.setTextColor(150, 150, 150)
+          pdf.text('⚠️ 2D diagram could not be captured automatically.', margin, yPosition)
+          pdf.text('Please export the pattern as text or take a screenshot of the 2D view.', margin, yPosition + 5)
+          pdf.setTextColor(0, 0, 0) // Reset color
+          yPosition += 20
         }
       }
       
@@ -253,6 +343,13 @@ export default function ExportDropdown({
       const view3D = document.querySelector('[data-testid="3d-view"]') as HTMLElement
       if (view3D) {
         const view3DCanvas = await capturePreviewElement('[data-testid="3d-view"]')
+        
+        // Add section title
+        pdf.setFontSize(14)
+        pdf.setFont('helvetica', 'bold')
+        pdf.text('3D Pattern View', margin, yPosition)
+        yPosition += 10
+        
         if (view3DCanvas) {
           // Calculate dimensions to fit on page
           const canvasRatio = view3DCanvas.width / view3DCanvas.height
@@ -261,21 +358,24 @@ export default function ExportDropdown({
           
           // If image is too tall, scale it down
           const maxImageHeight = (pageHeight - yPosition - margin - 20)
-          if (imgHeight > maxImageHeight) {
-            imgHeight = maxImageHeight
-            imgWidth = imgHeight * canvasRatio
-          }
-          
-          // Add section title
-          pdf.setFontSize(14)
-          pdf.setFont('helvetica', 'bold')
-          pdf.text('3D Pattern View', margin, yPosition)
-          yPosition += 10
+                      if (imgHeight > maxImageHeight) {
+              imgHeight = maxImageHeight
+              imgWidth = imgHeight * canvasRatio
+            }
           
           // Add image
           const imgData = view3DCanvas.toDataURL('image/png')
           pdf.addImage(imgData, 'PNG', margin, yPosition, imgWidth, imgHeight)
           yPosition += imgHeight + 15
+        } else {
+          // Fallback message when 3D capture fails
+          pdf.setFontSize(10)
+          pdf.setFont('helvetica', 'normal')
+          pdf.setTextColor(150, 150, 150)
+          pdf.text('⚠️ 3D view could not be captured automatically.', margin, yPosition)
+          pdf.text('Please take a screenshot of the 3D view if needed.', margin, yPosition + 5)
+          pdf.setTextColor(0, 0, 0) // Reset color
+          yPosition += 20
         }
       }
       
@@ -337,7 +437,7 @@ export default function ExportDropdown({
       addToast({
         type: "success",
         title: "PDF exported",
-        message: "Pattern downloaded as PDF with visual previews",
+        message: "Pattern downloaded as PDF. Check the document for visual previews.",
       })
       
     } catch (error) {
