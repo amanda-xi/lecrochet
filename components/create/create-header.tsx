@@ -1,6 +1,6 @@
 "use client"
 
-import { Play, Pause, Download, Settings, Save, Eye, BookOpen, User, Calendar, Clock } from "lucide-react"
+import { Play, Pause, Settings, Save, Eye, BookOpen, User, Calendar, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useSession } from "next-auth/react"
@@ -12,13 +12,13 @@ import StatusBadges from "./header/status-badges"
 import AuthSection from "./header/auth-section"
 import MobileMenu from "./header/mobile-menu"
 import ShareButton from "./header/share-button"
+import ExportDropdown from "./header/export-dropdown"
 
 interface CreateHeaderProps {
   isCompiling: boolean
   autoCompile: boolean
   onManualCompile: () => void
   onToggleAutoCompile: () => void
-  onDownloadPattern: () => void
   compilerResult: CompilerResult | null
   patternCode?: string
   onSavePattern?: (pattern: {
@@ -54,7 +54,6 @@ export default function CreateHeader({
   autoCompile,
   onManualCompile,
   onToggleAutoCompile,
-  onDownloadPattern,
   compilerResult,
   patternCode = "",
   onSavePattern,
@@ -173,10 +172,11 @@ export default function CreateHeader({
 
           <div className="hidden lg:flex items-center gap-2">
 
-            <Button variant="ghost" size="sm" onClick={onDownloadPattern} className="text-sm font-light">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
+            <ExportDropdown 
+              patternCode={patternCode}
+              compilerResult={compilerResult}
+              editingPattern={editingPattern}
+            />
 
             {!isViewingOthersPattern && (
               <Button 
@@ -226,10 +226,12 @@ export default function CreateHeader({
           </div>
 
           <div className="flex lg:hidden items-center gap-1 sm:gap-2">
-            <Button variant="ghost" size="sm" onClick={onDownloadPattern} className="text-sm font-light p-2 sm:px-3">
-              <Download className="h-4 w-4" />
-              <span className="hidden sm:inline ml-2">Export</span>
-            </Button>
+            <ExportDropdown 
+              patternCode={patternCode}
+              compilerResult={compilerResult}
+              editingPattern={editingPattern}
+              className="p-2 sm:px-3"
+            />
           </div>
         </div>
       </div>

@@ -78,7 +78,10 @@ export class EnhancedCrocheTeXCompiler {
       patternType: this.patternType,
       errors: [...this.errors],
       success: this.errors.filter(e => e.severity === "error").length === 0,
-      metadata: { ...this.metadata }
+      metadata: { 
+        ...this.metadata,
+        techniques: [...new Set(this.metadata.techniques)] // Deduplicate techniques
+      }
     }
   }
 

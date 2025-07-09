@@ -119,6 +119,7 @@ export default function EnhancedCrochetDiagram({
     <div 
       ref={containerRef}
       className="w-full h-full bg-white overflow-hidden relative"
+      data-testid="2d-diagram"
       onWheel={handleContainerWheel}
       onContextMenu={handleContainerContextMenu}
       onTouchStart={handleContainerTouchStart}
@@ -155,6 +156,7 @@ export default function EnhancedCrochetDiagram({
         width="100%"
         height="100%"
         viewBox="0 0 600 600"
+        data-testid="2d-diagram-svg"
         className={`border border-gray-200 rounded-lg ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         style={{ background: 'linear-gradient(to bottom, #fafafa, #f5f5f5)' }}
         onMouseDown={handleMouseDown}

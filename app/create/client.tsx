@@ -133,17 +133,7 @@ export default function CreatePage() {
     }
   }
 
-  const downloadPattern = () => {
-    const blob = new Blob([code], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = editingPattern ? `${editingPattern.title}.txt` : 'pattern.txt'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
+
 
   const handleSavePattern = (pattern: Pattern) => {
     console.log('Pattern saved:', pattern)
@@ -193,7 +183,6 @@ export default function CreatePage() {
         autoCompile={autoCompile}
         onManualCompile={manualCompile}
         onToggleAutoCompile={() => setAutoCompile(!autoCompile)}
-        onDownloadPattern={downloadPattern}
         compilerResult={compilerResult}
         patternCode={code}
         onSavePattern={handleSavePattern}

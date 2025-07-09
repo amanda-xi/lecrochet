@@ -77,7 +77,7 @@ export default function Crochet3DRenderer({
   }
 
   return (
-    <div className={`w-full h-full ${className}`}>
+    <div className={`w-full h-full ${className}`} data-testid="3d-view">
       <Canvas
         gl={{ antialias: true, alpha: true }}
         dpr={[1, 2]}
