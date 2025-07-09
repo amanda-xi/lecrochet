@@ -53,7 +53,7 @@ function DesktopAuthButtons() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href="/profile">Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => signOut()}>
