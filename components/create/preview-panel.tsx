@@ -5,7 +5,7 @@ import { Eye } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import EnhancedCrochetDiagram from "@/components/enhanced-crochet-diagram"
-import Crochet3DRenderer from "./crochet-3d-renderer"
+import Crochet3DRenderer from "./3d/crochet-3d-renderer"
 import ViewModeToggle, { ViewMode, View3DControls } from "./view-mode-toggle"
 import type { CompilerResult } from "@/lib/enhanced-crochet-compiler"
 

@@ -6,10 +6,10 @@ import {
   processCrochetPattern, 
   calculateCameraPosition
 } from '@/lib/3d-pattern-processor'
-import CrochetScene from './crochet-scene'
+import CrochetScene from '../crochet-scene'
 import StitchTooltip from './stitch-tooltip'
 import { HoveredStitchInfo } from './stitch-vertex'
-import { parsePatternStructure } from './pattern-structure-parser'
+import { parsePatternStructure } from '../pattern-structure-parser'
 import CrochetLegend from './crochet-3d-legend'
 
 interface Crochet3DRendererProps {

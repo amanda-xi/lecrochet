@@ -2,8 +2,8 @@
 
 import React, { useMemo } from 'react'
 import { PerspectiveCamera, OrbitControls } from '@react-three/drei'
-import StitchVertex, { HoveredStitchInfo } from './stitch-vertex'
-import StitchEdge from './stitch-edge'
+import StitchVertex, { HoveredStitchInfo } from './3d/stitch-vertex'
+import StitchEdge from './3d/stitch-edge'
 import { CrochetGeometry } from '@/lib/3d-geometry-utils'
 import { 
   getStitchColor,
