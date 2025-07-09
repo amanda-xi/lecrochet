@@ -241,9 +241,9 @@ export default function StitchTooltip({
           <div className="text-xs text-gray-500">
             {formatStitchName(hoveredStitch.stitchType)}
           </div>
-          <div className="text-xs text-gray-400">
+          {/* <div className="text-xs text-gray-400">
             SVG: {svgFile}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
