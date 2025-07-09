@@ -61,9 +61,9 @@ export default function CreateHeader({
   editingPattern
 }: CreateHeaderProps) {
   const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session } = useSession()
 
-  // Check if this is someone else's pattern
   const isViewingOthersPattern = editingPattern && editingPattern.author && 
     session?.user?.email !== editingPattern.author.email
 
@@ -78,7 +78,6 @@ export default function CreateHeader({
   return (
     <header className="border-b border-gray-200 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Author info banner for shared patterns */}
         {isViewingOthersPattern && (
           <div className="border-b border-gray-100 bg-gray-50/50 py-2 rounded-md">
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
@@ -105,17 +104,26 @@ export default function CreateHeader({
         )}
 
         <div className="flex h-16 items-center justify-between">
-          {/* Left section - Logo and core controls */}
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <div className="lg:hidden">
+              <MobileMenu
+                isOpen={mobileMenuOpen}
+                setIsOpen={setMobileMenuOpen}
+                patternCode={patternCode}
+                editingPattern={editingPattern}
+                onShowSaveDialog={() => setShowSaveDialog(true)}
+                isViewingOthersPattern={!!isViewingOthersPattern}
+              />
+            </div>
+
             <div className="flex items-center gap-2 flex-shrink-0">
-            <Link href="/" className="text-xl font-light tracking-wide">
-            Le Crochet
-          </Link>
+              <Link href="/" className="text-xl font-light tracking-wide">
+                Le Crochet
+              </Link>
             </div>
             
             <Separator orientation="vertical" className="h-6 hidden sm:block" />
             
-            {/* Desktop compile controls */}
             <div className="hidden sm:flex items-center gap-2">
               <Button 
                 variant="ghost" 
@@ -139,7 +147,6 @@ export default function CreateHeader({
               </Button>
             </div>
 
-            {/* Mobile compile controls */}
             <div className="flex sm:hidden items-center gap-1">
               <Button 
                 variant="ghost" 
@@ -161,11 +168,9 @@ export default function CreateHeader({
               </Button>
             </div>
 
-            {/* Status badges */}
             <StatusBadges compilerResult={compilerResult} />
           </div>
 
-          {/* Right section - Desktop actions */}
           <div className="hidden lg:flex items-center gap-2">
 
             <Button variant="ghost" size="sm" onClick={onDownloadPattern} className="text-sm font-light">
@@ -173,7 +178,6 @@ export default function CreateHeader({
               Export
             </Button>
 
-            {/* Save/Update button for own patterns */}
             {!isViewingOthersPattern && (
               <Button 
                 variant="ghost" 
@@ -187,7 +191,6 @@ export default function CreateHeader({
               </Button>
             )}
 
-            {/* Save as Copy button for other people's patterns */}
             {isViewingOthersPattern && (
               <Button 
                 variant="ghost" 
@@ -222,42 +225,23 @@ export default function CreateHeader({
             <AuthSection />
           </div>
 
-          {/* Save Pattern Dialog */}
-          <SavePatternDialog 
-            isOpen={showSaveDialog}
-            onClose={() => setShowSaveDialog(false)}
-            patternCode={patternCode}
-            compilerResult={compilerResult}
-            editingPattern={editingPattern}
-            onSavePattern={onSavePattern}
-            isCopyMode={!!isViewingOthersPattern}
-          />
-
-          {/* Mobile/Tablet actions */}
           <div className="flex lg:hidden items-center gap-1 sm:gap-2">
-            {/* Essential actions for mobile */}
-
             <Button variant="ghost" size="sm" onClick={onDownloadPattern} className="text-sm font-light p-2 sm:px-3">
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline ml-2">Export</span>
             </Button>
-
-            <MobileMenu 
-              patternCode={patternCode}
-              editingPattern={editingPattern}
-              onShowSaveDialog={() => setShowSaveDialog(true)}
-              isViewingOthersPattern={!!isViewingOthersPattern}
-            />
           </div>
         </div>
-
-        <MobileMenu 
-          patternCode={patternCode}
-          editingPattern={editingPattern}
-          onShowSaveDialog={() => setShowSaveDialog(true)}
-          isViewingOthersPattern={!!isViewingOthersPattern}
-        />
       </div>
+      <SavePatternDialog 
+        isOpen={showSaveDialog}
+        onClose={() => setShowSaveDialog(false)}
+        patternCode={patternCode}
+        compilerResult={compilerResult}
+        editingPattern={editingPattern}
+        onSavePattern={onSavePattern}
+        isCopyMode={!!isViewingOthersPattern}
+      />
     </header>
   )
 }
