@@ -17,11 +17,20 @@ export function useResponsive() {
     // Initial check
     checkScreenSize()
 
-    // Add event listener
-    window.addEventListener('resize', checkScreenSize)
+    // Add event listener with debounce to prevent rapid updates
+    let timeoutId: NodeJS.Timeout
+    const debouncedCheck = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(checkScreenSize, 100)
+    }
+
+    window.addEventListener('resize', debouncedCheck)
 
     // Cleanup
-    return () => window.removeEventListener('resize', checkScreenSize)
+    return () => {
+      window.removeEventListener('resize', debouncedCheck)
+      clearTimeout(timeoutId)
+    }
   }, [])
 
   return {

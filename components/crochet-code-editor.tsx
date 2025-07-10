@@ -326,7 +326,7 @@ export default function CrochetCodeEditor({
   }, [theme])
 
   return (
-    <div className="w-full h-full border border-gray-200 rounded-lg overflow-hidden">
+    <div className="w-full h-full border border-gray-200 rounded-lg overflow-hidden" style={{ minHeight: '280px' }}>
       <Editor
         height="100%"
         language="CrocheTeX"
@@ -349,6 +349,30 @@ export default function CrochetCodeEditor({
           cursorBlinking: "smooth",
           cursorSmoothCaretAnimation: "on",
           glyphMargin: true,
+          // Mobile-specific improvements
+          overviewRulerLanes: 0, // Hide overview ruler on mobile for more space
+          hideCursorInOverviewRuler: true,
+          scrollbar: {
+            vertical: 'auto',
+            horizontal: 'auto',
+            verticalScrollbarSize: 8, // Smaller scrollbars for mobile
+            horizontalScrollbarSize: 8,
+          },
+          // Better touch support
+          mouseWheelZoom: false, // Prevent accidental zoom on mobile
+          fastScrollSensitivity: 5, // Better scroll sensitivity for touch
+          // Mobile-friendly autocomplete
+          suggest: {
+            showMethods: true,
+            showFunctions: true,
+            showKeywords: true,
+            showSnippets: true,
+            filterGraceful: true,
+          },
+          // Better mobile keyboard support
+          acceptSuggestionOnEnter: "on",
+          acceptSuggestionOnCommitCharacter: true,
+          tabCompletion: "on",
         }}
       />
     </div>

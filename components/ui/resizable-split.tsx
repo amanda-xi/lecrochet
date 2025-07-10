@@ -83,14 +83,16 @@ export default function ResizableSplit({
     }
   }, [isDragging, handleMouseMove, handleMouseUp, direction])
 
-  // If disabled (mobile), render as simple flex layout
+  // If disabled (mobile), render as simple flex layout optimized for mobile
   if (disabled) {
     return (
-      <div className={cn("flex flex-col gap-3", className)}>
-        <div className="min-h-[400px]">
+      <div className={cn("flex flex-col gap-4 h-full", className)}>
+        {/* Code Editor - fixed height on mobile to prevent collapse */}
+        <div className="h-[320px] flex-shrink-0 overflow-hidden">
           {children[0]}
         </div>
-        <div className="min-h-[400px]">
+        {/* Preview Panel - much larger on mobile, especially for 3D view */}
+        <div className="min-h-[600px] flex-1 overflow-hidden">
           {children[1]}
         </div>
       </div>

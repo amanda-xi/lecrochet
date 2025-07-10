@@ -37,22 +37,22 @@ export default function CodeEditorPanel({
   return (
     <>
       <Card className="flex flex-col h-full">
-        <CardHeader className="pb-4 flex-shrink-0">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
-            <CardTitle className="text-xl font-extralight flex items-center gap-2">
-              <FileCode className="h-5 w-5" />
+        <CardHeader className="pb-3 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+            <CardTitle className="text-lg sm:text-xl font-extralight flex items-center gap-2">
+              <FileCode className="h-4 w-4 sm:h-5 sm:w-5" />
               CrocheTeX Code
             </CardTitle>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {onToggleFullScreen && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={onToggleFullScreen}
-                  className="flex items-center gap-2 flex-shrink-0"
+                  className="flex items-center gap-1 flex-shrink-0 px-2 sm:px-3"
                   title={isFullScreen ? "Exit Full Screen (Esc)" : "Enter Full Screen"}
                 >
-                  {isFullScreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  {isFullScreen ? <Minimize2 className="h-3 w-3 sm:h-4 sm:w-4" /> : <Maximize2 className="h-3 w-3 sm:h-4 sm:w-4" />}
                   {/* <span className="hidden sm:inline">{isFullScreen ? "Exit Code Editor" : "Code Editor"}</span> */}
                 </Button>
               )}
@@ -60,11 +60,11 @@ export default function CodeEditorPanel({
                 variant="outline"
                 size="sm"
                 onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-2 flex-shrink-0"
+                className="flex items-center gap-1 flex-shrink-0 px-2 sm:px-3"
               >
-                <Bot className="h-4 w-4" />
+                <Bot className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">Convert Pattern</span>
-                <span className="sm:hidden">Convert</span>
+                <span className="sm:hidden text-xs">Convert</span>
               </Button>
             </div>
           </div>

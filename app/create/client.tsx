@@ -239,7 +239,7 @@ export default function CreatePage() {
           />
         </div>
 
-        <div className={fullScreenMode !== 'none' ? "fixed inset-0 z-50 bg-background" : "min-h-[700px] lg:h-[calc(100vh-300px)]"}>
+        <div className={fullScreenMode !== 'none' ? "fixed inset-0 z-50 bg-background" : "h-[calc(100vh-200px)] min-h-[700px] lg:h-[calc(100vh-300px)]"}>
           {fullScreenMode === 'code' ? (
             <div className="h-full w-full">
               <CodeEditorPanel
