@@ -24,6 +24,7 @@ export function Header() {
     { href: "/marketplace", label: "Marketplace" },
     { href: "/contact", label: "Contact" },
     { href: "/privacy", label: "Privacy" },
+    { href: "/forum", label: "Forum" },
   ]
 
   // Close mobile menu when route changes

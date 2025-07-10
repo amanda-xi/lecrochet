@@ -3,38 +3,23 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, BookOpen, Code, Play, Zap, Box, Layers } from "lucide-react"
+import { BookOpen, Code, Zap, Box, Layers } from "lucide-react"
 import CrochetLegend from "@/components/crochet-legend"
 
 export default function DocsClient() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b bg-white">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Home
-                </Button>
-              </Link>
               <div className="flex items-center gap-2">
                 <BookOpen className="h-6 w-6 text-grey-600" />
                 <h1 className="text-2xl font-extralight">Documentation</h1>
               </div>
             </div>
-            <Link href="/create">
-              <Button>
-                <Play className="h-4 w-4 mr-2" />
-                Try it Now
-              </Button>
-            </Link>
           </div>
         </div>
-      </header>
 
       <main className="container mx-auto px-6 py-8 max-w-4xl">
         {/* Introduction */}

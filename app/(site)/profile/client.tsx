@@ -9,9 +9,10 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/toast"
 import { useConfirm } from "@/components/ui/confirm-dialog"
 import { useState, useEffect, useCallback } from "react"
-import { Edit2, Save, X, Trash2, Eye, Calendar, FileText } from "lucide-react"
+import { Edit2, Save, X, Trash2, Eye, Calendar, FileText, MessageCircle, Reply, Hash } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { formatDistanceToNow } from 'date-fns'
 
 interface Pattern {
   id: string
@@ -32,24 +33,58 @@ interface UserProfile {
   updated_at: string
 }
 
+interface ForumPost {
+  id: string
+  title: string
+  content: string
+  reply_count: number
+  created_at: string
+  category: {
+    id: string
+    name: string
+    slug: string
+    color: string
+  }
+}
+
+interface ForumReply {
+  id: string
+  content: string
+  created_at: string
+  post: {
+    id: string
+    title: string
+    category: {
+      id: string
+      name: string
+      slug: string
+    }
+  }
+}
+
 export function ProfilePage() {
   const { data: session } = useSession()
   const { addToast } = useToast()
   const { showConfirm, ConfirmComponent } = useConfirm()
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [patterns, setPatterns] = useState<Pattern[]>([])
+  const [forumPosts, setForumPosts] = useState<ForumPost[]>([])
+  const [forumReplies, setForumReplies] = useState<ForumReply[]>([])
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [editedName, setEditedName] = useState("")
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [activeTab, setActiveTab] = useState<'patterns' | 'posts' | 'replies'>('patterns')
 
   const fetchProfile = useCallback(async () => {
     try {
-      const response = await fetch('/api/profile')
+      const response = await fetch('/api/profile?include=forum')
       if (response.ok) {
         const data = await response.json()
         setProfile(data.profile)
         setEditedName(data.profile.name || "")
+        setForumPosts(data.forumPosts || [])
+        setForumReplies(data.forumReplies || [])
       } else {
         throw new Error('Failed to fetch profile')
       }
@@ -165,6 +200,14 @@ export function ProfilePage() {
     }
   }
 
+  const formatDate = (dateString: string) => {
+    try {
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true })
+    } catch {
+      return 'Unknown'
+    }
+  }
+
   if (!session || !session.user) {
     return (
       <div className="container mx-auto px-6 py-8">
@@ -201,7 +244,7 @@ export function ProfilePage() {
       >
         <div className="mb-8">
           <h1 className="text-3xl font-light mb-2">Profile</h1>
-          <p className="text-gray-600">Manage your account and view your patterns</p>
+          <p className="text-gray-600">Manage your account and view your activity</p>
         </div>
 
         {/* Profile Section */}
@@ -285,80 +328,277 @@ export function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Patterns Section */}
+        {/* Activity Summary */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center">
+                <FileText className="h-8 w-8 text-blue-500" />
+                <div className="ml-4">
+                  <p className="text-2xl font-light">{patterns.length}</p>
+                  <p className="text-sm text-gray-500">Pattern{patterns.length !== 1 ? 's' : ''}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center">
+                <MessageCircle className="h-8 w-8 text-green-500" />
+                <div className="ml-4">
+                  <p className="text-2xl font-light">{forumPosts.length}</p>
+                  <p className="text-sm text-gray-500">Discussion{forumPosts.length !== 1 ? 's' : ''}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center">
+                <Reply className="h-8 w-8 text-purple-500" />
+                <div className="ml-4">
+                  <p className="text-2xl font-light">{forumReplies.length}</p>
+                  <p className="text-sm text-gray-500">Repl{forumReplies.length !== 1 ? 'ies' : 'y'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Content Tabs */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-xl font-light">Your Patterns</CardTitle>
-              <CardDescription>Patterns you&apos;ve created and saved</CardDescription>
+          <CardHeader>
+            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+              <button
+                onClick={() => setActiveTab('patterns')}
+                className={`flex-1 px-4 py-2 text-sm font-light rounded-md transition-colors ${
+                  activeTab === 'patterns'
+                    ? 'bg-white text-black shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                <FileText className="h-4 w-4 inline mr-2" />
+                Patterns ({patterns.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('posts')}
+                className={`flex-1 px-4 py-2 text-sm font-light rounded-md transition-colors ${
+                  activeTab === 'posts'
+                    ? 'bg-white text-black shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                <MessageCircle className="h-4 w-4 inline mr-2" />
+                Posts ({forumPosts.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('replies')}
+                className={`flex-1 px-4 py-2 text-sm font-light rounded-md transition-colors ${
+                  activeTab === 'replies'
+                    ? 'bg-white text-black shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                <Reply className="h-4 w-4 inline mr-2" />
+                Replies ({forumReplies.length})
+              </button>
             </div>
-            <Badge variant="secondary">{patterns.length} pattern{patterns.length !== 1 && "s"}</Badge>
           </CardHeader>
           <CardContent>
-            {patterns.length === 0 ? (
-              <div className="text-center py-8">
-                <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 mb-4">You haven&apos;t saved any patterns yet.</p>
-                <Link href="/create">
-                  <Button>Create Your First Pattern</Button>
-                </Link>
+            {/* Patterns Tab */}
+            {activeTab === 'patterns' && (
+              <div>
+                {patterns.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 mb-4">You haven&apos;t saved any patterns yet.</p>
+                    <Link href="/create">
+                      <Button>Create Your First Pattern</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {patterns.map((pattern) => (
+                      <motion.div
+                        key={pattern.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <h3 className="font-medium">{pattern.title}</h3>
+                              {pattern.is_public && (
+                                <Badge variant="outline" className="text-xs">
+                                  <Eye className="h-3 w-3 mr-1" />
+                                  Public
+                                </Badge>
+                              )}
+                            </div>
+                            
+                            {pattern.description && (
+                              <p className="text-gray-600 text-sm mb-2">{pattern.description}</p>
+                            )}
+                            
+                            <div className="flex items-center space-x-4 text-xs text-gray-500">
+                              <span className="flex items-center">
+                                <Calendar className="h-3 w-3 mr-1" />
+                                Created {new Date(pattern.created_at).toLocaleDateString()}
+                              </span>
+                              {pattern.updated_at !== pattern.created_at && (
+                                <span className="flex items-center">
+                                  Updated {new Date(pattern.updated_at).toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2 ml-4">
+                            <Link href={`/create?pattern=${pattern.id}`}>
+                              <Button size="sm" variant="ghost">
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => deletePattern(pattern.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="space-y-4">
-                {patterns.map((pattern) => (
-                  <motion.div
-                    key={pattern.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="font-medium">{pattern.title}</h3>
-                          {pattern.is_public && (
-                            <Badge variant="outline" className="text-xs">
-                              <Eye className="h-3 w-3 mr-1" />
-                              Public
-                            </Badge>
-                          )}
+            )}
+
+            {/* Forum Posts Tab */}
+            {activeTab === 'posts' && (
+              <div>
+                {forumPosts.length === 0 ? (
+                  <div className="text-center py-8">
+                    <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 mb-4">You haven&apos;t started any discussions yet.</p>
+                    <Link href="/forum/new-post">
+                      <Button>Start Your First Discussion</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {forumPosts.map((post) => (
+                      <motion.div
+                        key={post.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <Link 
+                                href={`/forum/post/${post.id}`}
+                                className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                              >
+                                {post.title}
+                              </Link>
+                              <Badge 
+                                variant="outline" 
+                                className="text-xs"
+                                style={{ backgroundColor: `${post.category.color}20`, borderColor: post.category.color }}
+                              >
+                                <Hash className="h-3 w-3 mr-1" />
+                                {post.category.name}
+                              </Badge>
+                            </div>
+                            
+                            <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                              {post.content.length > 100 
+                                ? `${post.content.substring(0, 100)}...`
+                                : post.content
+                              }
+                            </p>
+                            
+                            <div className="flex items-center space-x-4 text-xs text-gray-500">
+                              <span className="flex items-center">
+                                <Calendar className="h-3 w-3 mr-1" />
+                                {formatDate(post.created_at)}
+                              </span>
+                              <span className="flex items-center">
+                                <MessageCircle className="h-3 w-3 mr-1" />
+                                {post.reply_count} {post.reply_count === 1 ? 'reply' : 'replies'}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        
-                        {pattern.description && (
-                          <p className="text-gray-600 text-sm mb-2">{pattern.description}</p>
-                        )}
-                        
-                        <div className="flex items-center space-x-4 text-xs text-gray-500">
-                          <span className="flex items-center">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            Created {new Date(pattern.created_at).toLocaleDateString()}
-                          </span>
-                          {pattern.updated_at !== pattern.created_at && (
-                            <span className="flex items-center">
-                              Updated {new Date(pattern.updated_at).toLocaleDateString()}
-                            </span>
-                          )}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Forum Replies Tab */}
+            {activeTab === 'replies' && (
+              <div>
+                {forumReplies.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Reply className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 mb-4">You haven&apos;t replied to any discussions yet.</p>
+                    <Link href="/forum">
+                      <Button>Browse Forum Discussions</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {forumReplies.map((reply) => (
+                      <motion.div
+                        key={reply.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <span className="text-sm text-gray-500">Reply to:</span>
+                              <Link 
+                                href={`/forum/post/${reply.post.id}`}
+                                className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                              >
+                                {reply.post.title}
+                              </Link>
+                              <Badge 
+                                variant="outline" 
+                                className="text-xs"
+                              >
+                                <Hash className="h-3 w-3 mr-1" />
+                                {reply.post.category.name}
+                              </Badge>
+                            </div>
+                            
+                            <p className="text-gray-600 text-sm mb-2 line-clamp-3">
+                              {reply.content}
+                            </p>
+                            
+                            <div className="flex items-center space-x-4 text-xs text-gray-500">
+                              <span className="flex items-center">
+                                <Calendar className="h-3 w-3 mr-1" />
+                                {formatDate(reply.created_at)}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 ml-4">
-                        <Link href={`/create?pattern=${pattern.id}`}>
-                          <Button size="sm" variant="ghost">
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => deletePattern(pattern.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </CardContent>

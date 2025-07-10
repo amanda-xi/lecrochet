@@ -1,6 +1,6 @@
 "use client"
 
-import { Play, Pause, Settings, Save, Eye, BookOpen, User, Calendar, Clock } from "lucide-react"
+import { Play, Pause, Settings, Save, Eye, User, Calendar, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useSession } from "next-auth/react"
@@ -13,6 +13,7 @@ import AuthSection from "./header/auth-section"
 import MobileMenu from "./header/mobile-menu"
 import ShareButton from "./header/share-button"
 import ExportDropdown from "./header/export-dropdown"
+import HelpDropdown from "./header/help-dropdown"
 
 interface CreateHeaderProps {
   isCompiling: boolean
@@ -213,12 +214,7 @@ export default function CreateHeader({
               </Button>
             </Link>
 
-            <Link href="/docs" target="_blank">
-              <Button variant="ghost" size="sm" className="text-sm font-light">
-                <BookOpen className="h-4 w-4 mr-2" />
-                Help
-              </Button>
-            </Link>
+            <HelpDropdown className="text-sm font-light" />
 
             <Separator orientation="vertical" className="h-6" />
 
