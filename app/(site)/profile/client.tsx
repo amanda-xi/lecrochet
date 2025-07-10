@@ -328,45 +328,6 @@ export function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Activity Summary */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center">
-                <FileText className="h-8 w-8 text-blue-500" />
-                <div className="ml-4">
-                  <p className="text-2xl font-light">{patterns.length}</p>
-                  <p className="text-sm text-gray-500">Pattern{patterns.length !== 1 ? 's' : ''}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center">
-                <MessageCircle className="h-8 w-8 text-green-500" />
-                <div className="ml-4">
-                  <p className="text-2xl font-light">{forumPosts.length}</p>
-                  <p className="text-sm text-gray-500">Discussion{forumPosts.length !== 1 ? 's' : ''}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center">
-                <Reply className="h-8 w-8 text-purple-500" />
-                <div className="ml-4">
-                  <p className="text-2xl font-light">{forumReplies.length}</p>
-                  <p className="text-sm text-gray-500">Repl{forumReplies.length !== 1 ? 'ies' : 'y'}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Content Tabs */}
         <Card>
           <CardHeader>
@@ -493,8 +454,8 @@ export function ProfilePage() {
                 ) : (
                   <div className="space-y-4">
                     {forumPosts.map((post) => (
+                      <Link key={post.id} href={`/forum/post/${post.id}`} passHref>
                       <motion.div
-                        key={post.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
@@ -502,12 +463,9 @@ export function ProfilePage() {
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-2">
-                              <Link 
-                                href={`/forum/post/${post.id}`}
-                                className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
-                              >
+                              <span className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
                                 {post.title}
-                              </Link>
+                              </span>
                               <Badge 
                                 variant="outline" 
                                 className="text-xs"
@@ -538,6 +496,7 @@ export function ProfilePage() {
                           </div>
                         </div>
                       </motion.div>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -558,8 +517,8 @@ export function ProfilePage() {
                 ) : (
                   <div className="space-y-4">
                     {forumReplies.map((reply) => (
+                      <Link key={reply.id} href={`/forum/post/${reply.post.id}`} passHref>
                       <motion.div
-                        key={reply.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
@@ -568,12 +527,9 @@ export function ProfilePage() {
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-2">
                               <span className="text-sm text-gray-500">Reply to:</span>
-                              <Link 
-                                href={`/forum/post/${reply.post.id}`}
-                                className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
-                              >
+                              <span className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
                                 {reply.post.title}
-                              </Link>
+                              </span>
                               <Badge 
                                 variant="outline" 
                                 className="text-xs"
@@ -596,6 +552,7 @@ export function ProfilePage() {
                           </div>
                         </div>
                       </motion.div>
+                      </Link>
                     ))}
                   </div>
                 )}
