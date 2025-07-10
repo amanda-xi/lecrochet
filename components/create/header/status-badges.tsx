@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertCircle, CheckCircle, Sparkles } from "lucide-react"
+import { AlertCircle, CheckCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import type { CompilerResult } from "@/lib/enhanced-crochet-compiler"
 
@@ -33,13 +33,13 @@ export default function StatusBadges({ compilerResult }: StatusBadgesProps) {
           {warningCount} Warning{warningCount !== 1 ? 's' : ''}
         </Badge>
       )}
-
+{/* 
       {compilerResult.patternType !== "linear" && (
         <Badge variant="outline" className="text-purple-700 border-purple-300 font-light text-xs sm:text-sm hidden md:inline-flex">
           <Sparkles className="h-3 w-3 mr-1" />
           {compilerResult.patternType}
         </Badge>
-      )}
+      )} */}
     </div>
   )
 } 

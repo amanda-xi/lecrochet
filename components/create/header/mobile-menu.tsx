@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import AuthSection from "./auth-section"
 import ShareButton from "./share-button"
+import ExportDropdown from "./export-dropdown"
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -121,9 +122,23 @@ export default function MobileMenu({
                 <Link href="/docs" target="_blank" className="w-full" onClick={() => setIsOpen(false)}>
                   <Button variant="ghost" size="sm" className="text-sm font-light justify-start w-full">
                     <BookOpen className="h-4 w-4 mr-2" />
-                    Help
+                    Docs
                   </Button>
                 </Link>
+
+                <Link href="/forum" target="_blank" className="w-full" onClick={() => setIsOpen(false)}>
+                  <Button variant="ghost" size="sm" className="text-sm font-light justify-start w-full">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Forum
+                  </Button>
+                </Link>
+
+                <ExportDropdown
+                  patternCode={patternCode}
+                  compilerResult={null}
+                  editingPattern={editingPattern}
+                  className="text-sm font-light justify-start w-full"
+                />
               </div>
 
               <Separator className="my-3" />

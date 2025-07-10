@@ -221,14 +221,14 @@ export default function CreateHeader({
             <AuthSection />
           </div>
 
-          <div className="flex lg:hidden items-center gap-1 sm:gap-2">
+          {/* <div className="flex lg:hidden items-center gap-1 sm:gap-2">
             <ExportDropdown 
               patternCode={patternCode}
               compilerResult={compilerResult}
               editingPattern={editingPattern}
               className="p-2 sm:px-3"
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <SavePatternDialog 
