@@ -10,6 +10,8 @@ import CreateHeader from "@/components/create/create-header"
 import ExamplePatternsSelector from "@/components/create/example-patterns-selector"
 import CodeEditorPanel from "@/components/create/code-editor-panel"
 import PreviewPanel from "@/components/create/preview-panel"
+import ResizableSplit from "@/components/ui/resizable-split"
+import { useResponsive } from "@/hooks/use-responsive"
 
 interface Pattern {
   id: string
@@ -40,6 +42,7 @@ export default function CreatePage() {
   const [isLoadingPattern, setIsLoadingPattern] = useState(false)
   const [savedPatterns, setSavedPatterns] = useState<Pattern[]>([])
   const { theme } = useTheme()
+  const { isMobile } = useResponsive()
 
   // Load user's saved patterns
   const loadSavedPatterns = useCallback(async () => {
@@ -208,8 +211,14 @@ export default function CreatePage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[700px] lg:h-[calc(100vh-300px)]">
-          <div className="min-h-[500px] lg:min-h-0">
+        <div className="min-h-[700px] lg:h-[calc(100vh-300px)]">
+          <ResizableSplit
+            disabled={isMobile}
+            defaultSplit={50}
+            minSplit={25}
+            maxSplit={75}
+            className="h-full"
+          >
             <CodeEditorPanel
               code={code}
               onCodeChange={handleCodeChange}
@@ -217,14 +226,11 @@ export default function CreatePage() {
               theme={theme === "dark" ? "dark" : "light"}
               compilerResult={compilerResult}
             />
-          </div>
-
-          <div className="min-h-[500px] lg:min-h-0">
             <PreviewPanel
               compilerResult={compilerResult}
               isCompiling={isCompiling}
             />
-          </div>
+          </ResizableSplit>
         </div>
       </main>
     </div>
