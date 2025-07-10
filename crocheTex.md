@@ -43,7 +43,6 @@ C. Safety and Performance Optimizations
 Focus on generating clear, realistic, and beautiful representations.
 
 A. Stitch Visualization Improvements
-	•	Map new stitch types (clusters, popcorn, post stitches) to more distinct shapes and 3D geometries.
 	•	Add color tagging to support multicolor work: dc(color="red", 3)
 
 B. Layout Algorithms

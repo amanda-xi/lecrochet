@@ -13,7 +13,7 @@ export async function GET(
             .from('forum_replies')
             .select(`
                 *,
-                user:profiles!forum_replies_user_id_fkey(id, email, avatar_url)
+                user:profiles!forum_replies_user_id_fkey(id, email, name, avatar_url)
             `)
             .eq('post_id', resolvedParams.id)
             .order('created_at', { ascending: true })
@@ -85,7 +85,7 @@ export async function POST(
             })
             .select(`
                 *,
-                user:profiles!forum_replies_user_id_fkey(id, email, avatar_url)
+                user:profiles!forum_replies_user_id_fkey(id, email, name, avatar_url)
             `)
             .single()
 

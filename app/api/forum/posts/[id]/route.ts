@@ -14,7 +14,7 @@ export async function GET(
             .select(`
                 *,
                 category:forum_categories(*),
-                user:profiles!forum_posts_user_id_fkey(id, email, avatar_url)
+                user:profiles!forum_posts_user_id_fkey(id, email, name, avatar_url)
             `)
             .eq('id', resolvedParams.id)
             .single()
@@ -87,7 +87,7 @@ export async function PUT(
             .select(`
                 *,
                 category:forum_categories(*),
-                user:profiles!forum_posts_user_id_fkey(id, email, avatar_url)
+                user:profiles!forum_posts_user_id_fkey(id, email, name, avatar_url)
             `)
             .single()
 

@@ -16,8 +16,8 @@ export async function GET(request: NextRequest) {
             .select(`
                 *,
                 category:forum_categories(*),
-                user:profiles!forum_posts_user_id_fkey(id, email, avatar_url),
-                last_reply_user:profiles!forum_posts_last_reply_user_id_fkey(id, email, avatar_url)
+                user:profiles!forum_posts_user_id_fkey(id, email, name, avatar_url),
+                last_reply_user:profiles!forum_posts_last_reply_user_id_fkey(id, email, name, avatar_url)
             `)
             .order('created_at', { ascending: false })
             .range(page * limit, (page + 1) * limit - 1)
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
             .select(`
                 *,
                 category:forum_categories(*),
-                user:profiles!forum_posts_user_id_fkey(id, email, avatar_url)
+                user:profiles!forum_posts_user_id_fkey(id, email, name, avatar_url)
             `)
             .single()
 
