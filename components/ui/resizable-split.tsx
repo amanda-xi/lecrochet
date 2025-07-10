@@ -86,11 +86,11 @@ export default function ResizableSplit({
   // If disabled (mobile), render as simple flex layout
   if (disabled) {
     return (
-      <div className={cn("flex flex-col gap-6", className)}>
-        <div className="min-h-[500px]">
+      <div className={cn("flex flex-col gap-3", className)}>
+        <div className="min-h-[400px]">
           {children[0]}
         </div>
-        <div className="min-h-[500px]">
+        <div className="min-h-[400px]">
           {children[1]}
         </div>
       </div>
