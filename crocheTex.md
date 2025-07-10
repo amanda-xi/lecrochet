@@ -55,27 +55,6 @@ C. Export and Interaction
 	•	Allow export to SVG/PNG/PDF with clear labels and stitch keys.
 	•	Add hover-tooltips or click-to-expand details on stitches in the diagram.
 
-🔹 Option 1: Feature-Based Modular Layout
-
-Good for large-scale DSL projects where logic and features evolve independently.
-
-/compiler
-  ├── index.ts                   // Exports compile function and singleton
-  ├── compiler.ts               // Core compilation logic
-  ├── parser/
-  │   ├── index.ts              // Entry point for parsing
-  │   ├── statementParser.ts    // Parses single-line/inline statements
-  │   ├── blockParser.ts        // Parses blocks (repeat, round, etc.)
-  │   └── stitchParser.ts       // Specialized stitch parsing logic
-  ├── metadata/
-  │   ├── patternMetadata.ts    // Stitch counts, rounds, techniques, etc.
-  │   ├── contextTracker.ts     // Current context, nesting, block tracking
-  ├── safety/
-  │   ├── limits.ts             // SAFETY_LIMITS constant
-  │   ├── safetyChecker.ts      // Enforces stitch/repeat limits
-  ├── utils/
-  │   ├── stitchMap.ts          // Stitch name aliases and canonical forms
-  │   └── helpers.ts            // Miscellaneous shared functions
 
   🔹 Option 2: DSL Interpreter Architecture
 
@@ -94,24 +73,314 @@ Inspired by traditional compiler design (lexer-parser-evaluator).
   ├── types.ts                  // All shared interfaces and types
   └── index.ts                  // Exports compile interface
 
-  🔹 Option 3: Domain-Driven Layout (Pattern-Centric)
+// "Swirls" Doily Pattern - Lily Design Book No. 79
+// Converted to CrocheTeX format
 
-Ideal for visual/render-heavy crochet-focused apps with reusable components.
+background(rgb(126,8,80))
+color(white)
 
-/core
-  ├── compiler/
-  │   ├── CrocheTeXCompiler.ts
-  │   ├── patternTypeDetector.ts
-  │   └── stitchExpander.ts
-  ├── patterns/
-  │   ├── granny.ts             // Granny square logic
-  │   ├── circular.ts           // Round-based logic
-  │   └── linear.ts             // Default fallback logic
-  ├── features/
-  │   ├── motifs.ts             // Motif declarations and reuse
-  │   ├── transforms.ts         // Rotate, mirror, position
-  │   ├── metadata.ts           // Stitch counts, techniques, etc.
-  ├── safety/
-  │   ├── safetyLimits.ts
-  │   └── validator.ts
-  └── index.ts
+magic_ring {
+  ch(2)
+  sc(1)  // into ring
+  repeat(5) {
+    sc(1)
+  }
+  sl_st
+}
+
+// Round 1
+ch(3)
+repeat(5) {
+  ch(7)
+  dc(1)
+}
+ch(4)
+dc(1)
+join
+
+// Round 2
+repeat(6) {
+  dc(6)
+  sc(1)
+}
+sl_st
+
+// Round 3 - Petals
+repeat(6) {
+  repeat(3) {
+    ch(7)
+    ch(8)
+    ch(1)
+    sc(1)
+    hdc(1)
+    dc(1)
+    dc2tog
+    dc(1)
+    hdc(1)
+    sl_st
+    sc(1)
+    hdc(1)
+    dc2tog
+    tr(1)
+    2tr(1)
+    sl_st
+  }
+}
+
+// Round 4
+repeat(6) {
+  ch(10)
+  dc(1)
+  ch(5)
+  dc(1)
+  ch(10)
+  sc(1)
+  ch(3)
+  sc(1)
+}
+
+// Round 5
+ch(5)
+dc(1)
+repeat(3) {
+  ch(2)
+  sk(2)
+  dc(1)
+}
+repeat(6) {
+  ch(5)
+  dc(1)
+  repeat(4) {
+    ch(2)
+    sk(2)
+    dc(1)
+  }
+  ch(2)
+  dc(1)
+  ch(1)
+  sc(1)
+  ch(1)
+  dc(1)
+  repeat(4) {
+    ch(2)
+    sk(2)
+    dc(1)
+  }
+}
+sc(1)
+
+// Round 6
+ch(1)
+sc(1)
+repeat(4) {
+  sc(2)
+  sc(1)
+}
+repeat(6) {
+  sc(3)
+  ch(1)
+  ch(7)
+  turn
+  sl_st
+  ch(1)
+  turn
+  sc(1)
+  hdc(1)
+  dc(14)
+  hdc(1)
+  sc(1)
+  sc(3)
+  sc(1)
+  repeat(10) {
+    sc(2)
+    sc(1)
+  }
+}
+repeat(5) {
+  sc(2)
+  sc(1)
+}
+sc(1)
+sl_st
+ch(1)
+sc(1)
+
+// Round 7
+repeat(6) {
+  ch(4)
+  longtr(1)
+  repeat(13) {
+    ch(4)
+    trtr(1)
+  }
+  ch(4)
+  longtr(1)
+  ch(4)
+  sk(16)
+  sc(2)
+  repeat(2) {
+    sk(1)
+    sc(1)
+  }
+  sc(1)
+}
+sl_st
+sl_st
+sl_st(6)
+
+// Round 8
+ch(3)
+dc(1)
+repeat(6) {
+  repeat(13) {
+    ch(4)
+    " some_space dc(2) some_space "
+  }
+  " some_space dc(2) some_space "
+}
+sl_st
+sl_st(8)
+
+// Round 9
+ch(3)
+" some_space dc(2) "
+repeat(6) {
+  repeat(10) {
+    ch(4)
+    dc(3)
+  }
+  dc(3)
+}
+sl_st
+sl_st(4)
+
+// Round 10
+ch(3)
+dc(1)
+repeat(6) {
+  repeat(8) {
+    ch(4)
+    dc(4)
+  }
+  ch(4)
+  dc(2)
+  dc(2)
+}
+sl_st
+sl_st(3)
+
+// Round 11
+ch(4)
+ch(3)
+repeat(8) {
+  ch(5)
+  ch(3)
+  ch(1)
+  sl_st
+  ch(3)
+  tr(1)
+}
+repeat(5) {
+  repeat(8) {
+    tr(1)
+    ch(3)
+    ch(1)
+    sl_st
+    ch(3)
+    tr(1)
+  }
+}
+sl_st
+sl_st(8)
+
+// Round 12
+ch(4)
+ch(3)
+repeat(6) {
+  repeat(7) {
+    tr(1)
+    ch(3)
+    ch(1)
+    sl_st
+    ch(3)
+    tr(1)
+  }
+}
+sl_st
+sl_st(8)
+
+// Round 13
+ch(4)
+ch(4)
+repeat(6) {
+  repeat(6) {
+    tr(1)
+    ch(4)
+    ch(1)
+    ch(4)
+    sl_st
+    ch(4)
+    tr(1)
+  }
+}
+sl_st
+sl_st(9)
+
+// Round 14
+ch(4)
+ch(1)
+ch(5)
+tr(1)
+repeat(35) {
+  ch(9)
+  tr(1)
+  ch(5)
+  tr(1)
+}
+ch(4)
+tr(1)
+join
+
+// Round 15
+repeat(36) {
+  repeat(8) {
+    ch(1)
+    tr(1)
+  }
+  ch(1)
+  sc(1)
+}
+sc(1)
+
+// Final Rows
+repeat(36) {
+  sc(1)
+  repeat(5) {
+    sc(2)
+  }
+  ch(4)
+  ch(6)
+  turn
+  sl_st
+  ch(1)
+  turn
+  sc(8)
+  ch(8)
+  turn
+  sl_st
+  ch(1)
+  turn
+  sc(5)
+  ch(5)
+  sl_st
+  sc(5)
+  sl_st
+  ch(1)
+  sc(4)
+  sl_st
+  ch(1)
+  sc(2)
+  sc(2)
+  sc(1)
+}
+sl_st
