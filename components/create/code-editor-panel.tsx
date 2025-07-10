@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FileCode, Bot } from "lucide-react"
+import { FileCode, Bot, Maximize2, Minimize2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import CrochetCodeEditor from "@/components/crochet-code-editor"
@@ -14,6 +14,8 @@ interface CodeEditorPanelProps {
   onCompile?: (code: string) => void
   theme?: "light" | "dark"
   compilerResult?: CompilerResult | null
+  isFullScreen?: boolean
+  onToggleFullScreen?: () => void
 }
 
 export default function CodeEditorPanel({
@@ -21,7 +23,9 @@ export default function CodeEditorPanel({
   onCodeChange,
   onCompile,
   theme,
-  compilerResult
+  compilerResult,
+  isFullScreen = false,
+  onToggleFullScreen
 }: CodeEditorPanelProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -39,16 +43,30 @@ export default function CodeEditorPanel({
               <FileCode className="h-5 w-5" />
               CrocheTeX Code
             </CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 flex-shrink-0"
-            >
-              <Bot className="h-4 w-4" />
-              <span className="hidden sm:inline">Convert Pattern</span>
-              <span className="sm:hidden">Convert</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              {onToggleFullScreen && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onToggleFullScreen}
+                  className="flex items-center gap-2 flex-shrink-0"
+                  title={isFullScreen ? "Exit Full Screen (Esc)" : "Enter Full Screen"}
+                >
+                  {isFullScreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  {/* <span className="hidden sm:inline">{isFullScreen ? "Exit Code Editor" : "Code Editor"}</span> */}
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center gap-2 flex-shrink-0"
+              >
+                <Bot className="h-4 w-4" />
+                <span className="hidden sm:inline">Convert Pattern</span>
+                <span className="sm:hidden">Convert</span>
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="flex-1 p-0 min-h-0">

@@ -43,6 +43,7 @@ export default function CreatePage() {
   const [savedPatterns, setSavedPatterns] = useState<Pattern[]>([])
   const { theme } = useTheme()
   const { isMobile } = useResponsive()
+  const [fullScreenMode, setFullScreenMode] = useState<'none' | 'code' | 'preview'>('none')
 
   // Load user's saved patterns
   const loadSavedPatterns = useCallback(async () => {
@@ -150,6 +151,33 @@ export default function CreatePage() {
     loadSavedPatterns()
   }
 
+  // Full screen functionality
+  const toggleCodeFullScreen = useCallback(() => {
+    setFullScreenMode(prev => prev === 'code' ? 'none' : 'code')
+  }, [])
+
+  const togglePreviewFullScreen = useCallback(() => {
+    setFullScreenMode(prev => prev === 'preview' ? 'none' : 'preview')
+  }, [])
+
+  const exitFullScreen = useCallback(() => {
+    setFullScreenMode('none')
+  }, [])
+
+  // Handle escape key to exit full screen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && fullScreenMode !== 'none') {
+        exitFullScreen()
+      }
+    }
+
+    if (fullScreenMode !== 'none') {
+      document.addEventListener('keydown', handleKeyDown)
+      return () => document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [fullScreenMode, exitFullScreen])
+
   // Initial compilation
   useEffect(() => {
     handleCompile(code)
@@ -211,26 +239,53 @@ export default function CreatePage() {
           />
         </div>
 
-        <div className="min-h-[700px] lg:h-[calc(100vh-300px)]">
-          <ResizableSplit
-            disabled={isMobile}
-            defaultSplit={50}
-            minSplit={25}
-            maxSplit={75}
-            className="h-full"
-          >
-            <CodeEditorPanel
-              code={code}
-              onCodeChange={handleCodeChange}
-              onCompile={autoCompile ? handleCompile : undefined}
-              theme={theme === "dark" ? "dark" : "light"}
-              compilerResult={compilerResult}
-            />
-            <PreviewPanel
-              compilerResult={compilerResult}
-              isCompiling={isCompiling}
-            />
-          </ResizableSplit>
+        <div className={fullScreenMode !== 'none' ? "fixed inset-0 z-50 bg-background" : "min-h-[700px] lg:h-[calc(100vh-300px)]"}>
+          {fullScreenMode === 'code' ? (
+            <div className="h-full w-full">
+              <CodeEditorPanel
+                code={code}
+                onCodeChange={handleCodeChange}
+                onCompile={autoCompile ? handleCompile : undefined}
+                theme={theme === "dark" ? "dark" : "light"}
+                compilerResult={compilerResult}
+                isFullScreen={true}
+                onToggleFullScreen={toggleCodeFullScreen}
+              />
+            </div>
+          ) : fullScreenMode === 'preview' ? (
+            <div className="h-full w-full">
+              <PreviewPanel
+                compilerResult={compilerResult}
+                isCompiling={isCompiling}
+                isFullScreen={true}
+                onToggleFullScreen={togglePreviewFullScreen}
+              />
+            </div>
+          ) : (
+            <ResizableSplit
+              disabled={isMobile}
+              defaultSplit={50}
+              minSplit={25}
+              maxSplit={75}
+              className="h-full"
+            >
+              <CodeEditorPanel
+                code={code}
+                onCodeChange={handleCodeChange}
+                onCompile={autoCompile ? handleCompile : undefined}
+                theme={theme === "dark" ? "dark" : "light"}
+                compilerResult={compilerResult}
+                isFullScreen={false}
+                onToggleFullScreen={toggleCodeFullScreen}
+              />
+              <PreviewPanel
+                compilerResult={compilerResult}
+                isCompiling={isCompiling}
+                isFullScreen={false}
+                onToggleFullScreen={togglePreviewFullScreen}
+              />
+            </ResizableSplit>
+          )}
         </div>
       </main>
     </div>
