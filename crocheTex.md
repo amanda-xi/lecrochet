@@ -1,385 +1,277 @@
-To render more impressive crochet patterns using this EnhancedCrocheTeXCompiler, you’ll need changes across three main layers: language design, internal representation, and rendering interface. Here’s a structured layout of what needs to be enhanced:
 
-⸻
+# Crochetex: A Modern Crochet Pattern Language and Compiler
 
-🧶 1. CrocheTeX Language Design (User-Facing DSL Enhancements)
+## 1. Introduction
 
-Make the language more expressive so users can describe complex patterns with ease.
+This document outlines the specification for **Crochetex**, a new language for defining 3D crochet patterns, and the architecture of its companion compiler. The goal of Crochetex is to provide an intuitive, human-readable syntax that mirrors traditional crochet patterns while retaining the power and precision required for accurate 3D rendering.
 
-A. New Constructs
-	•	Layered Patterns:
-	•	Allow layer(n) { ... } or motif(name) { ... } for composability (granny square corners, flower centers).
-	•	Symmetry and Mirroring:
-	•	Add support for mirror, reflect, or rotate(degrees) to duplicate motifs in circular layouts.
-	•	Conditional/Parameterized Blocks:
-	•	Add if ... then ... else, or support reusable named blocks with arguments (define motif(radius) { ... }).
+This system is designed to be written entirely in **TypeScript** and will compile `.crochetex` files into interactive 3D models rendered with Three.js.
 
-B. Advanced Stitch Shorthand
-	•	Group compound instructions: shell(dc 5) or fan(dc 3, ch 2, dc 3)
-	•	Support continuous row instructions: row(3) { dc(5), ch(2), dc(5) }
+The core philosophy is to move complexity away from the user and into the compiler. The user should describe *what* they are making in a familiar way, and the compiler should be responsible for figuring out the complex geometry, stitch placement, and yarn physics.
 
-⸻
+## 2. The Crochetex Language (`.crochetex`)
 
-🔧 2. Compiler Enhancements (Internal Logic and Metadata)
+Crochetex is designed to be simple, declarative, and visually similar to standard written crochet patterns.
 
-The goal is to interpret complex patterns more richly.
+### 2.1. Basic Syntax
 
-A. Metadata and Pattern Context
-	•	Track row/round orientation, layer depth, or stitch placement (e.g., “into chain space”, “front loop only”).
-	•	Add positioning: spatial metadata for where each stitch/motif appears.
+- **Rounds/Rows**: Are denoted by `R1:`, `R2:`, etc. for rounds, and `Row 1:`, `Row 2:` for rows.
+- **Stitches**: Use standard abbreviations (e.g., `sc`, `dc`, `hdc`, `sl st`, `ch`).
+- **Repetitions**: Use `[ ... ] * N` for repeating a sequence `N` times.
+- **Stitch Counts**: End a round/row definition with the total stitch count in parentheses, e.g., `(12)`. This is used for validation.
+- **Comments**: Start a line with `#` for comments.
 
-B. Motif Composition Engine
-	•	Support named block reuse with transforms (scale, rotate, position).
-	•	Flatten and combine patternSequence based on motif placements (like SVG path groups).
+### 2.2. Example `.crochetex` file: A simple sphere (amigurumi)
 
-C. Safety and Performance Optimizations
-	•	Add memory-efficient structure for repeated motifs (e.g., store motif definitions once, render many times).
-	•	Incremental compilation mode: only recompile changed lines.
+```crochetex
+# A simple sphere pattern
 
-⸻
+# Stitches are worked in a continuous spiral
+# 'mr' is a special keyword for Magic Ring
 
-🎨 3. Rendering Engine (2D/3D Visualization)
+R1: 6 sc in mr (6)
+R2: [inc] * 6 (12)
+R3: [sc, inc] * 6 (18)
+R4: [2 sc, inc] * 6 (24)
+R5: [3 sc, inc] * 6 (30)
+R6-R9: sc in each st (30)
+R10: [3 sc, dec] * 6 (24)
+R11: [2 sc, dec] * 6 (18)
+R12: [sc, dec] * 6 (12)
+R13: [dec] * 6 (6)
+# 'fo' is a special keyword for Fasten Off
+R14: fo
+```
 
-Focus on generating clear, realistic, and beautiful representations.
+### 2.3. Advanced Concepts
 
-A. Stitch Visualization Improvements
-	•	Add color tagging to support multicolor work: dc(color="red", 3)
+While the goal is simplicity, Crochetex supports advanced constructions through intuitive syntax.
 
-B. Layout Algorithms
-	•	Granny squares: render each round as a square shell.
-	•	Circular patterns: spiral or concentric ring logic.
-	•	Support custom positioning (place(x, y) or grid(row, col)).
+#### Color Changes
 
-C. Export and Interaction
-	•	Allow export to SVG/PNG/PDF with clear labels and stitch keys.
-	•	Add hover-tooltips or click-to-expand details on stitches in the diagram.
+Color changes are specified inline using `{color name}`.
 
+```crochetex
+R5: [2 sc, {red} sc, {white} inc] * 6 (30)
+```
 
-  🔹 Option 2: DSL Interpreter Architecture
+#### Working in Rows
 
-Inspired by traditional compiler design (lexer-parser-evaluator).
+Use the `Row` keyword and the `turn` instruction.
 
-/crochetex
-  ├── interpreter/
-  │   ├── tokenizer.ts          // Converts input to tokens
-  │   ├── parser.ts             // Builds AST or instruction tree
-  │   ├── evaluator.ts          // Walks AST and generates pattern
-  │   └── context.ts            // Maintains compilation state
-  ├── stitch/
-  │   ├── stitchRegistry.ts     // Known stitch types and categories
-  │   ├── stitchRenderer.ts     // Hooks to rendering engine (optional)
-  ├── compiler.ts               // Wraps full interpreter logic into API
-  ├── types.ts                  // All shared interfaces and types
-  └── index.ts                  // Exports compile interface
+```crochetex
+Row 1: ch 11 (10)
+Row 2: sc in 2nd ch from hook, 9 sc, turn (10)
+Row 3: ch 1, 10 sc, turn (10)
+```
 
-// "Swirls" Doily Pattern - Lily Design Book No. 79
-// Converted to CrocheTeX format
+#### Special Stitches and Placement
 
-background(rgb(126,8,80))
-color(white)
+- **Increases/Decreases**: `inc` and `dec` are aliases for `2 sc in next st` and `sc2tog` respectively. The compiler can be configured for different stitch types (e.g., `hdc-inc`).
+- **Front/Back Loop**: `sc-blo` or `sc-flo`.
+- **Working into chain spaces**: A special syntax will be used for granny squares and other patterns that work into spaces rather than specific stitches.
 
-magic_ring {
-  ch(2)
-  sc(1)  // into ring
-  repeat(5) {
-    sc(1)
+```crochetex
+# Example for a granny square
+R1: mr, ch 3, 2 dc, ch 2, [3 dc, ch 2] * 3, sl st to top of ch 3
+R2: ch 3, 2 dc in same sp, ch 2, 3 dc in same sp, [ch 1, (3 dc, ch 2, 3 dc) in next ch-2 sp] * 3, sl st
+```
+The compiler will recognize `in same sp` and `in next ch-2 sp` as instructions to target chain spaces.
+
+## 3. Compiler Architecture
+
+The Crochetex compiler is a TypeScript-based pipeline that transforms a `.crochetex` source file into a renderable 3D model.
+
+**Pipeline Stages:**
+
+1.  **Lexer (Tokenizer)**: `source text` -> `Token[]`
+2.  **Parser**: `Token[]` -> `AST (Abstract Syntax Tree)`
+3.  **Semantic Analyzer / Graph Builder**: `AST` -> `CrochetGraph`
+4.  **Geometry Engine**: `CrochetGraph` -> `Three.js Scene`
+
+### 3.1. Project Structure
+
+The project will be organized as follows:
+
+```
+.
+├── package.json
+├── tsconfig.json
+├── src/
+│   ├── index.ts            # Main compiler entry point
+│   ├── types.ts            # Core data structures (Token, AST, Graph)
+│   ├── lexer.ts            # Lexer implementation
+│   ├── parser.ts           # Parser implementation
+│   ├── graphBuilder.ts     # Semantic Analyzer & Graph Builder
+│   └── geometry.ts         # 3D Model Generation
+│   └── renderer.ts         # Three.js scene setup and rendering
+└── patterns/
+    └── sphere.crochetex    # Example pattern files
+```
+
+### 3.2. File Responsibilities and Detailed Implementation
+
+#### `src/types.ts`
+
+This file defines the core data structures used throughout the compiler.
+
+- **Tokens**:
+  ```typescript
+  export enum TokenType {
+    // Keywords
+    Round, Row, Turn, In, Mr, Fo,
+    // Stitches
+    Sc, Dc, Hdc, SlSt, Ch, Inc, Dec,
+    // Syntax
+    Identifier, Number, LeftBracket, RightBracket, Asterisk, Comma,
+    // Color
+    Color,
+    // Other
+    EOL, EOF,
   }
-  sl_st
-}
 
-// Round 1
-ch(3)
-repeat(5) {
-  ch(7)
-  dc(1)
-}
-ch(4)
-dc(1)
-join
-
-// Round 2
-repeat(6) {
-  dc(6)
-  sc(1)
-}
-sl_st
-
-// Round 3 - Petals
-repeat(6) {
-  repeat(3) {
-    ch(7)
-    ch(8)
-    ch(1)
-    sc(1)
-    hdc(1)
-    dc(1)
-    dc2tog
-    dc(1)
-    hdc(1)
-    sl_st
-    sc(1)
-    hdc(1)
-    dc2tog
-    tr(1)
-    2tr(1)
-    sl_st
+  export interface Token {
+    type: TokenType;
+    lexeme: string;
+    line: number;
   }
-}
+  ```
 
-// Round 4
-repeat(6) {
-  ch(10)
-  dc(1)
-  ch(5)
-  dc(1)
-  ch(10)
-  sc(1)
-  ch(3)
-  sc(1)
-}
+- **Abstract Syntax Tree (AST)**:
+  ```typescript
+  export type ASTNode = PatternNode | InstructionNode;
 
-// Round 5
-ch(5)
-dc(1)
-repeat(3) {
-  ch(2)
-  sk(2)
-  dc(1)
-}
-repeat(6) {
-  ch(5)
-  dc(1)
-  repeat(4) {
-    ch(2)
-    sk(2)
-    dc(1)
+  export interface PatternNode {
+    type: 'Pattern';
+    instructions: InstructionNode[];
   }
-  ch(2)
-  dc(1)
-  ch(1)
-  sc(1)
-  ch(1)
-  dc(1)
-  repeat(4) {
-    ch(2)
-    sk(2)
-    dc(1)
-  }
-}
-sc(1)
 
-// Round 6
-ch(1)
-sc(1)
-repeat(4) {
-  sc(2)
-  sc(1)
-}
-repeat(6) {
-  sc(3)
-  ch(1)
-  ch(7)
-  turn
-  sl_st
-  ch(1)
-  turn
-  sc(1)
-  hdc(1)
-  dc(14)
-  hdc(1)
-  sc(1)
-  sc(3)
-  sc(1)
-  repeat(10) {
-    sc(2)
-    sc(1)
-  }
-}
-repeat(5) {
-  sc(2)
-  sc(1)
-}
-sc(1)
-sl_st
-ch(1)
-sc(1)
+  export type InstructionNode = RoundNode | RowNode | FastenOffNode;
 
-// Round 7
-repeat(6) {
-  ch(4)
-  longtr(1)
-  repeat(13) {
-    ch(4)
-    trtr(1)
+  export interface RoundNode {
+    type: 'Round';
+    roundNumber: number;
+    stitches: StitchGroupNode[];
+    stitchCount: number;
   }
-  ch(4)
-  longtr(1)
-  ch(4)
-  sk(16)
-  sc(2)
-  repeat(2) {
-    sk(1)
-    sc(1)
-  }
-  sc(1)
-}
-sl_st
-sl_st
-sl_st(6)
+  // ... similar nodes for RowNode, StitchGroupNode, RepeatNode, StitchNode etc.
+  ```
 
-// Round 8
-ch(3)
-dc(1)
-repeat(6) {
-  repeat(13) {
-    ch(4)
-    " some_space dc(2) some_space "
+- **Crochet Graph**:
+  ```typescript
+  export interface CrochetGraph {
+    nodes: StitchNode[];
+    edges: StitchConnection[];
   }
-  " some_space dc(2) some_space "
-}
-sl_st
-sl_st(8)
 
-// Round 9
-ch(3)
-" some_space dc(2) "
-repeat(6) {
-  repeat(10) {
-    ch(4)
-    dc(3)
+  export interface StitchNode {
+    id: number;
+    type: StitchType; // e.g., 'sc', 'dc'
+    round: number;
+    position: THREE.Vector3; // Calculated by Geometry Engine
+    color: string;
   }
-  dc(3)
-}
-sl_st
-sl_st(4)
 
-// Round 10
-ch(3)
-dc(1)
-repeat(6) {
-  repeat(8) {
-    ch(4)
-    dc(4)
+  export interface StitchConnection {
+    from: number; // stitch id
+    to: number;   // stitch id
   }
-  ch(4)
-  dc(2)
-  dc(2)
-}
-sl_st
-sl_st(3)
+  ```
 
-// Round 11
-ch(4)
-ch(3)
-repeat(8) {
-  ch(5)
-  ch(3)
-  ch(1)
-  sl_st
-  ch(3)
-  tr(1)
-}
-repeat(5) {
-  repeat(8) {
-    tr(1)
-    ch(3)
-    ch(1)
-    sl_st
-    ch(3)
-    tr(1)
+#### `src/lexer.ts`
+
+The lexer (or tokenizer) scans the source code and converts it into a sequence of tokens.
+
+- **`Lexer` class**:
+  - `constructor(source: string)`
+  - `scanTokens(): Token[]`: The main public method. It iterates through the source string character by character and produces tokens.
+  - It will use a `Map<string, TokenType>` to map keywords and stitch names to token types for easy lookup.
+
+#### `src/parser.ts`
+
+The parser takes the token stream from the lexer and builds an AST. It will use a recursive descent parsing strategy.
+
+- **`Parser` class**:
+  - `constructor(tokens: Token[])`
+  - `parse(): PatternNode`: The main public method.
+  - Private methods for each grammar rule, e.g., `parsePattern()`, `parseInstruction()`, `parseRound()`, `parseStitchGroup()`.
+  - It will handle operator precedence (if any) and gracefully report syntax errors.
+
+#### `src/graphBuilder.ts`
+
+This is the core "brain" of the compiler. It walks the AST and performs semantic analysis, creating a `CrochetGraph`. This is where the logic of stitch connections is implemented.
+
+- **`GraphBuilder` class**:
+  - `constructor(ast: PatternNode)`
+  - `buildGraph(): CrochetGraph`: The main method.
+  - It maintains the state of the crochet piece, including the current round, the stitches in the previous round, and the current attachment point.
+  - For spirals (amigurumi), it will connect each stitch to the corresponding stitch in the round below it.
+  - It will calculate the number of stitches per round and validate it against the user-provided count.
+  - It will expand `inc` and `dec` into their base stitches.
+  - It will handle `turn` instructions by reversing the attachment order for the next row.
+
+#### `src/geometry.ts`
+
+This engine takes the `CrochetGraph` and calculates the 3D position of each stitch. It then generates the visible 3D geometry.
+
+- **`GeometryEngine` class**:
+  - `constructor(graph: CrochetGraph)`
+  - `generateScene(): THREE.Scene`: The main method.
+  - **Stitch Placement**: This is the most complex part.
+    - For flat circles/spirals, it will use polar coordinates. For a stitch `s` in a round `r` with `N` stitches:
+      - `angle = (s / N) * 2 * PI`
+      - `radius = r * YARN_THICKNESS`
+      - The `z` coordinate will be incremented slightly for each round to create the 3D shape.
+    - It will implement a simple physics-based relaxation algorithm to adjust stitch positions for a more natural look, preventing bunching and stretching. This replaces the need for an external C++/WASM module. Stitches can be modeled as nodes with spring-like forces (the yarn connections) between them.
+  - **Yarn Generation**:
+    - For each connection in the graph, it will create a `THREE.CatmullRomCurve3` between the `position` vectors of the connected `StitchNode`s.
+    - It will use `THREE.TubeGeometry` to create a mesh along this curve, representing the yarn. The radius of the tube will be a configurable parameter.
+    - It will assign materials (`THREE.MeshStandardMaterial`) to the tubes based on the color information in the graph.
+
+#### `src/renderer.ts`
+
+Sets up the Three.js environment and renders the scene.
+
+- **`Renderer` class**:
+  - `constructor(canvas: HTMLCanvasElement)`
+  - `render(scene: THREE.Scene)`: Renders the given scene.
+  - It will set up a `PerspectiveCamera`, `WebGLRenderer`, `OrbitControls`, and lighting (e.g., `AmbientLight`, `DirectionalLight`).
+  - It will contain the `animate` loop to re-render the scene on each frame.
+
+#### `src/index.ts`
+
+This is the main entry point that ties everything together.
+
+- It will have a main `compile` function:
+  ```typescript
+  function compile(sourceCode: string, canvas: HTMLCanvasElement) {
+    // 1. Lex
+    const lexer = new Lexer(sourceCode);
+    const tokens = lexer.scanTokens();
+
+    // 2. Parse
+    const parser = new Parser(tokens);
+    const ast = parser.parse();
+
+    // 3. Build Graph
+    const graphBuilder = new GraphBuilder(ast);
+    const graph = graphBuilder.buildGraph();
+
+    // 4. Generate Geometry
+    const geoEngine = new GeometryEngine(graph);
+    const scene = geoEngine.generateScene();
+
+    // 5. Render
+    const renderer = new Renderer(canvas);
+    renderer.render(scene);
   }
-}
-sl_st
-sl_st(8)
+  ```
 
-// Round 12
-ch(4)
-ch(3)
-repeat(6) {
-  repeat(7) {
-    tr(1)
-    ch(3)
-    ch(1)
-    sl_st
-    ch(3)
-    tr(1)
-  }
-}
-sl_st
-sl_st(8)
+## 4. Build and Run
 
-// Round 13
-ch(4)
-ch(4)
-repeat(6) {
-  repeat(6) {
-    tr(1)
-    ch(4)
-    ch(1)
-    ch(4)
-    sl_st
-    ch(4)
-    tr(1)
-  }
-}
-sl_st
-sl_st(9)
+- **Dependencies**: `three`, `@types/three`, `typescript`, `ts-node`.
+  - These would be listed in `package.json`.
+- **Configuration**: `tsconfig.json` will be set up to compile TypeScript to modern JavaScript (e.g., ES2020).
+- **Running**: A simple web page (`index.html`) would host a `<textarea>` for the Crochetex code and a `<canvas>` for the 3D output. A button would trigger the `compile` function in `index.ts`.
 
-// Round 14
-ch(4)
-ch(1)
-ch(5)
-tr(1)
-repeat(35) {
-  ch(9)
-  tr(1)
-  ch(5)
-  tr(1)
-}
-ch(4)
-tr(1)
-join
-
-// Round 15
-repeat(36) {
-  repeat(8) {
-    ch(1)
-    tr(1)
-  }
-  ch(1)
-  sc(1)
-}
-sc(1)
-
-// Final Rows
-repeat(36) {
-  sc(1)
-  repeat(5) {
-    sc(2)
-  }
-  ch(4)
-  ch(6)
-  turn
-  sl_st
-  ch(1)
-  turn
-  sc(8)
-  ch(8)
-  turn
-  sl_st
-  ch(1)
-  turn
-  sc(5)
-  ch(5)
-  sl_st
-  sc(5)
-  sl_st
-  ch(1)
-  sc(4)
-  sl_st
-  ch(1)
-  sc(2)
-  sc(2)
-  sc(1)
-}
-sl_st
+This document provides a complete blueprint for the Crochetex language and compiler. The design prioritizes a simple user experience while leveraging the power of TypeScript and Three.js to handle the complex underlying calculations, creating a powerful tool for modern crochet pattern design. 
