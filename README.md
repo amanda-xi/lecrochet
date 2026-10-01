@@ -10,6 +10,7 @@ Le Crochet transforms crochet pattern creation into a coding experience. Write p
 
 ### CrocheTeX Language & Compiler
 - **Custom Language**: CrocheTeX syntax specifically designed for crochet patterns
+- **Compiler Architecture:** Currently implemented in TypeScript utilizing state-machine context tracking and regex-based instruction routing. Next iteration planned: Rewriting the backend in C++ utilizing formal lexical analysis, tokenization, and Abstract Syntax Tree (AST) traversal to eliminate loop-unrolling memory overhead.
 - **Real-time Compilation**: See your pattern update as you type with live error checking
 - **Pattern Types**: Support for linear, circular, and granny square patterns
 - **Advanced Stitches**: Comprehensive stitch library including post stitches, clusters, and shells
